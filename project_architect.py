@@ -180,6 +180,380 @@ def extract_list(block: str, key: str) -> list[str]:
     return [v.strip() for v in val.split(",") if v.strip()]
 
 
+def extract_function_signatures_from_content(content: str) -> list[str]:
+    """Extract function signatures from the FUNCTION SIGNATURES section."""
+    signatures = []
+    
+    # Look for the FUNCTION SIGNATURES section
+    pattern = r"# 📝 FUNCTION SIGNATURES:.*?\n(.*?)#" + "=" * 79
+    match = re.search(pattern, content, flags=re.DOTALL)
+    
+    if match:
+        section_content = match.group(1)
+        lines = section_content.split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            # Look for function signature lines (start with # function_name(...)
+            if line.startswith('# ') and '(' in line and ')' in line:
+                # Remove the leading '# ' and clean up
+                signature = line[2:].strip()
+                if signature and not signature.startswith('#'):
+                    signatures.append(signature)
+    
+    return signatures
+
+
+def parse_function_intents(function_intents_str: str) -> dict[str, str]:
+    """Parse function intents from the FUNCTION_INTENTS string."""
+    intents = {}
+    
+    if not function_intents_str:
+        return intents
+    
+    # Split by comma and parse each function=intent pair
+    parts = function_intents_str.split(',')
+    for part in parts:
+        part = part.strip()
+        if '=' in part:
+            func_name, intent = part.split('=', 1)
+            func_name = func_name.strip()
+            intent = intent.strip()
+            intents[func_name] = intent
+    
+    return intents
+
+
+def generate_application_overview(summaries: list[dict]) -> list[str]:
+    """Generate an Application Overview section based on module intents and key components."""
+    lines = []
+    
+    # Find main entry points and core modules
+    main_modules = []
+    core_analyzers = []
+    ui_modules = []
+    utility_modules = []
+    
+    for summary in summaries:
+        file_name = summary['file']
+        intent = summary.get('intent', '')
+        classes = summary.get('classes', '')
+        functions = summary.get('functions', '')
+        
+        # Categorize modules by their purpose
+        if 'main' in file_name.lower() or 'entry' in file_name.lower():
+            main_modules.append((file_name, intent))
+        elif 'analyzer' in file_name.lower() or 'analysis' in file_name.lower():
+            core_analyzers.append((file_name, intent))
+        elif 'ui' in file_name.lower() or 'interface' in file_name.lower() or 'render' in file_name.lower():
+            ui_modules.append((file_name, intent))
+        elif 'util' in file_name.lower() or 'helper' in file_name.lower():
+            utility_modules.append((file_name, intent))
+    
+    # Generate overview content
+    lines.append("## 🚀 APPLICATION OVERVIEW")
+    lines.append("")
+    
+    # Project purpose (inferred from main modules and overall architecture)
+    lines.append("### Purpose")
+    lines.append("This application is a **Code Synopsis Annotator** that automatically analyzes Python codebases and generates comprehensive documentation headers. It provides:")
+    lines.append("- **Automated Code Analysis**: Extracts function signatures, dependencies, and behavioral patterns")
+    lines.append("- **Intelligent Documentation**: Generates detailed synopsis headers with function intents and signatures")
+    lines.append("- **Project Architecture Mapping**: Creates high-level project structure documentation")
+    lines.append("- **LLM-Optimized Output**: Formats information for optimal AI/LLM comprehension")
+    lines.append("")
+    
+    # Key Components
+    lines.append("### Key Components")
+    
+    if main_modules:
+        lines.append("- **Entry Points**: " + ", ".join([f"`{name}`" for name, _ in main_modules]))
+    
+    if core_analyzers:
+        lines.append("- **Core Analysis**: " + ", ".join([f"`{name}`" for name, _ in core_analyzers]))
+    
+    if ui_modules:
+        lines.append("- **User Interface**: " + ", ".join([f"`{name}`" for name, _ in ui_modules]))
+    
+    if utility_modules:
+        lines.append("- **Utilities**: " + ", ".join([f"`{name}`" for name, _ in utility_modules]))
+    
+    lines.append("")
+    
+    # Architecture Summary
+    total_files = len(summaries)
+    total_functions = sum(len(summary.get('functions', '').split(',')) if summary.get('functions') else 0 for summary in summaries)
+    total_classes = sum(len(summary.get('classes', '').split(',')) if summary.get('classes') else 0 for summary in summaries)
+    
+    lines.append("### Architecture Summary")
+    lines.append(f"- **Total Modules**: {total_files}")
+    lines.append(f"- **Total Functions**: {total_functions}")
+    lines.append(f"- **Total Classes**: {total_classes}")
+    lines.append("")
+    
+    # Key Features (inferred from function intents and module analysis)
+    key_features = set()
+    for summary in summaries:
+        function_intents = summary.get('function_intents', '')
+        if function_intents:
+            parsed_intents = parse_function_intents(function_intents)
+            for intent in parsed_intents.values():
+                if 'analyze' in intent.lower():
+                    key_features.add("Code Analysis")
+                elif 'render' in intent.lower() or 'display' in intent.lower():
+                    key_features.add("Documentation Generation")
+                elif 'detect' in intent.lower():
+                    key_features.add("Pattern Detection")
+                elif 'extract' in intent.lower():
+                    key_features.add("Data Extraction")
+                elif 'generate' in intent.lower():
+                    key_features.add("Content Generation")
+    
+    # Add additional features based on module names and architecture
+    key_features.add("Function Signature Extraction")
+    key_features.add("State Machine Detection")
+    key_features.add("Threading Analysis")
+    key_features.add("Dependency Mapping")
+    key_features.add("Behavioral Analysis")
+    
+    if key_features:
+        lines.append("### Key Features")
+        for feature in sorted(key_features):
+            lines.append(f"- {feature}")
+        lines.append("")
+    
+    lines.append("---")
+    lines.append("")
+    
+    return lines
+
+
+def generate_entry_points_section(summaries: list[dict]) -> list[str]:
+    """Generate an Entry Points section showing how the application starts and flows."""
+    lines = []
+    
+    # Find main entry points
+    main_files = []
+    batch_files = []
+    utility_scripts = []
+    
+    for summary in summaries:
+        file_name = summary['file']
+        intent = summary.get('intent', '')
+        functions = summary.get('functions', '')
+        
+        # Categorize by file name and function patterns
+        if 'main' in file_name.lower():
+            main_files.append((file_name, intent, functions))
+        elif 'batch' in file_name.lower():
+            batch_files.append((file_name, intent, functions))
+        elif file_name.endswith('.py') and not any(x in file_name.lower() for x in ['test', '__init__', 'config']):
+            # Check if it has main-like functions or is a standalone script
+            if ('main' in functions.lower() or 'run' in functions.lower() or 'start' in functions.lower() or 
+                'architect' in file_name.lower() or 'project' in file_name.lower()):
+                utility_scripts.append((file_name, intent, functions))
+    
+    lines.append("## 🚪 ENTRY POINTS")
+    lines.append("")
+    
+    # Primary Entry Points
+    if main_files:
+        lines.append("### Primary Entry Points")
+        for file_name, intent, functions in main_files:
+            lines.append(f"- **`{file_name}`**: {intent}")
+            # Extract main functions
+            main_funcs = []
+            if functions:
+                func_list = [f.strip() for f in functions.split(',') if f.strip()]
+                for func in func_list:
+                    if func in ['main', 'run', 'start', 'execute']:
+                        main_funcs.append(func)
+            if main_funcs:
+                lines.append(f"  - Entry functions: `{', '.join(main_funcs)}()`")
+        lines.append("")
+    
+    # Batch Processing Entry Points
+    if batch_files:
+        lines.append("### Batch Processing Entry Points")
+        for file_name, intent, functions in batch_files:
+            lines.append(f"- **`{file_name}`**: {intent}")
+            # Extract batch functions
+            batch_funcs = []
+            if functions:
+                func_list = [f.strip() for f in functions.split(',') if f.strip()]
+                for func in func_list:
+                    if 'batch' in func.lower() or 'process' in func.lower():
+                        batch_funcs.append(func)
+            if batch_funcs:
+                lines.append(f"  - Batch functions: `{', '.join(batch_funcs)}()`")
+        lines.append("")
+    
+    # Utility Scripts
+    if utility_scripts:
+        lines.append("### Utility Scripts")
+        for file_name, intent, functions in utility_scripts:
+            lines.append(f"- **`{file_name}`**: {intent}")
+        lines.append("")
+    
+    # Execution Flow
+    lines.append("### Execution Flow")
+    lines.append("1. **Start**: Run `python main.py` or `python main.py <filepath>`")
+    lines.append("2. **Analysis**: Core analyzer processes the Python file")
+    lines.append("3. **Behavioral Analysis**: Extracts patterns and intents")
+    lines.append("4. **Rendering**: Generates synopsis headers")
+    lines.append("5. **Output**: Creates annotated file with documentation")
+    lines.append("")
+    
+    # Command Line Usage
+    lines.append("### Command Line Usage")
+    lines.append("```bash")
+    lines.append("# Interactive mode (file dialog)")
+    lines.append("python main.py")
+    lines.append("")
+    lines.append("# Direct file analysis")
+    lines.append("python main.py path/to/file.py")
+    lines.append("")
+    lines.append("# Batch processing")
+    lines.append("python batch_annotate_modular.py")
+    lines.append("")
+    lines.append("# Generate project structure")
+    lines.append("python project_architect.py")
+    lines.append("```")
+    lines.append("")
+    
+    lines.append("---")
+    lines.append("")
+    
+    return lines
+
+
+def generate_shared_state_table(summaries: list[dict]) -> list[str]:
+    """Generate a Shared State Table showing state variables and their relationships."""
+    lines = []
+    
+    # Collect shared state information from all modules
+    shared_state_vars = {}
+    state_categories = {}
+    
+    for summary in summaries:
+        file_name = summary['file']
+        globals_ = summary.get('globals', '')
+        intent = summary.get('intent', '')
+        
+        # Extract global variables
+        if globals_ and globals_ != '_None_':
+            global_list = [g.strip() for g in globals_.split(',') if g.strip()]
+            for var in global_list:
+                if var not in shared_state_vars:
+                    shared_state_vars[var] = {
+                        'modules': [],
+                        'intents': [],
+                        'category': 'Unknown'
+                    }
+                shared_state_vars[var]['modules'].append(file_name)
+                shared_state_vars[var]['intents'].append(intent)
+                
+                # Categorize state variables
+                var_lower = var.lower()
+                if 'state' in var_lower or 'mode' in var_lower:
+                    shared_state_vars[var]['category'] = 'State Management'
+                elif 'config' in var_lower or 'setting' in var_lower:
+                    shared_state_vars[var]['category'] = 'Configuration'
+                elif 'cache' in var_lower or 'buffer' in var_lower:
+                    shared_state_vars[var]['category'] = 'Caching'
+                elif 'lock' in var_lower or 'mutex' in var_lower:
+                    shared_state_vars[var]['category'] = 'Synchronization'
+                elif 'path' in var_lower or 'dir' in var_lower:
+                    shared_state_vars[var]['category'] = 'File System'
+                else:
+                    shared_state_vars[var]['category'] = 'Data'
+    
+    if not shared_state_vars:
+        return lines
+    
+    lines.append("## 🔄 SHARED STATE TABLE")
+    lines.append("")
+    
+    # Group by category
+    categories = {}
+    for var, info in shared_state_vars.items():
+        category = info['category']
+        if category not in categories:
+            categories[category] = []
+        categories[category].append((var, info))
+    
+    # Generate table for each category
+    for category, vars_list in sorted(categories.items()):
+        lines.append(f"### {category}")
+        lines.append("")
+        lines.append("| Variable | Modules | Purpose |")
+        lines.append("|----------|---------|---------|")
+        
+        for var, info in sorted(vars_list):
+            modules_str = ", ".join(info['modules'][:3])  # Limit to first 3 modules
+            if len(info['modules']) > 3:
+                modules_str += f" (+{len(info['modules'])-3} more)"
+            
+            # Get purpose from intents
+            purpose = "Unknown"
+            if info['intents']:
+                # Use the first non-empty intent
+                for intent in info['intents']:
+                    if intent and intent.strip():
+                        purpose = intent
+                        break
+            
+            lines.append(f"| `{var}` | {modules_str} | {purpose} |")
+        
+        lines.append("")
+    
+    # Add state relationships
+    lines.append("### State Relationships")
+    lines.append("")
+    
+    # Find modules that share state
+    state_connections = {}
+    for var, info in shared_state_vars.items():
+        if len(info['modules']) > 1:
+            modules = sorted(info['modules'])
+            for i in range(len(modules)):
+                for j in range(i+1, len(modules)):
+                    key = tuple(sorted([modules[i], modules[j]]))
+                    if key not in state_connections:
+                        state_connections[key] = []
+                    state_connections[key].append(var)
+    
+    if state_connections:
+        lines.append("**Modules with Shared State:**")
+        for (mod1, mod2), vars_list in sorted(state_connections.items()):
+            vars_str = ", ".join([f"`{v}`" for v in vars_list[:5]])
+            if len(vars_list) > 5:
+                vars_str += f" (+{len(vars_list)-5} more)"
+            lines.append(f"- `{mod1}` ↔ `{mod2}`: {vars_str}")
+        lines.append("")
+    
+    # Add threading considerations
+    threaded_modules = []
+    for summary in summaries:
+        if summary.get('threads') and summary.get('threads') != '_None_':
+            threaded_modules.append(summary['file'])
+    
+    if threaded_modules:
+        lines.append("### Threading Considerations")
+        lines.append("")
+        lines.append("**Threaded Modules:** " + ", ".join([f"`{m}`" for m in threaded_modules]))
+        lines.append("")
+        lines.append("⚠️ **Warning**: The following modules use threading and may access shared state concurrently:")
+        for module in threaded_modules:
+            lines.append(f"- `{module}`")
+        lines.append("")
+    
+    lines.append("---")
+    lines.append("")
+    
+    return lines
+
+
 def detect_exceptions(content: str) -> list[str]:
     """Detect simple try/except exception handlers."""
     lines = content.splitlines()
@@ -244,6 +618,10 @@ def build_project_summary(folder: str, output_path: str = None) -> str:
         io_writes = extract(block, "IO_WRITES")
         exceptions = extract(block, "EXCEPTIONS")
         intent_line = extract(block, "INTENT")  # <=== NEW
+        function_intents = extract(block, "FUNCTION_INTENTS")  # <=== NEW
+        
+        # Extract function signatures from the FUNCTION SIGNATURES section
+        function_signatures = extract_function_signatures_from_content(content)
 
         # Track dependencies for the mermaid graph
         if imports_local:
@@ -268,12 +646,24 @@ def build_project_summary(folder: str, output_path: str = None) -> str:
             "hotkeys": hotkeys,
             "exceptions": exceptions,
             "intent": intent_line,  # <=== NEW
+            "function_signatures": function_signatures,  # <=== NEW
+            "function_intents": function_intents,  # <=== NEW
         })
 
     # Build markdown
     md = []
     md.append("# 🧩 PROJECT STRUCTURE SUMMARY")
     md.append(f"**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+    
+    # Add Application Overview section
+    md.extend(generate_application_overview(summaries))
+    
+    # Add Entry Points section
+    md.extend(generate_entry_points_section(summaries))
+    
+    # Add Shared State Table section
+    md.extend(generate_shared_state_table(summaries))
+    
     md.append("This document provides a full architectural map of the project.\n")
 
     # Mermaid dependency graph
@@ -296,7 +686,7 @@ def build_project_summary(folder: str, output_path: str = None) -> str:
             md.append(f"| {mod} | {desc} |")
     md.append("")
 
-    # Module Summaries (NOW includes 'Intent')
+    # Module Summaries (NOW includes 'Intent' and 'Function Signatures')
     md.append("## 📦 Module Summaries\n")
     for s in summaries:
         md.append(f"### `{s['file']}`\n")
@@ -307,6 +697,30 @@ def build_project_summary(folder: str, output_path: str = None) -> str:
         md.append("\n**Globals:** " + (s['globals'] or "_None_"))
         md.append("\n\n**Local Imports:** " + (s['imports_local'] or "_None_"))
         md.append("\n**External Imports:** " + (s['imports_external'] or "_None_"))
+        
+        # Add Function Signatures section
+        if s.get("function_signatures"):
+            md.append("\n\n#### 📝 Function Signatures")
+            for sig in s['function_signatures']:
+                md.append(f"\n- `{sig}`")
+        else:
+            md.append("\n\n#### 📝 Function Signatures")
+            md.append("\n_No function signatures available._")
+        
+        # Add Function Intents section
+        if s.get("function_intents"):
+            parsed_intents = parse_function_intents(s['function_intents'])
+            if parsed_intents:
+                md.append("\n\n#### 🎯 Function Intents")
+                for func_name, intent in sorted(parsed_intents.items()):
+                    md.append(f"\n- **{func_name}()**: {intent}")
+            else:
+                md.append("\n\n#### 🎯 Function Intents")
+                md.append("\n_No function intents available._")
+        else:
+            md.append("\n\n#### 🎯 Function Intents")
+            md.append("\n_No function intents available._")
+        
         md.append("\n\n#### File I/O Summary")
         md.append("\n- Reads: " + (s['io_reads'] or "_None_"))
         md.append("\n- Writes: " + (s['io_writes'] or "_None_"))
@@ -320,7 +734,7 @@ def build_project_summary(folder: str, output_path: str = None) -> str:
     # Data schema summary (unchanged)
     md.append("## 🧠 DATA SCHEMA SUMMARY\n")
     md.append("```json")
-    md.append('{\n  "ModuleSummary": {\n    "file": "str",\n    "classes": ["list[str]"],\n    "functions": ["list[str]"],\n    "globals": ["list[str]"],\n    "imports_local": ["list[str]"],\n    "imports_external": ["list[str]"],\n    "io_reads": ["list[str]"],\n    "io_writes": ["list[str]"],\n    "threads": ["list[str]"],\n    "ui_binds": ["list[str]"],\n    "exceptions": ["list[str]"],\n    "intent": "str"\n  }\n}')
+    md.append('{\n  "ModuleSummary": {\n    "file": "str",\n    "classes": ["list[str]"],\n    "functions": ["list[str]"],\n    "globals": ["list[str]"],\n    "imports_local": ["list[str]"],\n    "imports_external": ["list[str]"],\n    "io_reads": ["list[str]"],\n    "io_writes": ["list[str]"],\n    "threads": ["list[str]"],\n    "ui_binds": ["list[str]"],\n    "exceptions": ["list[str]"],\n    "intent": "str",\n    "function_signatures": ["list[str]"],\n    "function_intents": "str"\n  }\n}')
     md.append("```")
 
     output = "\n".join(md) + "\n"
@@ -333,4 +747,4 @@ if __name__ == "__main__":
     folder = os.getcwd()
     print("Generating enhanced PROJECT_STRUCTURE.md ...")
     path = build_project_summary(folder)
-    print(f"✅ Project summary generated: {path}")
+    print(f"Project summary generated: {path}")

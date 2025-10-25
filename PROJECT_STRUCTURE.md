@@ -1,5 +1,191 @@
 # 🧩 PROJECT STRUCTURE SUMMARY
-**Generated:** 2025-10-24 23:31:37
+**Generated:** 2025-10-25 11:09:01
+
+## 🚀 APPLICATION OVERVIEW
+
+### Purpose
+This application is a **Code Synopsis Annotator** that automatically analyzes Python codebases and generates comprehensive documentation headers. It provides:
+- **Automated Code Analysis**: Extracts function signatures, dependencies, and behavioral patterns
+- **Intelligent Documentation**: Generates detailed synopsis headers with function intents and signatures
+- **Project Architecture Mapping**: Creates high-level project structure documentation
+- **LLM-Optimized Output**: Formats information for optimal AI/LLM comprehension
+
+### Key Components
+- **Entry Points**: `main.py`
+- **Core Analysis**: `analyzer_state.py`, `behavioral_analysis.py`, `core_analyzer.py`
+- **User Interface**: `synopsis_renderer.py`
+- **Utilities**: `utils.py`
+
+### Architecture Summary
+- **Total Modules**: 14
+- **Total Functions**: 176
+- **Total Classes**: 13
+
+### Key Features
+- Behavioral Analysis
+- Content Generation
+- Dependency Mapping
+- Documentation Generation
+- Function Signature Extraction
+- State Machine Detection
+- Threading Analysis
+
+---
+
+## 🚪 ENTRY POINTS
+
+### Primary Entry Points
+- **`main.py`**: Main application entry point and orchestration.
+  - Entry functions: `main()`
+
+### Batch Processing Entry Points
+- **`batch_annotate_modular.py`**: Creates and manages user interface components. Processes various components.
+  - Batch functions: `_process_folder, _process_single, process_batch, process_single_file, run_batch()`
+
+### Utility Scripts
+- **`file_io.py`**: Creates and manages user interface components. Creates various components.
+- **`intent_enhancer_v2.py`**: Detects or identifies patterns in, Generates functionality for this module.
+- **`project_architect.py`**: Extracts, Detects or identifies patterns in functionality for this module.
+
+### Execution Flow
+1. **Start**: Run `python main.py` or `python main.py <filepath>`
+2. **Analysis**: Core analyzer processes the Python file
+3. **Behavioral Analysis**: Extracts patterns and intents
+4. **Rendering**: Generates synopsis headers
+5. **Output**: Creates annotated file with documentation
+
+### Command Line Usage
+```bash
+# Interactive mode (file dialog)
+python main.py
+
+# Direct file analysis
+python main.py path/to/file.py
+
+# Batch processing
+python batch_annotate_modular.py
+
+# Generate project structure
+python project_architect.py
+```
+
+---
+
+## 🔄 SHARED STATE TABLE
+
+### Data
+
+| Variable | Modules | Purpose |
+|----------|---------|---------|
+| `ACTION_MAP` | intent_inference.py | Generates functionality for this module. |
+| `ANNOTATOR_VERSION` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
+| `BEGIN_MARK` | state_tracker.py | Loads and manages configuration settings. Extracts various components. |
+| `BULLET_RE` | state_tracker.py | Loads and manages configuration settings. Extracts various components. |
+| `CRIT_GLOBALS_HEADER` | state_tracker.py | Loads and manages configuration settings. Extracts various components. |
+| `DEFAULT_MODULE_INTENT` | intent_inference.py | Generates functionality for this module. |
+| `DEFAULT_VERB` | intent_inference.py | Generates functionality for this module. |
+| `DOMAIN_INDICATORS` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
+| `DOMAIN_PURPOSES` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
+| `END_MARK` | state_tracker.py | Loads and manages configuration settings. Extracts various components. |
+| `FUNCTION_PATTERNS` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
+| `HEADER_BOUNDARY` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
+| `KEY_ALIASES` | state_tracker.py | Loads and manages configuration settings. Extracts various components. |
+| `KEY_LINE_RE` | state_tracker.py | Loads and manages configuration settings. Extracts various components. |
+| `MODULE_NAME_HINTS` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
+| `VAR_HEADER_RE` | state_tracker.py | Loads and manages configuration settings. Extracts various components. |
+| `__all__` | __init__.py | Handles init functionality. |
+| `__author__` | __init__.py | Handles init functionality. |
+| `__version__` | __init__.py | Handles init functionality. |
+| `analyzer` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `analyzer1` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
+| `analyzer2` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
+| `analyzer3` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
+| `analyzer4` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
+| `analyzer5` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
+| `analyzer6` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
+| `analyzer7` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
+| `analyzer8` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
+| `app` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
+| `args` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
+| `classes` | analyzer_state.py | Manages concurrent execution. |
+| `comparisons` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `condition` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `detector` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `exceptions` | analyzer_state.py | Manages concurrent execution. |
+| `files` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
+| `folder` | project_architect.py, state_tracker.py | Extracts, Detects or identifies patterns in functionality for this module. |
+| `functions` | analyzer_state.py | Manages concurrent execution. |
+| `generated_at` | analyzer_state.py | Manages concurrent execution. |
+| `globals` | analyzer_state.py | Manages concurrent execution. |
+| `hotkeys` | analyzer_state.py | Manages concurrent execution. |
+| `imports_external` | analyzer_state.py | Manages concurrent execution. |
+| `imports_local` | analyzer_state.py | Manages concurrent execution. |
+| `io_reads` | analyzer_state.py | Manages concurrent execution. |
+| `io_writes` | analyzer_state.py | Manages concurrent execution. |
+| `line_number` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `name` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `notes` | analyzer_state.py | Manages concurrent execution. |
+| `out_md` | state_tracker.py | Loads and manages configuration settings. Extracts various components. |
+| `parser` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
+| `primary_variable` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `readers` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `related_variables` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `results` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `root` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
+| `test_code` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `threads` | analyzer_state.py | Manages concurrent execution. |
+| `transitions` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `trigger_function` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `ui_binds` | analyzer_state.py | Manages concurrent execution. |
+| `values` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `var_type` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `version` | analyzer_state.py | Manages concurrent execution. |
+| `writers` | state_machine_detector.py | Generates, Renders functionality for this module. |
+
+### File System
+
+| Variable | Modules | Purpose |
+|----------|---------|---------|
+| `path` | project_architect.py | Extracts, Detects or identifies patterns in functionality for this module. |
+| `project_path` | analyzer_state.py | Manages concurrent execution. |
+| `project_structure_path` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
+
+### State Management
+
+| Variable | Modules | Purpose |
+|----------|---------|---------|
+| `STATE_VARIABLE_PATTERNS` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `config_state` | analyzer_state.py | Manages concurrent execution. |
+| `from_state` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `position_state` | analyzer_state.py | Manages concurrent execution. |
+| `state` | analyzer_state.py, state_tracker.py | Manages concurrent execution. |
+| `state_cats` | analyzer_state.py | Manages concurrent execution. |
+| `state_map` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
+| `state_table` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
+| `states` | state_machine_detector.py | Generates, Renders functionality for this module. |
+| `timing_state` | analyzer_state.py | Manages concurrent execution. |
+| `to_state` | state_machine_detector.py | Generates, Renders functionality for this module. |
+
+### Synchronization
+
+| Variable | Modules | Purpose |
+|----------|---------|---------|
+| `_lock` | analyzer_state.py | Manages concurrent execution. |
+
+### State Relationships
+
+**Modules with Shared State:**
+- `analyzer_state.py` ↔ `state_tracker.py`: `state`
+- `project_architect.py` ↔ `state_tracker.py`: `folder`
+
+### Threading Considerations
+
+**Threaded Modules:** `batch_annotate_modular.py`
+
+⚠️ **Warning**: The following modules use threading and may access shared state concurrently:
+- `batch_annotate_modular.py`
+
+---
 
 This document provides a full architectural map of the project.
 
@@ -66,6 +252,16 @@ graph TD
 **External Imports:** importlib, sys
 
 
+#### 📝 Function Signatures
+
+_No function signatures available._
+
+
+#### 🎯 Function Intents
+
+_No function intents available._
+
+
 #### File I/O Summary
 
 - Reads: _None_
@@ -101,6 +297,40 @@ _No exception handlers detected._
 **Local Imports:** _None_
 
 **External Imports:** __future__, dataclasses, datetime, json, threading, typing
+
+
+#### 📝 Function Signatures
+
+- `AnalyzerState.clear(self) -> None`
+
+- `AnalyzerState.merge(self, other: AnalyzerState) -> None`
+
+- `AnalyzerState.summary(self) -> str`
+
+- `AnalyzerState.to_dict(self) -> Dict[str, Any]`
+
+- `AnalyzerState.to_json(self, path: str) -> None`
+
+- `AnalyzerState.update(self, key: str, value: Any) -> None`
+
+- `new_state(project_path: Optional[str] = None) -> AnalyzerState`
+
+
+#### 🎯 Function Intents
+
+- **clear()**: Handles the target entities.
+
+- **merge()**: Handles the target entities.
+
+- **new_state()**: Handles state.
+
+- **summary()**: Handles the target entities.
+
+- **to_dict()**: Handles dict.
+
+- **to_json()**: Handles json.
+
+- **update()**: Handles the target entities.
 
 
 #### File I/O Summary
@@ -140,6 +370,108 @@ _No exception handlers detected._
 **External Imports:** argparse, datetime, glob, hashlib, os, pathlib, shutil, subprocess, sys, threading, tkinter
 
 
+#### 📝 Function Signatures
+
+- `AnnotatorGUI.__init__(self, root) -> None`
+
+- `AnnotatorGUI._build_ui(self) -> None`
+
+- `AnnotatorGUI._process_folder(self, folder) -> None`
+
+- `AnnotatorGUI._process_single(self, path) -> None`
+
+- `AnnotatorGUI.generate_markdown(self) -> None`
+
+- `AnnotatorGUI.log(self, msg, tag = None) -> None`
+
+- `AnnotatorGUI.open_folder(self) -> None`
+
+- `AnnotatorGUI.run_batch(self) -> None`
+
+- `AnnotatorGUI.run_in_thread(self, fn) -> None`
+
+- `AnnotatorGUI.run_single(self) -> None`
+
+- `AnnotatorGUI.select_file(self) -> None`
+
+- `AnnotatorGUI.select_folder(self) -> None`
+
+- `compute_code_hash(code_text: str) -> str`
+
+- `extract_existing_hash(file_path: str) -> None`
+
+- `find_python_files(directory_path, recursive = False, skip_patterns = None) -> None`
+
+- `format_duration(seconds) -> None`
+
+- `get_code_body(file_path: str) -> None`
+
+- `is_up_to_date(file_path) -> None`
+
+- `make_backup(file_path) -> None`
+
+- `open_folder_in_explorer(path) -> None`
+
+- `Open folder in file explorer (cross-platform).`
+
+- `process_batch(files, dry_run = False, backup = True, skip_annotated = False, force_rewrite = False) -> None`
+
+- `process_single_file(file_path, dry_run = False, backup = True, force_rewrite = False) -> None`
+
+- `strip_all_annotations(file_path) -> None`
+
+
+#### 🎯 Function Intents
+
+- **__init__()**: Handles the target entities.
+
+- **_build_ui()**: Constructs or generates ui.
+
+- **_process_folder()**: Handles or executes folder.
+
+- **_process_single()**: Handles or executes single.
+
+- **_run()**: Handles the target entities.
+
+- **compute_code_hash()**: Handles code hash.
+
+- **extract_existing_hash()**: Retrieves existing hash.
+
+- **find_python_files()**: Locates or gathers python files.
+
+- **format_duration()**: Handles duration.
+
+- **generate_markdown()**: Handles markdown.
+
+- **get_code_body()**: Handles code body.
+
+- **is_up_to_date()**: Handles up to date.
+
+- **log()**: Handles the target entities.
+
+- **make_backup()**: Handles backup.
+
+- **open_folder()**: Handles folder.
+
+- **open_folder_in_explorer()**: Handles folder in explorer.
+
+- **process_batch()**: Handles or executes batch.
+
+- **process_single_file()**: Handles or executes single file.
+
+- **run_batch()**: Handles batch.
+
+- **run_in_thread()**: Handles in thread.
+
+- **run_single()**: Handles single.
+
+- **select_file()**: Handles file.
+
+- **select_folder()**: Handles folder.
+
+- **strip_all_annotations()**: Handles all annotations.
+
+
 #### File I/O Summary
 
 - Reads: _None_
@@ -175,6 +507,56 @@ _No exception handlers detected._
 **Local Imports:** _None_
 
 **External Imports:** ast, collections, datetime, typing
+
+
+#### 📝 Function Signatures
+
+- `BehavioralAnalyzer.__init__(self, analyzer, state = None) -> None`
+
+- `BehavioralAnalyzer.analyze_function_dependencies(self) -> List[Tuple[str, List[str]]]`
+
+- `Analyze functions with high fan-out (calling many other functions).`
+
+- `BehavioralAnalyzer.analyze_high_priority_functions(self) -> List[Tuple[str, Dict, Set[str], Set[str]]]`
+
+- `BehavioralAnalyzer.build_machine_block(self) -> List[str]`
+
+- `BehavioralAnalyzer.categorize_shared_state(self) -> List[Tuple[str, List[str]]]`
+
+- `BehavioralAnalyzer.generate_behavioral_summary(self) -> List[str]`
+
+- `BehavioralAnalyzer.group_modules_generic(self) -> Dict[str, List[str]]`
+
+- `BehavioralAnalyzer.render_call_hierarchy(self, max_depth: int = 3, max_children: int = 8) -> List[str]`
+
+- `BehavioralAnalyzer.render_state_machines(self) -> List[str]`
+
+- `BehavioralAnalyzer.render_ui_after_usage(self) -> List[str]`
+
+
+#### 🎯 Function Intents
+
+- **__init__()**: Handles the target entities.
+
+- **analyze_function_dependencies()**: Examines and summarizes function dependencies.
+
+- **analyze_high_priority_functions()**: Examines and summarizes high priority functions.
+
+- **build_machine_block()**: Constructs or generates machine block.
+
+- **categorize_shared_state()**: Handles shared state.
+
+- **dfs()**: Handles the target entities.
+
+- **generate_behavioral_summary()**: Handles behavioral summary.
+
+- **group_modules_generic()**: Organizes modules generic.
+
+- **render_call_hierarchy()**: Produces or displays call hierarchy.
+
+- **render_state_machines()**: Produces or displays state machines.
+
+- **render_ui_after_usage()**: Produces or displays ui after usage.
 
 
 #### File I/O Summary
@@ -214,6 +596,218 @@ _No exception handlers detected._
 **External Imports:** ast, collections, os, typing, warnings
 
 
+#### 📝 Function Signatures
+
+- `CodeAnalyzer.__init__(self, filepath: str, state = None, *, include_machine_block: bool = True) -> None`
+
+- `CodeAnalyzer._analyze_function_accesses(self, func_node: ast.AST, func_name: str) -> None`
+
+- `CodeAnalyzer._call_to_name(self, func_node) -> str`
+
+- `CodeAnalyzer._enclosing_function_name(self, node: ast.AST) -> Optional[str]`
+
+- `CodeAnalyzer._extract_open_args(self, call_node: ast.Call) -> Tuple[Optional[str], str]`
+
+- `Extract file path and mode from open() call.`
+
+- `CodeAnalyzer._format_call_name(self, call_node: ast.Call) -> str`
+
+- `CodeAnalyzer._is_local_module(self, module_name: str) -> bool`
+
+- `CodeAnalyzer._render_arg(self, arg: ast.arg, default: Optional[ast.AST]) -> str`
+
+- `CodeAnalyzer._safe_unparse(self, node: Optional[ast.AST]) -> str`
+
+- `CodeAnalyzer.analyze(self) -> None`
+
+- `CodeAnalyzer.analyze_classes(self) -> None`
+
+- `CodeAnalyzer.analyze_functions(self) -> None`
+
+- `CodeAnalyzer.build_call_graph(self) -> None`
+
+- `CodeAnalyzer.build_symbol_indexes(self) -> None`
+
+- `CodeAnalyzer.detect_state_machines(self) -> None`
+
+- `CodeAnalyzer.detect_ui_after_usage(self) -> None`
+
+- `CodeAnalyzer.extract_call_graph(self, tree: ast.AST) -> Dict[str, Set[str]]`
+
+- `CodeAnalyzer.extract_function_signatures(self) -> None`
+
+- `CodeAnalyzer.extract_hotkey_bindings(self) -> List[str]`
+
+- `CodeAnalyzer.extract_state_transitions(self, tree: ast.AST) -> Dict[str, Set[str]]`
+
+- `CodeAnalyzer.find_file_io(self) -> None`
+
+- `CodeAnalyzer.find_globals(self) -> None`
+
+- `CodeAnalyzer.find_hotkeys_and_ui_binds(self) -> None`
+
+- `CodeAnalyzer.find_imports(self) -> None`
+
+- `CodeAnalyzer.find_threading(self) -> None`
+
+- `CodeAnalyzer.infer_function_behavior(self, func_name: str) -> Dict[str, object]`
+
+- `CodeAnalyzer.map_global_accesses(self) -> None`
+
+- `CodeAnalyzer.parse_code(self) -> None`
+
+- `CodeAnalyzer.read_file(self) -> str`
+
+- `CodeAnalyzer.strip_existing_synopsis(self, code: str) -> str`
+
+- `CodeAnalyzer.summarize_initialization_sequence(self) -> None`
+
+- `GlobalAccessVisitor.__init__(self, module_assigned: Set[str], module_imported: Set[str], func_params: Set[str], func_locals: Set[str], func_globals_declared: Set[str]) -> None`
+
+- `GlobalAccessVisitor._is_true_global(self, name: str) -> bool`
+
+- `GlobalAccessVisitor.visit_Name(self, node: ast.Name) -> None`
+
+- `ScopeIndexer.__init__(self) -> None`
+
+- `ScopeIndexer._collect_params(self, node: ast.AST) -> Set[str]`
+
+- `ScopeIndexer._enter_func(self, name: str, node: ast.AST) -> None`
+
+- `ScopeIndexer._exit_func(self) -> None`
+
+- `ScopeIndexer.visit_AnnAssign(self, node: ast.AnnAssign) -> None`
+
+- `ScopeIndexer.visit_Assign(self, node: ast.Assign) -> None`
+
+- `ScopeIndexer.visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None`
+
+- `ScopeIndexer.visit_AugAssign(self, node: ast.AugAssign) -> None`
+
+- `ScopeIndexer.visit_ExceptHandler(self, node: ast.ExceptHandler) -> None`
+
+- `ScopeIndexer.visit_For(self, node: ast.For) -> None`
+
+- `ScopeIndexer.visit_FunctionDef(self, node: ast.FunctionDef) -> None`
+
+- `ScopeIndexer.visit_Global(self, node: ast.Global) -> None`
+
+- `ScopeIndexer.visit_Import(self, node: ast.Import) -> None`
+
+- `ScopeIndexer.visit_ImportFrom(self, node: ast.ImportFrom) -> None`
+
+- `ScopeIndexer.visit_Name(self, node: ast.Name) -> None`
+
+- `ScopeIndexer.visit_Nonlocal(self, node: ast.Nonlocal) -> None`
+
+- `ScopeIndexer.visit_With(self, node: ast.With) -> None`
+
+- `_names_in_target(target: ast.AST) -> Set[str]`
+
+
+#### 🎯 Function Intents
+
+- **__init__()**: Handles the target entities.
+
+- **_analyze_function_accesses()**: Examines and summarizes function accesses.
+
+- **_call_to_name()**: Handles to name.
+
+- **_collect_params()**: Handles params.
+
+- **_enclosing_function_name()**: Handles function name.
+
+- **_enter_func()**: Handles func.
+
+- **_exit_func()**: Handles func.
+
+- **_extract_open_args()**: Retrieves open args.
+
+- **_format_call_name()**: Handles call name.
+
+- **_is_local_module()**: Handles local module.
+
+- **_is_true_global()**: Handles true global.
+
+- **_names_in_target()**: Handles in target.
+
+- **_render_arg()**: Produces or displays arg.
+
+- **_safe_unparse()**: Handles unparse.
+
+- **analyze()**: Examines and summarizes the target entities.
+
+- **analyze_classes()**: Examines and summarizes classes.
+
+- **analyze_functions()**: Examines and summarizes functions.
+
+- **build_call_graph()**: Constructs or generates call graph.
+
+- **build_symbol_indexes()**: Constructs or generates symbol indexes.
+
+- **detect_state_machines()**: Identifies state machines.
+
+- **detect_ui_after_usage()**: Identifies ui after usage.
+
+- **extract_call_graph()**: Retrieves call graph.
+
+- **extract_function_signatures()**: Retrieves function signatures.
+
+- **extract_hotkey_bindings()**: Retrieves hotkey bindings.
+
+- **extract_state_transitions()**: Retrieves state transitions.
+
+- **find_file_io()**: Locates or gathers file io.
+
+- **find_globals()**: Locates or gathers globals.
+
+- **find_hotkeys_and_ui_binds()**: Locates or gathers hotkeys and ui binds.
+
+- **find_imports()**: Locates or gathers imports.
+
+- **find_threading()**: Locates or gathers threading.
+
+- **infer_function_behavior()**: Handles function behavior.
+
+- **map_global_accesses()**: Handles global accesses.
+
+- **parse_code()**: Parses code.
+
+- **process_function()**: Handles or executes function.
+
+- **read_file()**: Reads file.
+
+- **strip_existing_synopsis()**: Handles existing synopsis.
+
+- **summarize_initialization_sequence()**: Condenses results of initialization sequence.
+
+- **visit_AnnAssign()**: Handles ann assign.
+
+- **visit_Assign()**: Handles assign.
+
+- **visit_AsyncFunctionDef()**: Handles async function def.
+
+- **visit_AugAssign()**: Handles aug assign.
+
+- **visit_ExceptHandler()**: Handles except handler.
+
+- **visit_For()**: Handles for.
+
+- **visit_FunctionDef()**: Handles function def.
+
+- **visit_Global()**: Handles global.
+
+- **visit_Import()**: Handles import.
+
+- **visit_ImportFrom()**: Handles import from.
+
+- **visit_Name()**: Handles name.
+
+- **visit_Nonlocal()**: Handles nonlocal.
+
+- **visit_With()**: Handles with.
+
+
 #### File I/O Summary
 
 - Reads: _None_
@@ -249,6 +843,40 @@ _No exception handlers detected._
 **Local Imports:** behavioral_analysis, core_analyzer, synopsis_renderer
 
 **External Imports:** os, sys, time, tkinter, traceback, typing
+
+
+#### 📝 Function Signatures
+
+- `FileIOHandler.__init__(self) -> None`
+
+- `FileIOHandler.analyze_file(self, filepath: str) -> bool`
+
+- `FileIOHandler.batch_analyze_files(self, filepaths: list) -> dict`
+
+- `FileIOHandler.create_annotated_file(self, analyzer: CodeAnalyzer, output_path: str) -> None`
+
+- `FileIOHandler.get_analysis_summary(self, analyzer: CodeAnalyzer) -> dict`
+
+- `FileIOHandler.select_file_and_analyze(self) -> None`
+
+- `main() -> None`
+
+
+#### 🎯 Function Intents
+
+- **__init__()**: Handles the target entities.
+
+- **analyze_file()**: Examines and summarizes file.
+
+- **batch_analyze_files()**: Examines and summarizes files.
+
+- **create_annotated_file()**: Handles annotated file.
+
+- **get_analysis_summary()**: Handles analysis summary.
+
+- **main()**: Handles the target entities.
+
+- **select_file_and_analyze()**: Handles file and.
 
 
 #### File I/O Summary
@@ -288,6 +916,40 @@ _No exception handlers detected._
 **External Imports:** re, typing
 
 
+#### 📝 Function Signatures
+
+- `detect_domains(imports_external: List[str]) -> Set[str]`
+
+- `detect_function_patterns(function_names: List[str]) -> Dict[str, int]`
+
+- `extract_noun_from_functions(function_names: List[str]) -> List[str]`
+
+- `find_common_themes(nouns: List[str]) -> List[str]`
+
+- `generate_enhanced_module_intent(analyzer, filename: Optional[str] = None, imports_external: Optional[List[str]] = None) -> str`
+
+- `generate_smart_intent(analyzer) -> str`
+
+- `Drop-in replacement for generate_module_intent() from intent_inference.py`
+
+
+#### 🎯 Function Intents
+
+- **__init__()**: Handles the target entities.
+
+- **detect_domains()**: Identifies domains.
+
+- **detect_function_patterns()**: Identifies function patterns.
+
+- **extract_noun_from_functions()**: Retrieves noun from functions.
+
+- **find_common_themes()**: Locates or gathers common themes.
+
+- **generate_enhanced_module_intent()**: Handles enhanced module intent.
+
+- **generate_smart_intent()**: Handles smart intent.
+
+
 #### File I/O Summary
 
 - Reads: _None_
@@ -323,6 +985,46 @@ _No exception handlers detected._
 **Local Imports:** intent_enhancer_v2
 
 **External Imports:** __future__, re, typing
+
+
+#### 📝 Function Signatures
+
+- `_infer_verb(tokens: List[str]) -> Tuple[str, str]`
+
+- `_insert_human_readable_intent(header_text: str, human_intent: str) -> str`
+
+- `Insert a '# INTENT: ...' line near the top (after SYNOPSIS_HASH if present).`
+
+- `_insert_machine_block_kv(header_text: str, key: str, value: str) -> str`
+
+- `_noun_phrase_from(tokens: List[str], skip_first: bool = True) -> str`
+
+- `_split_ident(name: str) -> List[str]`
+
+- `generate_module_intent(analyzer) -> str`
+
+- `infer_function_intent(func_name: str) -> str`
+
+- `inject_intent(header_text: str, analyzer, behavioral_analyzer) -> str`
+
+
+#### 🎯 Function Intents
+
+- **_infer_verb()**: Handles verb.
+
+- **_insert_human_readable_intent()**: Handles human readable intent.
+
+- **_insert_machine_block_kv()**: Handles machine block kv.
+
+- **_noun_phrase_from()**: Handles phrase from.
+
+- **_split_ident()**: Handles ident.
+
+- **generate_module_intent()**: Handles module intent.
+
+- **infer_function_intent()**: Handles function intent.
+
+- **inject_intent()**: Handles intent.
 
 
 #### File I/O Summary
@@ -362,6 +1064,24 @@ _No exception handlers detected._
 **External Imports:** code_synopsis_annotator.behavioral_analysis, code_synopsis_annotator.core_analyzer, code_synopsis_annotator.file_io, code_synopsis_annotator.synopsis_renderer, os, sys, typing
 
 
+#### 📝 Function Signatures
+
+- `analyze_file(filepath: str, include_machine_block: bool = True) -> Optional[dict]`
+
+- `batch_analyze(files: list, include_machine_block: bool = True) -> dict`
+
+- `main() -> None`
+
+
+#### 🎯 Function Intents
+
+- **analyze_file()**: Examines and summarizes file.
+
+- **batch_analyze()**: Examines and summarizes the target entities.
+
+- **main()**: Handles the target entities.
+
+
 #### File I/O Summary
 
 - Reads: _None_
@@ -397,6 +1117,28 @@ _No exception handlers detected._
 **Local Imports:** _None_
 
 **External Imports:** collections, datetime, os, re
+
+
+#### 📝 Function Signatures
+
+- `build_project_summary(folder: str, output_path: str = None) -> str`
+
+- `detect_exceptions(content: str) -> list[str]`
+
+- `extract(block: str, key: str) -> str`
+
+- `extract_list(block: str, key: str) -> list[str]`
+
+
+#### 🎯 Function Intents
+
+- **build_project_summary()**: Constructs or generates project summary.
+
+- **detect_exceptions()**: Identifies exceptions.
+
+- **extract()**: Retrieves the target entities.
+
+- **extract_list()**: Retrieves list.
 
 
 #### File I/O Summary
@@ -436,6 +1178,88 @@ _No exception handlers detected._
 **External Imports:** ast, collections, dataclasses, re, typing
 
 
+#### 📝 Function Signatures
+
+- `StateMachineDetector.__init__(self, analyzer) -> None`
+
+- `StateMachineDetector._analyze_transitions(self) -> None`
+
+- `Analyze state transitions (assignments to state variables).`
+
+- `StateMachineDetector._build_function_map(self) -> None`
+
+- `StateMachineDetector._classify_state_variable(self, var_name: str) -> Optional[str]`
+
+- `StateMachineDetector._detect_guards(self) -> None`
+
+- `Detect guard conditions (if statements checking state).`
+
+- `StateMachineDetector._detect_state_variables(self) -> None`
+
+- `StateMachineDetector._extract_name(self, node: ast.AST) -> Optional[str]`
+
+- `StateMachineDetector._extract_value(self, node: ast.AST) -> Optional[str]`
+
+- `StateMachineDetector._get_enclosing_function(self, node: ast.AST) -> Optional[str]`
+
+- `StateMachineDetector._group_into_state_machines(self) -> None`
+
+- `StateMachineDetector._infer_source_states(self, func_node: ast.FunctionDef, var_name: str, assignment_node: ast.Assign) -> List[str]`
+
+- `StateMachineDetector._matches_variable(self, state_value: str, var_name: str) -> bool`
+
+- `StateMachineDetector.detect(self) -> Dict[str, any]`
+
+- `StateMachineDetector.generate_mermaid_diagram(self) -> str`
+
+- `StateMachineDetector.render_summary(self) -> List[str]`
+
+- `detect_state_machines(analyzer) -> Dict[str, any]`
+
+- `generate_state_machine_diagram(analyzer) -> str`
+
+- `render_state_machine_summary(analyzer) -> List[str]`
+
+
+#### 🎯 Function Intents
+
+- **__init__()**: Handles the target entities.
+
+- **_analyze_transitions()**: Examines and summarizes transitions.
+
+- **_build_function_map()**: Constructs or generates function map.
+
+- **_classify_state_variable()**: Handles state variable.
+
+- **_detect_guards()**: Identifies guards.
+
+- **_detect_state_variables()**: Identifies state variables.
+
+- **_extract_name()**: Retrieves name.
+
+- **_extract_value()**: Retrieves value.
+
+- **_get_enclosing_function()**: Handles enclosing function.
+
+- **_group_into_state_machines()**: Organizes into state machines.
+
+- **_infer_source_states()**: Handles source states.
+
+- **_matches_variable()**: Handles variable.
+
+- **detect()**: Identifies the target entities.
+
+- **detect_state_machines()**: Identifies state machines.
+
+- **generate_mermaid_diagram()**: Handles mermaid diagram.
+
+- **generate_state_machine_diagram()**: Handles state machine diagram.
+
+- **render_state_machine_summary()**: Produces or displays state machine summary.
+
+- **render_summary()**: Produces or displays summary.
+
+
 #### File I/O Summary
 
 - Reads: _None_
@@ -471,6 +1295,44 @@ _No exception handlers detected._
 **Local Imports:** _None_
 
 **External Imports:** datetime, json, os, pathlib, re, typing
+
+
+#### 📝 Function Signatures
+
+- `_strip_comment_prefix(line: str) -> str`
+
+- `append_to_project_structure(project_folder: str, shared_state_md: str) -> None`
+
+- `build_state_table(folder: str) -> Dict[str, Dict[str, Dict[str, List[str]]]]`
+
+- `extract_blocks(text: str) -> List[str]`
+
+- `extract_critical_globals(text: str) -> Dict[str, Dict[str, Set[str]]]`
+
+- `generate_state_markdown(state_map: Dict[str, Dict[str, Dict[str, List[str]]]], output_path: str = None) -> str`
+
+- `merge_file_state_from_text(file_path: str) -> Dict[str, Dict[str, Set[str]]]`
+
+- `parse_block(block: str) -> Dict[str, Dict[str, Set[str]]]`
+
+
+#### 🎯 Function Intents
+
+- **_strip_comment_prefix()**: Handles comment prefix.
+
+- **append_to_project_structure()**: Handles to project structure.
+
+- **build_state_table()**: Constructs or generates state table.
+
+- **extract_blocks()**: Retrieves blocks.
+
+- **extract_critical_globals()**: Retrieves critical globals.
+
+- **generate_state_markdown()**: Handles state markdown.
+
+- **merge_file_state_from_text()**: Handles file state from text.
+
+- **parse_block()**: Parses block.
 
 
 #### File I/O Summary
@@ -510,6 +1372,84 @@ _No exception handlers detected._
 **External Imports:** datetime, typing
 
 
+#### 📝 Function Signatures
+
+- `SynopsisRenderer.__init__(self, analyzer, behavioral_analyzer, state = None) -> None`
+
+- `SynopsisRenderer._render_classes(self) -> List[str]`
+
+- `SynopsisRenderer._render_critical_globals(self) -> List[str]`
+
+- `SynopsisRenderer._render_data_flow_summary(self) -> List[str]`
+
+- `SynopsisRenderer._render_function_behavioral_summaries(self) -> List[str]`
+
+- `SynopsisRenderer._render_function_dependencies(self) -> List[str]`
+
+- `SynopsisRenderer._render_function_signatures(self) -> List[str]`
+
+- `SynopsisRenderer._render_high_priority_functions(self) -> List[str]`
+
+- `SynopsisRenderer._render_hotkeys(self) -> List[str]`
+
+- `SynopsisRenderer._render_integration_intent(self) -> List[str]`
+
+- `SynopsisRenderer._render_io_summary(self) -> List[str]`
+
+- `SynopsisRenderer._render_modularization_recommendations(self) -> List[str]`
+
+- `SynopsisRenderer._render_patch_additions(self) -> List[str]`
+
+- `SynopsisRenderer._render_shared_state(self) -> List[str]`
+
+- `SynopsisRenderer._render_state_machine_diagrams(self) -> List[str]`
+
+- `SynopsisRenderer._render_thread_interactions(self) -> List[str]`
+
+- `SynopsisRenderer._render_threading_analysis(self) -> List[str]`
+
+- `SynopsisRenderer.generate_synopsis_header(self) -> str`
+
+
+#### 🎯 Function Intents
+
+- **__init__()**: Handles the target entities.
+
+- **_render_classes()**: Produces or displays classes.
+
+- **_render_critical_globals()**: Produces or displays critical globals.
+
+- **_render_data_flow_summary()**: Produces or displays data flow summary.
+
+- **_render_function_behavioral_summaries()**: Produces or displays function behavioral summaries.
+
+- **_render_function_dependencies()**: Produces or displays function dependencies.
+
+- **_render_function_signatures()**: Produces or displays function signatures.
+
+- **_render_high_priority_functions()**: Produces or displays high priority functions.
+
+- **_render_hotkeys()**: Produces or displays hotkeys.
+
+- **_render_integration_intent()**: Produces or displays integration intent.
+
+- **_render_io_summary()**: Produces or displays io summary.
+
+- **_render_modularization_recommendations()**: Produces or displays modularization recommendations.
+
+- **_render_patch_additions()**: Produces or displays patch additions.
+
+- **_render_shared_state()**: Produces or displays shared state.
+
+- **_render_state_machine_diagrams()**: Produces or displays state machine diagrams.
+
+- **_render_thread_interactions()**: Produces or displays thread interactions.
+
+- **_render_threading_analysis()**: Produces or displays threading analysis.
+
+- **generate_synopsis_header()**: Handles synopsis header.
+
+
 #### File I/O Summary
 
 - Reads: _None_
@@ -533,8 +1473,6 @@ _No exception handlers detected._
 
 ### `utils.py`
 
-**Intent:** Utility functions and helper methods.
-
 **Classes:** CodeUtils
 
 **Functions:** call_to_name, categorize_shared_state, enclosing_function_name, extract_hotkey_bindings, extract_open_args, format_call_name, format_file_size, get_file_info, group_functions_by_purpose, is_local_module, safe_filename
@@ -545,6 +1483,38 @@ _No exception handlers detected._
 **Local Imports:** _None_
 
 **External Imports:** ast, os, re, typing
+
+
+#### 📝 Function Signatures
+
+- `CodeUtils.call_to_name(func_node: ast.AST) -> str`
+
+- `CodeUtils.categorize_shared_state(globals_found: Set[str]) -> List[Tuple[str, List[str]]]`
+
+- `CodeUtils.enclosing_function_name(node: ast.AST, tree: ast.AST) -> Optional[str]`
+
+- `CodeUtils.extract_hotkey_bindings(code: str) -> List[str]`
+
+- `CodeUtils.extract_open_args(call: ast.Call) -> Tuple[Optional[str], str]`
+
+- `Extract file path and mode from open() calls.`
+
+- `CodeUtils.format_call_name(call: ast.Call) -> str`
+
+- `CodeUtils.format_file_size(size_bytes: int) -> str`
+
+- `CodeUtils.get_file_info(filepath: str) -> Dict[str, Any]`
+
+- `CodeUtils.group_functions_by_purpose(functions: Dict[str, Any]) -> Dict[str, List[str]]`
+
+- `CodeUtils.is_local_module(module_name: str, dirpath: str) -> bool`
+
+- `CodeUtils.safe_filename(filename: str) -> str`
+
+
+#### 🎯 Function Intents
+
+_No function intents available._
 
 
 #### File I/O Summary
@@ -584,144 +1554,9 @@ _No exception handlers detected._
     "threads": ["list[str]"],
     "ui_binds": ["list[str]"],
     "exceptions": ["list[str]"],
-    "intent": "str"
+    "intent": "str",
+    "function_signatures": ["list[str]"],
+    "function_intents": "str"
   }
 }
 ```
-
-
----
-
-# 🧩 SHARED STATE TABLE
-**Generated:** 2025-10-24 23:31:37
-
-| File | Variable | Modified By | Read By |
-|------|-----------|-------------|---------|
-| __init__.py | `CALLGRAPH_ROOTS` | - | - |
-| __init__.py | `CLASSES` | - | - |
-| __init__.py | `COMMAND_BINDS` | - | - |
-| __init__.py | `FUNCTIONS` | - | - |
-| __init__.py | `HOTKEYS` | - | - |
-| __init__.py | `INIT_SEQUENCE` | - | - |
-| __init__.py | `IO_READS` | - | - |
-| __init__.py | `IO_WRITES` | - | - |
-| __init__.py | `RETURNS` | - | - |
-| __init__.py | `STATE_VARS` | - | - |
-| __init__.py | `THREAD_TARGETS` | - | - |
-| __init__.py | `TK_BINDS` | - | - |
-| analyzer_state.py | `COMMAND_BINDS` | - | - |
-| analyzer_state.py | `HOTKEYS` | - | - |
-| analyzer_state.py | `IMPORTS_LOCAL` | - | - |
-| analyzer_state.py | `INIT_SEQUENCE` | - | - |
-| analyzer_state.py | `IO_READS` | - | - |
-| analyzer_state.py | `THREAD_TARGETS` | - | - |
-| analyzer_state.py | `TK_BINDS` | - | - |
-| batch_annotate_modular.py | `COMMAND_BINDS` | - | - |
-| batch_annotate_modular.py | `HOTKEYS` | - | - |
-| batch_annotate_modular.py | `INIT_SEQUENCE` | - | - |
-| batch_annotate_modular.py | `IO_READS` | - | - |
-| batch_annotate_modular.py | `IO_WRITES` | - | - |
-| batch_annotate_modular.py | `TK_BINDS` | - | - |
-| batch_annotate_modular.py | `files` | _process_folder, find_python_files | _process_folder, find_python_files |
-| batch_annotate_modular.py | `state_map` | _run, generate_markdown, process_single_file | _run, generate_markdown |
-| batch_annotate_modular.py | `state_table` | _run, generate_markdown | _run, generate_markdown |
-| behavioral_analysis.py | `COMMAND_BINDS` | - | - |
-| behavioral_analysis.py | `GLOBALS` | - | - |
-| behavioral_analysis.py | `HOTKEYS` | - | - |
-| behavioral_analysis.py | `IMPORTS_LOCAL` | - | - |
-| behavioral_analysis.py | `INIT_SEQUENCE` | - | - |
-| behavioral_analysis.py | `IO_READS` | - | - |
-| behavioral_analysis.py | `IO_WRITES` | - | - |
-| behavioral_analysis.py | `STATE_VARS` | - | - |
-| behavioral_analysis.py | `THREAD_TARGETS` | - | - |
-| behavioral_analysis.py | `TK_BINDS` | - | - |
-| core_analyzer.py | `COMMAND_BINDS` | - | - |
-| core_analyzer.py | `GLOBALS` | - | - |
-| core_analyzer.py | `HOTKEYS` | - | - |
-| core_analyzer.py | `INIT_SEQUENCE` | - | - |
-| core_analyzer.py | `IO_READS` | - | - |
-| core_analyzer.py | `IO_WRITES` | - | - |
-| core_analyzer.py | `THREAD_TARGETS` | - | - |
-| core_analyzer.py | `TK_BINDS` | - | - |
-| file_io.py | `COMMAND_BINDS` | - | - |
-| file_io.py | `GLOBALS` | - | - |
-| file_io.py | `HOTKEYS` | - | - |
-| file_io.py | `INIT_SEQUENCE` | - | - |
-| file_io.py | `IO_READS` | - | - |
-| file_io.py | `IO_WRITES` | - | - |
-| file_io.py | `STATE_VARS` | - | - |
-| file_io.py | `THREAD_TARGETS` | - | - |
-| file_io.py | `TK_BINDS` | - | - |
-| intent_enhancer_v2.py | `CLASSES` | - | - |
-| intent_enhancer_v2.py | `COMMAND_BINDS` | - | - |
-| intent_enhancer_v2.py | `HOTKEYS` | - | - |
-| intent_enhancer_v2.py | `INIT_SEQUENCE` | - | - |
-| intent_enhancer_v2.py | `IO_READS` | - | - |
-| intent_enhancer_v2.py | `IO_WRITES` | - | - |
-| intent_enhancer_v2.py | `THREAD_TARGETS` | - | - |
-| intent_enhancer_v2.py | `TK_BINDS` | - | - |
-| intent_inference.py | `CLASSES` | - | - |
-| intent_inference.py | `COMMAND_BINDS` | - | - |
-| intent_inference.py | `HOTKEYS` | - | - |
-| intent_inference.py | `INIT_SEQUENCE` | - | - |
-| intent_inference.py | `IO_READS` | - | - |
-| intent_inference.py | `IO_WRITES` | - | - |
-| intent_inference.py | `THREAD_TARGETS` | - | - |
-| intent_inference.py | `TK_BINDS` | - | - |
-| main.py | `CLASSES` | - | - |
-| main.py | `COMMAND_BINDS` | - | - |
-| main.py | `GLOBALS` | - | - |
-| main.py | `HOTKEYS` | - | - |
-| main.py | `IO_READS` | - | - |
-| main.py | `IO_WRITES` | - | - |
-| main.py | `THREAD_TARGETS` | - | - |
-| main.py | `TK_BINDS` | - | - |
-| project_architect.py | `CLASSES` | - | - |
-| project_architect.py | `COMMAND_BINDS` | - | - |
-| project_architect.py | `HOTKEYS` | - | - |
-| project_architect.py | `IMPORTS_LOCAL` | - | - |
-| project_architect.py | `INIT_SEQUENCE` | - | - |
-| project_architect.py | `IO_READS` | - | - |
-| project_architect.py | `IO_WRITES` | - | - |
-| project_architect.py | `THREAD_TARGETS` | - | - |
-| project_architect.py | `TK_BINDS` | - | - |
-| state_machine_detector.py | `COMMAND_BINDS` | - | - |
-| state_machine_detector.py | `HOTKEYS` | - | - |
-| state_machine_detector.py | `IMPORTS_LOCAL` | - | - |
-| state_machine_detector.py | `INIT_SEQUENCE` | - | - |
-| state_machine_detector.py | `IO_READS` | - | - |
-| state_machine_detector.py | `IO_WRITES` | - | - |
-| state_machine_detector.py | `THREAD_TARGETS` | - | - |
-| state_machine_detector.py | `TK_BINDS` | - | - |
-| state_machine_detector.py | `detector` | detect_state_machines, generate_state_machine_diagram, render_state_machine_summary | detect_state_machines, generate_state_machine_diagram, render_state_machine_summary |
-| state_machine_detector.py | `from_state` | _analyze_transitions, generate_mermaid_diagram | _analyze_transitions, generate_mermaid_diagram |
-| state_machine_detector.py | `to_state` | _analyze_transitions, generate_mermaid_diagram | _analyze_transitions, generate_mermaid_diagram |
-| state_machine_detector.py | `var_type` | _analyze_transitions, _classify_state_variable, _detect_state_variables, generate_mermaid_diagram | _classify_state_variable, _detect_state_variables |
-| state_tracker.py | `CLASSES` | - | - |
-| state_tracker.py | `COMMAND_BINDS` | - | - |
-| state_tracker.py | `HOTKEYS` | - | - |
-| state_tracker.py | `IMPORTS_LOCAL` | - | - |
-| state_tracker.py | `INIT_SEQUENCE` | - | - |
-| state_tracker.py | `IO_READS` | - | - |
-| state_tracker.py | `IO_WRITES` | - | - |
-| state_tracker.py | `THREAD_TARGETS` | - | - |
-| state_tracker.py | `TK_BINDS` | - | - |
-| synopsis_renderer.py | `COMMAND_BINDS` | - | - |
-| synopsis_renderer.py | `GLOBALS` | - | - |
-| synopsis_renderer.py | `HOTKEYS` | - | - |
-| synopsis_renderer.py | `IMPORTS_LOCAL` | - | - |
-| synopsis_renderer.py | `INIT_SEQUENCE` | - | - |
-| synopsis_renderer.py | `IO_READS` | - | - |
-| synopsis_renderer.py | `IO_WRITES` | - | - |
-| synopsis_renderer.py | `STATE_VARS` | - | - |
-| synopsis_renderer.py | `THREAD_TARGETS` | - | - |
-| synopsis_renderer.py | `TK_BINDS` | - | - |
-| utils.py | `COMMAND_BINDS` | - | - |
-| utils.py | `GLOBALS` | - | - |
-| utils.py | `HOTKEYS` | - | - |
-| utils.py | `IMPORTS_LOCAL` | - | - |
-| utils.py | `INIT_SEQUENCE` | - | - |
-| utils.py | `IO_READS` | - | - |
-| utils.py | `IO_WRITES` | - | - |
-| utils.py | `THREAD_TARGETS` | - | - |
-| utils.py | `TK_BINDS` | - | - |

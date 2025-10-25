@@ -1,12 +1,10 @@
 #===============================================================================
 # CODE SYNOPSIS: utils.py
-# SYNOPSIS_HASH: 6b15330cb38cdd71d41fe1e96b3470e6756b6db67d99893a3bf2a7e21ecdfb8d
-# Generated: 2025-10-24 23:31:33
-# INTENT: Utility functions and helper methods.
+# Generated: 2025-10-25 10:48:32
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 270
+#   Total Lines: 271
 #   Functions: 11
 #   Classes: 1
 #   Global Variables: 0
@@ -22,7 +20,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 23:31:33
+# LAST_ANALYZED: 2025-10-25 10:48:32
 # FILE: utils.py
 # IMPORTS_EXTERNAL: ast, os, re, typing
 # IMPORTS_LOCAL: 
@@ -41,8 +39,6 @@
 # STATE_MACHINES_COUNT: 1
 # STATE_TRANSITIONS_COUNT: 2
 # INIT_SEQUENCE: 
-# INTENT: Utility functions and helper methods.
-# FUNCTION_INTENTS: call_to_name=Handles to name., categorize_shared_state=Handles shared state., enclosing_function_name=Handles function name., extract_hotkey_bindings=Retrieves hotkey bindings., extract_open_args=Retrieves open args., format_call_name=Handles call name., format_file_size=Handles file size., get_file_info=Handles file info., group_functions_by_purpose=Organizes functions by purpose., is_local_module=Handles local module., safe_filename=Handles filename.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
@@ -86,7 +82,7 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   CodeUtils (line 17):
+#   CodeUtils (line 18):
 #     - CodeUtils.is_local_module()
 #     - CodeUtils.call_to_name()
 #     - CodeUtils.format_call_name()
@@ -198,6 +194,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
