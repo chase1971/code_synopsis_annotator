@@ -669,6 +669,9 @@ class CodeAnalyzer:
         # File I/O
         self.io_reads: Set[str] = set()
         self.io_writes: Set[str] = set()
+        
+        # Exception handling
+        self.exception_handlers: List[Dict[str, object]] = []
 
         # Behavioral layers
         self.call_graph: Dict[str, Set[str]] = defaultdict(set)  # caller -> {callees}
@@ -739,6 +742,7 @@ class CodeAnalyzer:
         self.find_imports()
         self.find_threading()
         self.find_hotkeys_and_ui_binds()
+        self.find_exception_handlers()
         self.find_file_io()
         self.build_call_graph()
         
@@ -918,13 +922,32 @@ class CodeAnalyzer:
                     if node.args and isinstance(node.args[0], ast.Constant):
                         hk = str(node.args[0].value)
                         cb = None
+                        
+                        # Handle direct function reference
                         if len(node.args) > 1 and isinstance(node.args[1], ast.Name):
                             cb = node.args[1].id
+                        
+                        # Handle lambda expressions - NEW!
+                        elif len(node.args) > 1 and isinstance(node.args[1], ast.Lambda):
+                            # Try to extract the actual function being called inside lambda
+                            lambda_body = node.args[1].body
+                            if isinstance(lambda_body, ast.Call):
+                                # Get the function being called in the lambda
+                                cb = self._call_to_name(lambda_body.func)
+                                # If it's something like main_root.after(0, func), get the final func
+                                if lambda_body.args:
+                                    for arg in lambda_body.args:
+                                        if isinstance(arg, ast.Name):
+                                            cb = arg.id
+                                            break
+                        
+                        # Handle keyword argument (callback=...)
                         for kw in node.keywords:
                             if kw.arg == 'callback' and isinstance(kw.value, ast.Name):
                                 cb = kw.value.id
-                        if hk and cb:
-                            self.hotkeys_found.append((hk, cb))
+                        
+                    if hk and cb:
+                        self.hotkeys_found.append((hk, cb))
                 # Tkinter .bind("<Key>", callback)
                 if funcname.endswith('.bind'):
                     if node.args and isinstance(node.args[0], ast.Constant):
@@ -940,20 +963,92 @@ class CodeAnalyzer:
                         if kw.arg == 'command' and isinstance(kw.value, ast.Name):
                             self.hotkeys_command_bind.append(('widget.command', kw.value.id))
 
+    def find_exception_handlers(self):
+        """Find try-except blocks and what they handle."""
+        for node in ast.walk(self.tree):
+            if isinstance(node, ast.Try):
+                # Extract what exceptions are caught
+                exception_types = []
+                for handler in node.handlers:
+                    if handler.type:
+                        # Specific exception like "except ValueError:"
+                        if isinstance(handler.type, ast.Name):
+                            exception_types.append(handler.type.id)
+                        elif isinstance(handler.type, ast.Attribute):
+                            exception_types.append(self._call_to_name(handler.type))
+                        elif isinstance(handler.type, ast.Tuple):
+                            # Multiple exceptions like "except (ValueError, TypeError):"
+                            for exc in handler.type.elts:
+                                if isinstance(exc, ast.Name):
+                                    exception_types.append(exc.id)
+                                elif isinstance(exc, ast.Attribute):
+                                    exception_types.append(self._call_to_name(exc))
+                    else:
+                        # Bare "except:" catches everything
+                        exception_types.append("all exceptions")
+                
+                # Store exception handler info
+                handler_info = {
+                    'line': node.lineno,
+                    'catches': exception_types if exception_types else ['all exceptions']
+                }
+                self.exception_handlers.append(handler_info)
+
     def find_file_io(self):
         """Find file I/O operations."""
         for node in ast.walk(self.tree):
             if isinstance(node, ast.Call):
+                # Handle open() calls (existing logic)
                 if isinstance(node.func, ast.Name) and node.func.id == 'open':
                     path, mode = self._extract_open_args(node)
                     if path:
                         (self.io_writes if any(m in mode for m in ('w', 'a', 'x', '+')) else self.io_reads).add(path)
+                
+                # Handle attribute-based calls (expanded logic)
                 if isinstance(node.func, ast.Attribute):
                     fullname = self._call_to_name(node.func)
+                    
+                    # JSON operations (existing)
                     if fullname.endswith('json.load'):
                         self.io_reads.add('json.load(...)')
                     elif fullname.endswith('json.dump'):
                         self.io_writes.add('json.dump(...)')
+                    
+                    # File system operations (NEW)
+                    elif fullname == 'os.path.exists':
+                        path = self._extract_string_arg(node.args[0]) if node.args else 'unknown'
+                        self.io_reads.add(path)
+                    elif fullname == 'os.remove':
+                        path = self._extract_string_arg(node.args[0]) if node.args else 'unknown'
+                        self.io_writes.add(f"removes {path}")
+                    elif fullname == 'os.unlink':
+                        path = self._extract_string_arg(node.args[0]) if node.args else 'unknown'
+                        self.io_writes.add(f"removes {path}")
+                    elif fullname == 'os.rename':
+                        old_path = self._extract_string_arg(node.args[0]) if len(node.args) > 0 else 'unknown'
+                        new_path = self._extract_string_arg(node.args[1]) if len(node.args) > 1 else 'unknown'
+                        self.io_writes.add(f"renames {old_path} to {new_path}")
+                    
+                    # Image operations (NEW)
+                    elif fullname == 'Image.open':
+                        path = self._extract_string_arg(node.args[0]) if node.args else 'unknown'
+                        self.io_reads.add(path)
+                    
+                    # Pickle operations (NEW)
+                    elif fullname.endswith('pickle.load'):
+                        path = self._extract_string_arg(node.args[0]) if node.args else 'unknown'
+                        self.io_reads.add(path)
+                    elif fullname.endswith('pickle.dump'):
+                        path = self._extract_string_arg(node.args[1]) if len(node.args) > 1 else 'unknown'
+                        self.io_writes.add(path)
+
+    def _extract_string_arg(self, arg_node: ast.AST) -> str:
+        """Extract string value from an AST argument node."""
+        if isinstance(arg_node, ast.Constant) and isinstance(arg_node.value, str):
+            return str(arg_node.value)
+        elif isinstance(arg_node, ast.Str):  # Python < 3.8 compatibility
+            return str(arg_node.s)
+        return "unknown"
 
     def _extract_open_args(self, call_node: ast.Call) -> Tuple[Optional[str], str]:
         """Extract file path and mode from open() call."""

@@ -613,9 +613,9 @@ def build_project_summary(folder: str, output_path: str = None) -> str:
         threads = extract(block, "THREAD_TARGETS")
         tk_binds = extract(block, "TK_BINDS")
         hotkeys = extract(block, "HOTKEYS")
+        exceptions = extract(block, "EXCEPTIONS")
         io_reads = extract(block, "IO_READS")
         io_writes = extract(block, "IO_WRITES")
-        exceptions = extract(block, "EXCEPTIONS")
         intent_line = extract(block, "INTENT")  # <=== NEW
         function_intents = extract(block, "FUNCTION_INTENTS")  # <=== NEW
         
@@ -641,7 +641,7 @@ def build_project_summary(folder: str, output_path: str = None) -> str:
             "io_reads": io_reads,
             "io_writes": io_writes,
             "threads": threads,
-            "ui_binds": tk_binds,
+            "ui_binds": hotkeys,
             "hotkeys": hotkeys,
             "exceptions": exceptions,
             "intent": intent_line,  # <=== NEW
@@ -727,7 +727,10 @@ def build_project_summary(folder: str, output_path: str = None) -> str:
         md.append("\n- Threads: " + (s['threads'] or "_None_"))
         md.append("\n- UI Binds: " + (s['ui_binds'] or "_None_"))
         md.append("\n\n#### Exception Paths")
-        md.append("\n" + (s['exceptions'] or "_No exception handlers detected._"))
+        if s['exceptions']:
+            md.append("\n" + s['exceptions'])
+        else:
+            md.append("\n_No exception handlers detected._")
         md.append("\n\n---\n")
 
     # Data schema summary (unchanged)

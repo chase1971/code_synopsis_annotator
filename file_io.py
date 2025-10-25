@@ -203,6 +203,11 @@ class FileIOHandler:
         renderer = SynopsisRenderer(analyzer, behavioral_analyzer)
         
         synopsis_header = renderer.generate_synopsis_header()
+        
+        # Inject INTENT (human-readable + machine-readable)
+        from .intent_inference import inject_intent
+        synopsis_header = inject_intent(synopsis_header, analyzer, behavioral_analyzer)
+        
         annotated_code = synopsis_header + analyzer.code
         
         try:

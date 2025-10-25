@@ -253,6 +253,136 @@ def _noun_phrase_from(tokens: List[str], skip_first: bool = True) -> str:
     return " ".join(tokens)
 
 
+def _get_all_calls(func_node: ast.FunctionDef) -> List[str]:
+    """Extract all function/method calls from a function body."""
+    calls = []
+    for node in ast.walk(func_node):
+        if isinstance(node, ast.Call):
+            if isinstance(node.func, ast.Name):
+                calls.append(node.func.id)
+            elif isinstance(node.func, ast.Attribute):
+                # Build full method name like 'os.path.exists'
+                parts = []
+                n = node.func
+                while isinstance(n, ast.Attribute):
+                    parts.append(n.attr)
+                    n = n.value
+                if isinstance(n, ast.Name):
+                    parts.append(n.id)
+                calls.append('.'.join(reversed(parts)))
+    return calls
+
+
+def _check_api_patterns(func_node: ast.FunctionDef) -> str:
+    """Check for specific API patterns to infer more accurate intents with combination patterns."""
+    if not func_node or not func_node.body:
+        return None
+    
+    calls = _get_all_calls(func_node)
+    call_set = set(calls)
+    
+    # COMBINATION PATTERNS (check these FIRST for multi-purpose functions)
+    
+    # Window creation + keyboard simulation (like show_arrow_overlay) - HIGHEST PRIORITY
+    if (any(pattern in call_set for pattern in ['Toplevel', 'tk.Toplevel', 'geometry']) and
+        any(pattern in call_set for pattern in ['keyboard.press', 'keyboard.release'])):
+        return "Creates GUI window with keyboard input capabilities"
+    
+    # File operations + UI operations (like watch_for_signals)
+    if (any(pattern in call_set for pattern in ['os.path.exists', 'os.remove']) and
+        any(pattern in call_set for pattern in ['after', 'deiconify', 'withdraw'])):
+        return "Manages file-based event signals and UI updates"
+    
+    # Mouse + Keyboard combination (like poll function) - LOWER PRIORITY
+    if ('pyautogui.position' in call_set and 
+        any(pattern in call_set for pattern in ['keyboard.press', 'keyboard.release'])):
+        return "Processes mouse position for keyboard control"
+    
+    # File operations + threading
+    if (any(pattern in call_set for pattern in ['os.path.exists', 'os.remove']) and
+        any(pattern in call_set for pattern in ['time.sleep', 'threading.Thread'])):
+        return "Monitors file system events in background thread"
+    
+    # INDIVIDUAL PATTERNS (fallback for single-purpose functions)
+    
+    # PRIORITY 1: Window/GUI Creation (strongest signal - beats everything else)
+    if any(pattern in call_set for pattern in ['Toplevel', 'tk.Toplevel', 'geometry', 'attributes', 'overrideredirect']):
+        if any(pattern in call_set for pattern in ['withdraw', 'deiconify']):
+            return "Controls window visibility and display"
+        elif any(pattern in call_set for pattern in ['configure', 'pack', 'grid']):
+            return "Configures and arranges GUI components"
+        else:
+            return "Creates and manages GUI window"
+    
+    # PRIORITY 2: File System Operations (strong signal)
+    if any(pattern in call_set for pattern in ['os.path.exists', 'os.remove', 'os.unlink']):
+        if any(pattern in call_set for pattern in ['os.remove', 'os.unlink']):
+            return "Manages file system state and operations"
+        elif any(pattern in call_set for pattern in ['os.path.exists']):
+            return "Checks file or directory existence"
+        else:
+            return "Manages file system state and operations"
+    
+    # PRIORITY 3: Threading Patterns (strong signal)
+    if any(pattern in call_set for pattern in ['threading.Thread', 'Thread']):
+        return "Creates and manages background threads"
+    if any(pattern in call_set for pattern in ['time.sleep']):
+        return "Pauses execution for specified duration"
+    
+    # PRIORITY 4: Image/Media Processing (strong signal)
+    if any(pattern in call_set for pattern in ['Image.open', 'ImageTk.PhotoImage']):
+        return "Loads and processes image data"
+    if any(pattern in call_set for pattern in ['Image.open']):
+        return "Opens and loads image files"
+    
+    # PRIORITY 5: Network/HTTP Operations (strong signal)
+    if any(pattern in call_set for pattern in ['requests.get', 'requests.post', 'requests.put']):
+        return "Performs HTTP network requests"
+    if any(pattern in call_set for pattern in ['requests.get']):
+        return "Retrieves data from web services"
+    
+    # PRIORITY 6: System/OS Operations (strong signal)
+    if any(pattern in call_set for pattern in ['ctypes.windll', 'GetForegroundWindow', 'SetForegroundWindow']):
+        if any(pattern in call_set for pattern in ['GetForegroundWindow']):
+            return "Gets the currently active window handle"
+        elif any(pattern in call_set for pattern in ['SetForegroundWindow']):
+            return "Brings a window to the foreground"
+        else:
+            return "Interacts with Windows system APIs"
+    
+    # PRIORITY 7: Mouse Control (distinguish read vs. write)
+    if any(pattern in call_set for pattern in ['pyautogui.click', 'pyautogui.moveTo', 'pyautogui.drag']):
+        return "Controls mouse programmatically"
+    elif any(pattern in call_set for pattern in ['pyautogui.position']):
+        return "Reads mouse cursor position"
+    
+    # PRIORITY 8: Input Simulation (only if no higher priority matches)
+    if any(pattern in call_set for pattern in ['keyboard.press', 'keyboard.release']):
+        return "Simulates keyboard input events"
+    
+    # PRIORITY 9: UI Event Handling (lower priority - often incidental)
+    if any(pattern in call_set for pattern in ['after', 'bind', 'configure']):
+        if any(pattern in call_set for pattern in ['after']):
+            return "Schedules delayed UI operations"
+        else:
+            return "Manages UI event handling and updates"
+    
+    # PRIORITY 10: Data Processing (lower priority)
+    if any(pattern in call_set for pattern in ['json.load', 'json.dump']):
+        if any(pattern in call_set for pattern in ['json.load']):
+            return "Loads and parses JSON data"
+        elif any(pattern in call_set for pattern in ['json.dump']):
+            return "Saves data in JSON format"
+        else:
+            return "Handles JSON data serialization"
+    
+    # PRIORITY 11: Mathematical/Computational (lowest priority - often incidental)
+    if any(pattern in call_set for pattern in ['max', 'min', 'sum', 'len']):
+        return "Performs mathematical calculations"
+    
+    return None
+
+
 def _analyze_function_body(func_node: ast.FunctionDef) -> str:
     """Infer intent from function body patterns."""
     
@@ -261,11 +391,16 @@ def _analyze_function_body(func_node: ast.FunctionDef) -> str:
     
     body = func_node.body
     
+    # NEW: Check API-specific patterns first (high confidence)
+    api_intent = _check_api_patterns(func_node)
+    if api_intent:
+        return api_intent
+    
     # Pattern 1: Single return statement (getter/calculator)
     if len(body) == 1 and isinstance(body[0], ast.Return):
         return "Returns computed value"
     
-    # Pattern 2: File operations
+    # Pattern 2: File operations (legacy - now handled by API patterns)
     has_open = False
     is_writing = False
     for node in ast.walk(func_node):
@@ -285,7 +420,7 @@ def _analyze_function_body(func_node: ast.FunctionDef) -> str:
     if has_open:
         return "Writes data to file" if is_writing else "Reads data from file"
     
-    # Pattern 3: JSON operations
+    # Pattern 3: JSON operations (legacy - now handled by API patterns)
     for node in ast.walk(func_node):
         if isinstance(node, ast.Call) and hasattr(node.func, 'attr'):
             if hasattr(node.func, 'value') and hasattr(node.func.value, 'id'):
@@ -295,12 +430,19 @@ def _analyze_function_body(func_node: ast.FunctionDef) -> str:
                     elif node.func.attr == 'load':
                         return "Deserializes data from JSON format"
     
-    # Pattern 4: Loops (iteration/processing)
+    # Pattern 4: Loops (iteration/processing) - FALLBACK with better context
     has_loop = any(isinstance(node, (ast.For, ast.While)) for node in ast.walk(func_node))
     if has_loop:
-        return "Iterates and processes items"
+        # Try to be more specific about what kind of iteration
+        calls = _get_all_calls(func_node)
+        if any('print' in call for call in calls):
+            return "Iterates and displays items"
+        elif any('append' in call or 'add' in call for call in calls):
+            return "Iterates and builds collection"
+        else:
+            return "Iterates and processes items"
     
-    # Pattern 5: Many function calls (orchestration)
+    # Pattern 5: Many function calls (orchestration) - FALLBACK
     call_count = sum(1 for node in ast.walk(func_node) if isinstance(node, ast.Call))
     if call_count > 5:
         return "Orchestrates multiple operations"
