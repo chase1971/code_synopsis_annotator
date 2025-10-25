@@ -266,7 +266,7 @@ def generate_application_overview(summaries: list[dict]) -> list[str]:
     utility_modules = []
     
     for summary in summaries:
-        file_name = summary['file']
+        file_name = summary.get('file_name', summary.get('file', 'unknown.py'))
         intent = summary.get('intent', '')
         classes = summary.get('classes', '')
         functions = summary.get('functions', '')
@@ -285,13 +285,45 @@ def generate_application_overview(summaries: list[dict]) -> list[str]:
     lines.append("## 🚀 APPLICATION OVERVIEW")
     lines.append("")
     
-    # Project purpose (inferred from main modules and overall architecture)
+    # Project purpose (dynamically inferred from module intents and architecture)
     lines.append("### Purpose")
-    lines.append("This application is a **Code Synopsis Annotator** that automatically analyzes Python codebases and generates comprehensive documentation headers. It provides:")
-    lines.append("- **Automated Code Analysis**: Extracts function signatures, dependencies, and behavioral patterns")
-    lines.append("- **Intelligent Documentation**: Generates detailed synopsis headers with function intents and signatures")
-    lines.append("- **Project Architecture Mapping**: Creates high-level project structure documentation")
-    lines.append("- **LLM-Optimized Output**: Formats information for optimal AI/LLM comprehension")
+    
+    # Analyze module intents to determine the actual project purpose
+    purpose_intents = []
+    for summary in summaries:
+        intent = summary.get('intent', '').strip()
+        if intent and intent not in purpose_intents:
+            purpose_intents.append(intent)
+    
+    # Generate intelligent purpose description based on project analysis
+    has_d2l = any('d2l' in summary.get('file_name', summary.get('file', '')).lower() for summary in summaries)
+    has_automation = any('automation' in summary.get('intent', '').lower() or 'browser' in summary.get('intent', '').lower() for summary in summaries)
+    has_csv = any('csv' in summary.get('intent', '').lower() for summary in summaries)
+    has_gui = any('gui' in summary.get('file_name', summary.get('file', '')).lower() for summary in summaries)
+    
+    if has_d2l:
+        lines.append("This application is a **D2L Course Management Automation Tool** that automates assignment date updates in the Desire2Learn (D2L) learning management system using browser automation.")
+        lines.append("")
+        lines.append("**Key Capabilities:**")
+        if has_automation:
+            lines.append("- Browser automation for D2L course management")
+        if has_csv:
+            lines.append("- Bulk CSV-based assignment date updates")
+        if has_gui:
+            lines.append("- User-friendly GUI interface for course navigation")
+        lines.append("- Persistent login session management")
+        lines.append("- Automated assignment date modification")
+    elif purpose_intents:
+        lines.append(f"This application is designed to: {purpose_intents[0]}")
+        if len(purpose_intents) > 1:
+            lines.append("")
+            lines.append("**Key Capabilities:**")
+            for intent in purpose_intents[1:4]:  # Show up to 3 additional intents
+                lines.append(f"- {intent}")
+    else:
+        # Fallback if no intents found
+        lines.append("This application provides functionality across multiple modules with specialized components.")
+    
     lines.append("")
     
     # Key Components
@@ -340,12 +372,23 @@ def generate_application_overview(summaries: list[dict]) -> list[str]:
                 elif 'generate' in intent.lower():
                     key_features.add("Content Generation")
     
-    # Add additional features based on module names and architecture
-    key_features.add("Function Signature Extraction")
-    key_features.add("State Machine Detection")
-    key_features.add("Threading Analysis")
-    key_features.add("Dependency Mapping")
-    key_features.add("Behavioral Analysis")
+    # Add project-specific features based on actual module analysis
+    for summary in summaries:
+        file_name = summary.get('file_name', summary.get('file', '')).lower()
+        intent = summary.get('intent', '').lower()
+        
+        # D2L-specific features
+        if 'd2l' in file_name or 'assignment' in intent or 'date' in intent:
+            key_features.add("D2L Course Management")
+            key_features.add("Assignment Date Automation")
+        if 'browser' in intent or 'selenium' in intent or 'playwright' in intent:
+            key_features.add("Browser Automation")
+        if 'csv' in intent or 'process' in intent:
+            key_features.add("CSV Data Processing")
+        if 'gui' in file_name or 'interface' in intent:
+            key_features.add("User Interface")
+        if 'login' in intent or 'session' in intent:
+            key_features.add("Session Management")
     
     if key_features:
         lines.append("### Key Features")
@@ -353,58 +396,55 @@ def generate_application_overview(summaries: list[dict]) -> list[str]:
             lines.append(f"- {feature}")
         lines.append("")
     
-    # Add Example Output Section
-    lines.append("### 📄 What This Tool Produces")
-    lines.append("This tool transforms Python files by adding comprehensive documentation headers while preserving your original code.")
-    lines.append("**Input** (Python file before annotation):")
-    lines.append("```python")
-    lines.append("def calculate_total(price, tax_rate=0.08):")
-    lines.append('    """Calculate total with tax."""')
-    lines.append("    return price * (1 + tax_rate)")
-    lines.append("")
-    lines.append("total = calculate_total(100.00)")
-    lines.append("```")
-    lines.append("**Output** (Same file after annotation):")
-    lines.append("```python")
-    lines.append("#" + "="*79)
-    lines.append("# CODE SYNOPSIS: example.py")
-    lines.append("# SYNOPSIS_HASH: 7a8b9c1d2e3f...")
-    lines.append("# Generated: 2025-10-25 11:30:45")
-    lines.append("# INTENT: Handles tax calculation functionality.")
-    lines.append("#" + "="*79)
-    lines.append("#")
-    lines.append("# 📝 FUNCTION SIGNATURES:")
-    lines.append("#")
-    lines.append("# calculate_total(price, tax_rate = 0.08) -> None")
-    lines.append("#   Calculate total with tax.")
-    lines.append("#")
-    lines.append("#" + "="*79)
-    lines.append("#")
-    lines.append("# CRITICAL GLOBAL VARIABLES:")
-    lines.append("#")
-    lines.append("# total:")
-    lines.append("#   Modified by: <module>")
-    lines.append("#   Read by: (none)")
-    lines.append("#")
-    lines.append("#" + "="*79)
-    lines.append("# === END SYNOPSIS HEADER ===")
-    lines.append("")
-    lines.append("def calculate_total(price, tax_rate=0.08):")
-    lines.append('    """Calculate total with tax."""')
-    lines.append("    return price * (1 + tax_rate)")
-    lines.append("")
-    lines.append("total = calculate_total(100.00)")
-    lines.append("```")
-    lines.append("**Key Features of Generated Headers:**")
-    lines.append("- ✅ Function signatures with parameters and return types")
-    lines.append("- ✅ Module-level intent description")
-    lines.append("- ✅ Per-function intent statements")
-    lines.append("- ✅ State variable tracking (who modifies/reads)")
-    lines.append("- ✅ Threading and UI binding analysis")
-    lines.append("- ✅ Machine-readable metadata blocks")
-    lines.append("- ✅ Original code preserved unchanged")
-    lines.append("")
-    lines.append("*View any `.py` file in this project to see real annotated examples.*")
+    # Add Project-Specific Examples Section
+    lines.append("### 📄 Project Structure & Examples")
+    
+    # Find a representative module to show as an example
+    example_module = None
+    for summary in summaries:
+        if summary.get('functions') and len(summary.get('functions', '').split(',')) > 0:
+            example_module = summary
+            break
+    
+    if example_module:
+        module_name = example_module.get('file_name', 'example.py')
+        module_intent = example_module.get('intent', 'Provides core functionality')
+        functions = example_module.get('functions', '').split(',')[:3]  # Show first 3 functions
+        
+        lines.append(f"**Example Module: `{module_name}`**")
+        lines.append(f"*Purpose: {module_intent}*")
+        lines.append("")
+        
+        if functions:
+            lines.append("**Key Functions:**")
+            for func in functions:
+                if func.strip():
+                    lines.append(f"- `{func.strip()}`")
+            lines.append("")
+        
+        # Show actual function signatures if available
+        if example_module.get('function_signatures'):
+            lines.append("**Function Signatures:**")
+            lines.append("```python")
+            signatures = example_module.get('function_signatures', [])
+            if isinstance(signatures, str):
+                signatures = signatures.split('\n')[:5]
+            elif isinstance(signatures, list):
+                signatures = signatures[:5]
+            for sig in signatures:
+                if sig and str(sig).strip():
+                    lines.append(str(sig).strip())
+            lines.append("```")
+            lines.append("")
+    else:
+        lines.append("This project contains multiple modules with specialized functionality.")
+        lines.append("")
+    
+    # Show project statistics
+    lines.append("**Project Statistics:**")
+    lines.append(f"- **Total Modules**: {len(summaries)}")
+    lines.append(f"- **Total Functions**: {sum(len(summary.get('functions', '').split(',')) if summary.get('functions') else 0 for summary in summaries)}")
+    lines.append(f"- **Total Classes**: {sum(len(summary.get('classes', '').split(',')) if summary.get('classes') else 0 for summary in summaries)}")
     lines.append("")
     
     lines.append("---")
@@ -423,7 +463,7 @@ def generate_entry_points_section(summaries: list[dict]) -> list[str]:
     utility_scripts = []
     
     for summary in summaries:
-        file_name = summary['file']
+        file_name = summary.get('file_name', summary.get('file', 'unknown.py'))
         intent = summary.get('intent', '')
         functions = summary.get('functions', '')
         
@@ -480,29 +520,57 @@ def generate_entry_points_section(summaries: list[dict]) -> list[str]:
             lines.append(f"- **`{file_name}`**: {intent}")
         lines.append("")
     
-    # Execution Flow
+    # Execution Flow (dynamically generated based on project type)
     lines.append("### Execution Flow")
-    lines.append("1. **Start**: Run `python main.py` or `python main.py <filepath>`")
-    lines.append("2. **Analysis**: Core analyzer processes the Python file")
-    lines.append("3. **Behavioral Analysis**: Extracts patterns and intents")
-    lines.append("4. **Rendering**: Generates synopsis headers")
-    lines.append("5. **Output**: Creates annotated file with documentation")
+    
+    # Detect project type and generate appropriate flow
+    has_d2l = any('d2l' in summary.get('file_name', summary.get('file', '')).lower() for summary in summaries)
+    has_gui = any('gui' in summary.get('file_name', summary.get('file', '')).lower() for summary in summaries)
+    has_csv = any('csv' in summary.get('intent', '').lower() for summary in summaries)
+    
+    if has_d2l:
+        lines.append("1. **Start**: Launch the D2L automation tool")
+        if has_gui:
+            lines.append("2. **GUI Launch**: Open the user interface for course selection")
+        lines.append("3. **Login**: Authenticate with D2L learning management system")
+        lines.append("4. **Course Selection**: Navigate to the target course")
+        if has_csv:
+            lines.append("5. **CSV Processing**: Load and parse assignment data from CSV file")
+            lines.append("6. **Date Updates**: Automate assignment date modifications")
+        lines.append("7. **Completion**: Verify updates and close browser session")
+    else:
+        # Generic flow for non-D2L projects
+        lines.append("1. **Start**: Run the main application")
+        lines.append("2. **Initialization**: Load configuration and dependencies")
+        lines.append("3. **Processing**: Execute core functionality")
+        lines.append("4. **Output**: Generate results or complete tasks")
     lines.append("")
     
-    # Command Line Usage
+    # Command Line Usage (dynamically generated based on project)
     lines.append("### Command Line Usage")
     lines.append("```bash")
-    lines.append("# Interactive mode (file dialog)")
-    lines.append("python main.py")
-    lines.append("")
-    lines.append("# Direct file analysis")
-    lines.append("python main.py path/to/file.py")
-    lines.append("")
-    lines.append("# Batch processing")
-    lines.append("python batch_annotate_modular.py")
-    lines.append("")
-    lines.append("# Generate project structure")
-    lines.append("python project_architect.py")
+    
+    if has_d2l:
+        if has_gui:
+            lines.append("# Launch GUI interface")
+            lines.append("python D2L_Gui.py")
+            lines.append("")
+        lines.append("# Run D2L date processing")
+        lines.append("python d2l_date_processing_new.py")
+        lines.append("")
+        lines.append("# Run Playwright automation")
+        lines.append("python d2l_playwright_processor.py")
+    else:
+        # Generic commands for non-D2L projects
+        main_files = [f for f in summaries if 'main' in f.get('file_name', f.get('file', '')).lower()]
+        if main_files:
+            main_file = main_files[0].get('file_name', main_files[0].get('file', 'main.py'))
+            lines.append(f"# Run main application")
+            lines.append(f"python {main_file}")
+        else:
+            lines.append("# Run the application")
+            lines.append("python <main_script.py>")
+    
     lines.append("```")
     lines.append("")
     

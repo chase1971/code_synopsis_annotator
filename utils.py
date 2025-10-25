@@ -1,12 +1,11 @@
 #===============================================================================
 # CODE SYNOPSIS: utils.py
-# SYNOPSIS_HASH: f257bfcdae2d608b2704567996ff5511162d9a4d52f408ac389cabd00d02d20b
-# Generated: 2025-10-25 13:00:59
+# Generated: 2025-10-25 14:27:46
 # INTENT: Utility functions and helper methods.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 273
+#   Total Lines: 274
 #   Functions: 11
 #   Classes: 1
 #   Global Variables: 0
@@ -22,7 +21,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-25 13:00:59
+# LAST_ANALYZED: 2025-10-25 14:27:46
 # FILE: utils.py
 # IMPORTS_EXTERNAL: ast, os, re, typing
 # IMPORTS_LOCAL: 
@@ -34,8 +33,9 @@
 # TK_BINDS: 
 # COMMAND_BINDS: 
 # CLASSES: CodeUtils
-# IO_READS: 
+# IO_READS: unknown
 # IO_WRITES: 
+# EXCEPTIONS: line 258: ['OSError']
 # CALLGRAPH_ROOTS: is_local_module,call_to_name,format_call_name,enclosing_function_name,extract_open_args,categorize_shared_state,group_functions_by_purpose,extract_hotkey_bindings,safe_filename,format_file_size,get_file_info
 # STATE_VARS: mode
 # STATE_MACHINES_COUNT: 1
@@ -86,7 +86,7 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   CodeUtils (line 20):
+#   CodeUtils (line 21):
 #     - CodeUtils.is_local_module()
 #     - CodeUtils.call_to_name()
 #     - CodeUtils.format_call_name()
@@ -149,6 +149,11 @@
 #     [*] --> Unknown
 # ```
 #
+#
+# 🔌 EXTERNAL I/O SUMMARY:
+#
+#   Reads: unknown
+#===============================================================================
 #
 # 📊 DATA FLOW SUMMARY:
 #
