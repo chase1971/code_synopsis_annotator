@@ -1,15 +1,15 @@
 #===============================================================================
 # CODE SYNOPSIS: core_analyzer.py
-# SYNOPSIS_HASH: c248c511bb0949e1e7beb2063b59143dc58c96566086e1e0d5c179934d7fd37a
-# Generated: 2025-10-24 22:17:09
+# SYNOPSIS_HASH: 34ed9db64a8afa5cb5d575dceb12f2e4395c67a3096dd19b3ae5fd9fdb944586
+# Generated: 2025-10-24 23:31:32
 # INTENT: Locates or discovers, Extracts functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 511
-#   Functions: 29
-#   Classes: 1
-#   Global Variables: 37
+#   Total Lines: 764
+#   Functions: 50
+#   Classes: 3
+#   Global Variables: 0
 #
 # Key Dependencies:
 #   - ast
@@ -18,6 +18,7 @@
 #   - typing
 #   - warnings
 #   (Local modules):
+#     * analyzer_state
 #     * state_machine_detector
 #
 #===============================================================================
@@ -25,35 +26,38 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 22:17:09
+# LAST_ANALYZED: 2025-10-24 23:31:32
 # FILE: core_analyzer.py
 # IMPORTS_EXTERNAL: ast, collections, os, typing, warnings
-# IMPORTS_LOCAL: state_machine_detector
-# GLOBALS: args, callee, candidate_pkg, candidate_py, cb, defaults_list, detector, enclosing, event, extra_calls, extra_transitions, found_end_marker, fullname, func, func_key, funcname, hk, info, kwarg_str, lines, methods, mode, module, node, parts, path, posonly, pretty, reads, regular_args, result, results, return_type, synopsis_end, transitions, vararg_str, writes
-# FUNCTIONS: __init__, _call_to_name, _enclosing_function_name, _extract_open_args, _format_call_name, _is_local_module, _render_arg, _safe_unparse, analyze, analyze_classes, analyze_functions, build_call_graph, detect_state_machines, detect_ui_after_usage, extract_call_graph, extract_function_signatures, extract_hotkey_bindings, extract_state_transitions, find_file_io, find_globals, find_hotkeys_and_ui_binds, find_imports, find_threading, infer_function_behavior, parse_code, process_function, read_file, strip_existing_synopsis, summarize_initialization_sequence
-# RETURNS: _call_to_name, _enclosing_function_name, _extract_open_args, _format_call_name, _is_local_module, _render_arg, _safe_unparse, extract_call_graph, extract_hotkey_bindings, extract_state_transitions, infer_function_behavior, read_file, strip_existing_synopsis
+# IMPORTS_LOCAL: analyzer_state, state_machine_detector
+# GLOBALS: 
+# FUNCTIONS: __init__, _analyze_function_accesses, _call_to_name, _collect_params, _enclosing_function_name, _enter_func, _exit_func, _extract_open_args, _format_call_name, _is_local_module, _is_true_global, _names_in_target, _render_arg, _safe_unparse, analyze, analyze_classes, analyze_functions, build_call_graph, build_symbol_indexes, detect_state_machines, detect_ui_after_usage, extract_call_graph, extract_function_signatures, extract_hotkey_bindings, extract_state_transitions, find_file_io, find_globals, find_hotkeys_and_ui_binds, find_imports, find_threading, infer_function_behavior, map_global_accesses, parse_code, process_function, read_file, strip_existing_synopsis, summarize_initialization_sequence, visit_AnnAssign, visit_Assign, visit_AsyncFunctionDef, visit_AugAssign, visit_ExceptHandler, visit_For, visit_FunctionDef, visit_Global, visit_Import, visit_ImportFrom, visit_Name, visit_Nonlocal, visit_With
+# RETURNS: _call_to_name, _collect_params, _enclosing_function_name, _extract_open_args, _format_call_name, _is_local_module, _is_true_global, _names_in_target, _render_arg, _safe_unparse, extract_call_graph, extract_hotkey_bindings, extract_state_transitions, infer_function_behavior, read_file, strip_existing_synopsis
 # THREAD_TARGETS: 
 # HOTKEYS: 
 # TK_BINDS: 
 # COMMAND_BINDS: 
-# CLASSES: CodeAnalyzer
+# CLASSES: CodeAnalyzer, GlobalAccessVisitor, ScopeIndexer
 # IO_READS: 
 # IO_WRITES: 
-# CALLGRAPH_ROOTS: __init__,read_file,strip_existing_synopsis,parse_code,analyze,find_globals,analyze_classes,analyze_functions,_is_local_module,find_imports,find_threading,find_hotkeys_and_ui_binds,find_file_io,_extract_open_args,build_call_graph,detect_state_machines,detect_ui_after_usage,summarize_initialization_sequence,_call_to_name,_format_call_name,_enclosing_function_name,extract_call_graph,extract_state_transitions,extract_hotkey_bindings,infer_function_behavior,_safe_unparse,_render_arg,extract_function_signatures
+# CALLGRAPH_ROOTS: __init__,visit_Assign,visit_AnnAssign,visit_AugAssign,visit_Import,visit_ImportFrom,visit_FunctionDef,visit_AsyncFunctionDef,_enter_func,_exit_func,_collect_params,visit_Name,visit_For,visit_With,visit_ExceptHandler,visit_Global,visit_Nonlocal,_is_true_global,read_file,strip_existing_synopsis,parse_code,analyze,build_symbol_indexes,_analyze_function_accesses,find_globals,analyze_classes,analyze_functions,map_global_accesses,_is_local_module,find_imports
 # STATE_VARS: mode
 # STATE_MACHINES_COUNT: 1
 # STATE_TRANSITIONS_COUNT: 1
 # INIT_SEQUENCE: 
 # INTENT: Locates or discovers, Extracts functionality for this module.
-# FUNCTION_INTENTS: __init__=Handles the target entities., _call_to_name=Handles to name., _enclosing_function_name=Handles function name., _extract_open_args=Retrieves open args., _format_call_name=Handles call name., _is_local_module=Handles local module., _render_arg=Produces or displays arg., _safe_unparse=Handles unparse., analyze=Examines and summarizes the target entities., analyze_classes=Examines and summarizes classes., analyze_functions=Examines and summarizes functions., build_call_graph=Constructs or generates call graph., detect_state_machines=Identifies state machines., detect_ui_after_usage=Identifies ui after usage., extract_call_graph=Retrieves call graph., extract_function_signatures=Retrieves function signatures., extract_hotkey_bindings=Retrieves hotkey bindings., extract_state_transitions=Retrieves state transitions., find_file_io=Locates or gathers file io., find_globals=Locates or gathers globals., find_hotkeys_and_ui_binds=Locates or gathers hotkeys and ui binds., find_imports=Locates or gathers imports., find_threading=Locates or gathers threading., infer_function_behavior=Handles function behavior., parse_code=Parses code., process_function=Handles or executes function., read_file=Reads file., strip_existing_synopsis=Handles existing synopsis., summarize_initialization_sequence=Condenses results of initialization sequence.
+# FUNCTION_INTENTS: __init__=Handles the target entities., _analyze_function_accesses=Examines and summarizes function accesses., _call_to_name=Handles to name., _collect_params=Handles params., _enclosing_function_name=Handles function name., _enter_func=Handles func., _exit_func=Handles func., _extract_open_args=Retrieves open args., _format_call_name=Handles call name., _is_local_module=Handles local module., _is_true_global=Handles true global., _names_in_target=Handles in target., _render_arg=Produces or displays arg., _safe_unparse=Handles unparse., analyze=Examines and summarizes the target entities., analyze_classes=Examines and summarizes classes., analyze_functions=Examines and summarizes functions., build_call_graph=Constructs or generates call graph., build_symbol_indexes=Constructs or generates symbol indexes., detect_state_machines=Identifies state machines., detect_ui_after_usage=Identifies ui after usage., extract_call_graph=Retrieves call graph., extract_function_signatures=Retrieves function signatures., extract_hotkey_bindings=Retrieves hotkey bindings., extract_state_transitions=Retrieves state transitions., find_file_io=Locates or gathers file io., find_globals=Locates or gathers globals., find_hotkeys_and_ui_binds=Locates or gathers hotkeys and ui binds., find_imports=Locates or gathers imports., find_threading=Locates or gathers threading., infer_function_behavior=Handles function behavior., map_global_accesses=Handles global accesses., parse_code=Parses code., process_function=Handles or executes function., read_file=Reads file., strip_existing_synopsis=Handles existing synopsis., summarize_initialization_sequence=Condenses results of initialization sequence., visit_AnnAssign=Handles ann assign., visit_Assign=Handles assign., visit_AsyncFunctionDef=Handles async function def., visit_AugAssign=Handles aug assign., visit_ExceptHandler=Handles except handler., visit_For=Handles for., visit_FunctionDef=Handles function def., visit_Global=Handles global., visit_Import=Handles import., visit_ImportFrom=Handles import from., visit_Name=Handles name., visit_Nonlocal=Handles nonlocal., visit_With=Handles with.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
 #
 # 📝 FUNCTION SIGNATURES:
 #
-# CodeAnalyzer.__init__(self, filepath: str, *, include_machine_block: bool = True) -> None
-#   Initialize the analyzer with a file path.
+# CodeAnalyzer.__init__(self, filepath: str, state = None, *, include_machine_block: bool = True) -> None
+#   Initialize the analyzer with a file path and optional shared state.
+#
+# CodeAnalyzer._analyze_function_accesses(self, func_node: ast.AST, func_name: str) -> None
+#   Populate reads/writes for a function using scope indexes.
 #
 # CodeAnalyzer._call_to_name(self, func_node) -> str
 #   Convert a call function node to a string name.
@@ -88,6 +92,9 @@
 # CodeAnalyzer.build_call_graph(self) -> None
 #   Build a call graph of function calls.
 #
+# CodeAnalyzer.build_symbol_indexes(self) -> None
+#   Build scope indexes for this file's AST.
+#
 # CodeAnalyzer.detect_state_machines(self) -> None
 #   Detect state machine patterns using StateMachineDetector.
 #
@@ -110,7 +117,7 @@
 #   Find file I/O operations.
 #
 # CodeAnalyzer.find_globals(self) -> None
-#   Find all global variable assignments.
+#   Find all global variable assignments and references using proper scope analysis.
 #
 # CodeAnalyzer.find_hotkeys_and_ui_binds(self) -> None
 #   Find hotkey and UI binding patterns.
@@ -124,6 +131,9 @@
 # CodeAnalyzer.infer_function_behavior(self, func_name: str) -> Dict[str, object]
 #   Infer behavioral intent of a function.
 #
+# CodeAnalyzer.map_global_accesses(self) -> None
+#   Map which functions read and write each global variable.
+#
 # CodeAnalyzer.parse_code(self) -> None
 #   Parse the Python code into an AST.
 #
@@ -136,19 +146,87 @@
 # CodeAnalyzer.summarize_initialization_sequence(self) -> None
 #   Summarize module initialization sequence.
 #
+# GlobalAccessVisitor.__init__(self, module_assigned: Set[str], module_imported: Set[str], func_params: Set[str], func_locals: Set[str], func_globals_declared: Set[str]) -> None
+#
+# GlobalAccessVisitor._is_true_global(self, name: str) -> bool
+#
+# GlobalAccessVisitor.visit_Name(self, node: ast.Name) -> None
+#
+# ScopeIndexer.__init__(self) -> None
+#
+# ScopeIndexer._collect_params(self, node: ast.AST) -> Set[str]
+#
+# ScopeIndexer._enter_func(self, name: str, node: ast.AST) -> None
+#
+# ScopeIndexer._exit_func(self) -> None
+#
+# ScopeIndexer.visit_AnnAssign(self, node: ast.AnnAssign) -> None
+#
+# ScopeIndexer.visit_Assign(self, node: ast.Assign) -> None
+#
+# ScopeIndexer.visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None
+#
+# ScopeIndexer.visit_AugAssign(self, node: ast.AugAssign) -> None
+#
+# ScopeIndexer.visit_ExceptHandler(self, node: ast.ExceptHandler) -> None
+#
+# ScopeIndexer.visit_For(self, node: ast.For) -> None
+#
+# ScopeIndexer.visit_FunctionDef(self, node: ast.FunctionDef) -> None
+#
+# ScopeIndexer.visit_Global(self, node: ast.Global) -> None
+#
+# ScopeIndexer.visit_Import(self, node: ast.Import) -> None
+#
+# ScopeIndexer.visit_ImportFrom(self, node: ast.ImportFrom) -> None
+#
+# ScopeIndexer.visit_Name(self, node: ast.Name) -> None
+#
+# ScopeIndexer.visit_Nonlocal(self, node: ast.Nonlocal) -> None
+#
+# ScopeIndexer.visit_With(self, node: ast.With) -> None
+#
+# _names_in_target(target: ast.AST) -> Set[str]
+#   Extract all simple names bound by an assignment/target expression.
+#
 #===============================================================================
 #
 # 🧱 CLASSES FOUND:
 #
-#   CodeAnalyzer (line 18):
+#   ScopeIndexer (line 24):
+#     - ScopeIndexer.__init__()
+#     - ScopeIndexer.visit_Assign()
+#     - ScopeIndexer.visit_AnnAssign()
+#     - ScopeIndexer.visit_AugAssign()
+#     - ScopeIndexer.visit_Import()
+#     - ScopeIndexer.visit_ImportFrom()
+#     - ScopeIndexer.visit_FunctionDef()
+#     - ScopeIndexer.visit_AsyncFunctionDef()
+#     - ScopeIndexer._enter_func()
+#     - ScopeIndexer._exit_func()
+#     - ScopeIndexer._collect_params()
+#     - ScopeIndexer.visit_Name()
+#     - ScopeIndexer.visit_For()
+#     - ScopeIndexer.visit_With()
+#     - ScopeIndexer.visit_ExceptHandler()
+#     - ScopeIndexer.visit_Global()
+#     - ScopeIndexer.visit_Nonlocal()
+#   GlobalAccessVisitor (line 155):
+#     - GlobalAccessVisitor.__init__()
+#     - GlobalAccessVisitor._is_true_global()
+#     - GlobalAccessVisitor.visit_Name()
+#   CodeAnalyzer (line 199):
 #     - CodeAnalyzer.__init__()
 #     - CodeAnalyzer.read_file()
 #     - CodeAnalyzer.strip_existing_synopsis()
 #     - CodeAnalyzer.parse_code()
 #     - CodeAnalyzer.analyze()
+#     - CodeAnalyzer.build_symbol_indexes()
+#     - CodeAnalyzer._analyze_function_accesses()
 #     - CodeAnalyzer.find_globals()
 #     - CodeAnalyzer.analyze_classes()
 #     - CodeAnalyzer.analyze_functions()
+#     - CodeAnalyzer.map_global_accesses()
 #     - CodeAnalyzer._is_local_module()
 #     - CodeAnalyzer.find_imports()
 #     - CodeAnalyzer.find_threading()
@@ -171,142 +249,6 @@
 #     - CodeAnalyzer.extract_function_signatures()
 #===============================================================================
 #
-# CRITICAL GLOBAL VARIABLES:
-#
-# node:
-#   Modified by: find_globals, analyze_classes, analyze_functions, find_imports, find_threading, find_hotkeys_and_ui_binds +6 more
-#   Read by: find_globals, analyze_classes, analyze_functions, find_imports, find_threading, find_hotkeys_and_ui_binds +8 more
-#
-# parts:
-#   Modified by: _call_to_name, extract_function_signatures, process_function
-#   Read by: _call_to_name, extract_function_signatures, process_function
-#
-# func_key:
-#   Modified by: extract_function_signatures, process_function
-#   Read by: extract_function_signatures, process_function
-#
-# defaults_list:
-#   Modified by: extract_function_signatures, process_function
-#   Read by: extract_function_signatures, process_function
-#
-# vararg_str:
-#   Modified by: extract_function_signatures, process_function
-#   Read by: extract_function_signatures, process_function
-#
-# path:
-#   Modified by: find_file_io, _extract_open_args
-#   Read by: find_file_io, _extract_open_args
-#
-# hk:
-#   Modified by: find_hotkeys_and_ui_binds, extract_hotkey_bindings
-#   Read by: find_hotkeys_and_ui_binds, extract_hotkey_bindings
-#
-# regular_args:
-#   Modified by: extract_function_signatures, process_function
-#   Read by: extract_function_signatures, process_function
-#
-# callee:
-#   Modified by: analyze_functions, build_call_graph
-#   Read by: analyze_functions, build_call_graph
-#
-# cb:
-#   Modified by: find_hotkeys_and_ui_binds, extract_hotkey_bindings
-#   Read by: find_hotkeys_and_ui_binds, extract_hotkey_bindings
-#
-# result:
-#   Modified by: _safe_unparse, _render_arg
-#   Read by: _safe_unparse, _render_arg
-#
-# mode:
-#   Modified by: find_file_io, _extract_open_args
-#   Read by: find_file_io, _extract_open_args
-#
-# args:
-#   Modified by: extract_function_signatures, process_function
-#   Read by: extract_function_signatures, process_function
-#
-# funcname:
-#   Modified by: find_hotkeys_and_ui_binds, detect_ui_after_usage
-#   Read by: find_hotkeys_and_ui_binds, detect_ui_after_usage
-#
-# kwarg_str:
-#   Modified by: extract_function_signatures, process_function
-#   Read by: extract_function_signatures, process_function
-#
-# return_type:
-#   Modified by: extract_function_signatures, process_function
-#   Read by: extract_function_signatures, process_function
-#
-# func:
-#   Modified by: find_threading, _enclosing_function_name
-#   Read by: find_threading, _enclosing_function_name
-#
-# posonly:
-#   Modified by: extract_function_signatures, process_function
-#   Read by: extract_function_signatures, process_function
-#
-#===============================================================================
-#
-# SHARED STATE CATEGORIES:
-#
-#   Control State:
-#     - mode
-#   Timing State:
-#     - found_end_marker
-#     - synopsis_end
-#   Position State:
-#     - candidate_py
-#     - extra_calls
-#     - extra_transitions
-#     - func_key
-#     - posonly
-#     - pretty
-#     - return_type
-#     - synopsis_end
-#   Config State:
-#     - path
-#===============================================================================
-#
-# ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
-#
-# strip_existing_synopsis() - line 86  (Returns: Yes)
-#   Modifies: found_end_marker, lines, synopsis_end
-#   Reads: found_end_marker, lines, synopsis_end
-#
-# analyze_functions() - line 160  (Returns: No)
-#   Modifies: callee, info, node
-#   Reads: callee, info, node
-#
-# find_threading() - line 209  (Returns: No)
-#   Modifies: func, node, reads, writes
-#   Reads: func, node, reads, writes
-#
-# find_hotkeys_and_ui_binds() - line 225  (Returns: No)
-#   Modifies: cb, event, funcname, hk, node
-#   Reads: cb, event, funcname, hk, node
-#
-# find_file_io() - line 257  (Returns: No)
-#   Modifies: fullname, mode, node, path
-#   Reads: fullname, mode, node, path
-#
-# detect_ui_after_usage() - line 332  (Returns: No)
-#   Modifies: enclosing, funcname, node
-#   Reads: enclosing, funcname, node
-#
-# extract_hotkey_bindings() - line 390  (Returns: Yes)
-#   Modifies: cb, hk, pretty
-#   Reads: cb, hk, pretty
-#
-# extract_function_signatures() - line 446  (Returns: No)
-#   Modifies: args, defaults_list, func_key, kwarg_str, node, parts, posonly, regular_args
-#   Reads: args, defaults_list, func_key, kwarg_str, node, parts, posonly, regular_args
-#
-# process_function() - line 454  (Returns: No)
-#   Modifies: args, defaults_list, func_key, kwarg_str, parts, posonly, regular_args, return_type
-#   Reads: args, defaults_list, func_key, kwarg_str, parts, posonly, regular_args, return_type
-#
-#===============================================================================
-#
 # 🧠 FUNCTION BEHAVIORAL SUMMARIES:
 #
 #
@@ -316,6 +258,40 @@
 #
 # - __init__()
 #
+# - visit_Assign()
+#
+# - visit_AnnAssign()
+#
+# - visit_AugAssign()
+#
+# - visit_Import()
+#
+# - visit_ImportFrom()
+#
+# - visit_FunctionDef()
+#
+# - visit_AsyncFunctionDef()
+#
+# - _enter_func()
+#
+# - _exit_func()
+#
+# - _collect_params()
+#
+# - visit_Name()
+#
+# - visit_For()
+#
+# - visit_With()
+#
+# - visit_ExceptHandler()
+#
+# - visit_Global()
+#
+# - visit_Nonlocal()
+#
+# - _is_true_global()
+#
 # - read_file()
 #
 # - strip_existing_synopsis()
@@ -324,51 +300,21 @@
 #
 # - analyze()
 #
+# - build_symbol_indexes()
+#
+# - _analyze_function_accesses()
+#
 # - find_globals()
 #
 # - analyze_classes()
 #
 # - analyze_functions()
 #
+# - map_global_accesses()
+#
 # - _is_local_module()
 #
 # - find_imports()
-#
-# - find_threading()
-#
-# - find_hotkeys_and_ui_binds()
-#
-# - find_file_io()
-#
-# - _extract_open_args()
-#
-# - build_call_graph()
-#
-# - detect_state_machines()
-#
-# - detect_ui_after_usage()
-#
-# - summarize_initialization_sequence()
-#
-# - _call_to_name()
-#
-# - _format_call_name()
-#
-# - _enclosing_function_name()
-#
-# - extract_call_graph()
-#
-# - extract_state_transitions()
-#
-# - extract_hotkey_bindings()
-#
-# - infer_function_behavior()
-#
-# - _safe_unparse()
-#
-# - _render_arg()
-#
-# - extract_function_signatures()
 #
 #===============================================================================
 #
@@ -394,43 +340,59 @@
 #
 # 📊 DATA FLOW SUMMARY:
 #
-#   __init__() — calls defaultdict, os.path.abspath, os.path.basename, os.path.dirname, self.parse_code, self.read_file; no return value
+#   visit_Assign() — calls isinstance, self.generic_visit, self.module_assigned.add; no return value
+#   visit_AnnAssign() — calls isinstance, self.generic_visit, self.module_assigned.add; no return value
+#   visit_AugAssign() — calls isinstance, self.generic_visit, self.module_assigned.add; no return value
+#   visit_Import() — calls alias.name.split, self.generic_visit, self.module_imported.add; no return value
+#   visit_ImportFrom() — calls self.generic_visit, self.module_imported.add; no return value
+#   visit_FunctionDef() — calls self._enter_func, self._exit_func, self.generic_visit; no return value
+#   visit_AsyncFunctionDef() — calls self._enter_func, self._exit_func, self.generic_visit; no return value
+#   _enter_func() — calls self._collect_params, self._func_stack.append, set; no return value
+#   _exit_func() — calls self._func_stack.pop; no return value
+#   _collect_params() — calls isinstance, params.add, set; returns value
+#   visit_For() — calls _names_in_target, add, self.generic_visit; no return value
+#   visit_With() — calls _names_in_target, add, self.generic_visit; no return value
+#   visit_ExceptHandler() — calls add, self.generic_visit; no return value
+#   visit_Global() — calls self.generic_visit, update; no return value
+#   visit_Nonlocal() — calls self.generic_visit, update; no return value
+#   _names_in_target() — calls _names_in_target, isinstance, names.add, names.update, set; returns value
+#   _is_true_global() — calls name.startswith; returns value
+#   visit_Name() — calls isinstance, self._is_true_global, self.generic_visit, self.reads.add, self.writes.add; no return value
+#   __init__() — calls defaultdict, new_state, os.path.abspath, os.path.basename, os.path.dirname, self.parse_code; no return value
 #   read_file() — calls Exception, f.read, open; returns value
-#   strip_existing_synopsis() — reads found_end_marker, lines, synopsis_end; writes found_end_marker, lines, synopsis_end; calls code.split, enumerate, join, len, line.startswith, startswith; returns value
+#   strip_existing_synopsis() — calls code.split, enumerate, join, len, line.startswith, startswith; returns value
 #   parse_code() — calls Exception, ast.parse; no return value
-#   analyze() — reads extra_calls, extra_transitions; writes extra_calls, extra_transitions; calls extra_calls.items, extra_transitions.items, self.analyze_classes, self.analyze_functions, self.build_call_graph, self.detect_state_machines; no return value
-#   find_globals() — reads node; writes node; calls ast.walk, isinstance, self.globals_found.add; no return value
-#   analyze_classes() — reads methods, node; writes methods, node; calls isinstance; no return value
-#   analyze_functions() — reads callee, info, node; writes callee, info, node; calls add, ast.walk, isinstance, self._call_to_name, set; no return value
-#   _is_local_module() — reads candidate_pkg, candidate_py; writes candidate_pkg, candidate_py; calls module_name.replace, os.path.exists, os.path.join; returns value
-#   find_imports() — reads module, node; writes module, node; calls add, ast.walk, getattr, isinstance, self._is_local_module, self.imports.append; no return value
-#   find_threading() — reads func, node, reads, writes; writes func, node, reads, writes; calls ast.walk, isinstance, self.threads_found.append, sorted; no return value
-#   find_hotkeys_and_ui_binds() — reads cb, event, funcname, hk, node; writes cb, event, funcname, hk, node; calls ast.walk, funcname.endswith, isinstance, len, self._call_to_name, self.hotkeys_command_bind.append; no return value
-#   find_file_io() — reads fullname, mode, node, path; writes fullname, mode, node, path; calls add, any, ast.walk, fullname.endswith, isinstance, self._call_to_name; no return value
-#   _extract_open_args() — reads mode, path; writes mode, path; calls isinstance, len, str; returns value
-#   build_call_graph() — reads callee; writes callee; calls add, self.functions.items; no return value
-#   detect_state_machines() — reads detector, results; writes detector, results; calls StateMachineDetector, detector.detect, items, set, update, warnings.warn; no return value
-#   detect_ui_after_usage() — reads enclosing, funcname, node; writes enclosing, funcname, node; calls ast.walk, funcname.endswith, isinstance, self._call_to_name, self._enclosing_function_name, self.ui_after_users.add; no return value
-#   summarize_initialization_sequence() — reads node; writes node; calls isinstance, self._call_to_name, self.init_sequence.append; no return value
-#   _call_to_name() — reads node, parts; writes node, parts; calls isinstance, join, parts.append, reversed; returns value
+#   analyze() — calls extra_calls.items, extra_transitions.items, self.analyze_classes, self.analyze_functions, self.build_call_graph, self.build_symbol_indexes; no return value
+#   build_symbol_indexes() — calls ScopeIndexer, self.scope_idx.visit; no return value
+#   _analyze_function_accesses() — calls GlobalAccessVisitor, gav.visit, self.functions.setdefault, self.scope_idx.func_globals_declared.get, self.scope_idx.func_locals.get, self.scope_idx.func_params.get; no return value
+#   find_globals() — calls ScopeIndexer, indexer.visit; no return value
+#   analyze_classes() — calls isinstance; no return value
+#   analyze_functions() — calls add, ast.walk, get, isinstance, self._analyze_function_accesses, self._call_to_name; no return value
+#   map_global_accesses() — calls add, func_info.get, self.functions.items, self.shared_state_map.items, set, update; no return value
+#   _is_local_module() — calls module_name.replace, os.path.exists, os.path.join; returns value
+#   find_imports() — calls add, ast.walk, getattr, isinstance, self._is_local_module, self.imports.append; no return value
+#   find_threading() — calls ast.walk, isinstance, self.threads_found.append, sorted; no return value
+#   find_hotkeys_and_ui_binds() — calls ast.walk, funcname.endswith, isinstance, len, self._call_to_name, self.hotkeys_command_bind.append; no return value
+#   find_file_io() — calls add, any, ast.walk, fullname.endswith, isinstance, self._call_to_name; no return value
+#   _extract_open_args() — calls isinstance, len, str; returns value
+#   build_call_graph() — calls add, self.functions.items; no return value
+#   detect_state_machines() — calls StateMachineDetector, detector.detect, items, set, update, warnings.warn; no return value
+#   detect_ui_after_usage() — calls ast.walk, funcname.endswith, isinstance, self._call_to_name, self._enclosing_function_name, self.ui_after_users.add; no return value
+#   summarize_initialization_sequence() — calls isinstance, self._call_to_name, self.init_sequence.append; no return value
+#   _call_to_name() — calls isinstance, join, parts.append, reversed; returns value
 #   _format_call_name() — calls self._call_to_name; returns value
-#   _enclosing_function_name() — reads func, node; writes func; calls any, ast.walk, isinstance; returns value
+#   _enclosing_function_name() — calls any, ast.walk, isinstance; returns value
 #   extract_call_graph() — calls self.call_graph.items, v.copy; returns value
-#   extract_state_transitions() — reads node, transitions; writes node, transitions; calls add, ast.walk, defaultdict, isinstance, str, target.id.endswith; returns value
-#   extract_hotkey_bindings() — reads cb, hk, pretty; writes cb, hk, pretty; calls pretty.append; returns value
+#   extract_state_transitions() — calls add, ast.walk, defaultdict, isinstance, str, target.id.endswith; returns value
+#   extract_hotkey_bindings() — calls pretty.append; returns value
 #   infer_function_behavior() — pure/local computation; returns value
-#   _safe_unparse() — reads node, result; writes result; calls ast.unparse, isinstance, len; returns value
-#   _render_arg() — reads result; writes result; calls self._safe_unparse; returns value
-#   extract_function_signatures() — reads args, defaults_list, func_key, kwarg_str, node, parts; writes args, defaults_list, func_key, kwarg_str, node, parts; calls ast.get_docstring, getattr, isinstance, len, list, parts.append; no return value
-#   process_function() — reads args, defaults_list, func_key, kwarg_str, parts, posonly; writes args, defaults_list, func_key, kwarg_str, parts, posonly; calls ast.get_docstring, getattr, len, list, parts.append, self._render_arg; no return value
+#   _safe_unparse() — calls ast.unparse, isinstance, len; returns value
+#   _render_arg() — calls self._safe_unparse; returns value
+#   extract_function_signatures() — calls ast.get_docstring, getattr, isinstance, len, list, parts.append; no return value
+#   process_function() — calls ast.get_docstring, getattr, len, list, parts.append, self._render_arg; no return value
 #===============================================================================
 #
 # 🔧 MODULARIZATION RECOMMENDATIONS:
-#
-# ⚠️ GLOBAL STATE: Significant global variables found.
-#    1. Create a State class to hold all globals
-#    2. Pass state object instead of using globals
-#    3. Use getter/setter methods for thread-safe access
 #
 # When modularizing, consider splitting by:
 #   - Separate state management from business logic
@@ -464,6 +426,9 @@
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
 # === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 """
 Core Code Analyzer - Main analysis engine for Python code.
 
@@ -479,6 +444,184 @@ try:
     from .state_machine_detector import StateMachineDetector  # NEW
 except ImportError:
     from state_machine_detector import StateMachineDetector  # Fallback for direct execution
+
+
+# =============================================================================
+# SCOPE & ACCESS ANALYZERS
+# =============================================================================
+class ScopeIndexer(ast.NodeVisitor):
+    """
+    Builds symbol indexes:
+      - module_assigned: names assigned at module level
+      - module_imported: names imported at module level (to exclude)
+      - func_params/locals/globals_declared: per-function local symbols
+    """
+    def __init__(self):
+        self.module_assigned: Set[str] = set()
+        self.module_imported: Set[str] = set()
+        self.func_params: Dict[str, Set[str]] = {}
+        self.func_locals: Dict[str, Set[str]] = {}
+        self.func_globals_declared: Dict[str, Set[str]] = {}
+        self.func_nonlocals_declared: Dict[str, Set[str]] = {}
+        self._func_stack: List[str] = []  # qualified names if you have nesting
+
+    # ---------- Module-level ----------
+    def visit_Assign(self, node: ast.Assign):
+        if not self._func_stack:  # at module scope
+            for t in node.targets:
+                if isinstance(t, ast.Name):
+                    self.module_assigned.add(t.id)
+        self.generic_visit(node)
+
+    def visit_AnnAssign(self, node: ast.AnnAssign):
+        if not self._func_stack and isinstance(node.target, ast.Name):
+            self.module_assigned.add(node.target.id)
+        self.generic_visit(node)
+
+    def visit_AugAssign(self, node: ast.AugAssign):
+        if not self._func_stack and isinstance(node.target, ast.Name):
+            self.module_assigned.add(node.target.id)
+        self.generic_visit(node)
+
+    def visit_Import(self, node: ast.Import):
+        if not self._func_stack:
+            for alias in node.names:
+                if alias.asname:
+                    self.module_imported.add(alias.asname)
+                else:
+                    # 'import pkg.subpkg' exposes 'pkg' in module scope
+                    self.module_imported.add(alias.name.split(".")[0])
+        self.generic_visit(node)
+
+    def visit_ImportFrom(self, node: ast.ImportFrom):
+        if not self._func_stack:
+            for alias in node.names:
+                self.module_imported.add(alias.asname or alias.name)
+        self.generic_visit(node)
+
+    # ---------- Functions & inner scopes ----------
+    def visit_FunctionDef(self, node: ast.FunctionDef):
+        self._enter_func(node.name, node)
+        self.generic_visit(node)
+        self._exit_func()
+
+    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef):
+        self._enter_func(node.name, node)
+        self.generic_visit(node)
+        self._exit_func()
+
+    def _enter_func(self, name: str, node: ast.AST):
+        self._func_stack.append(name)
+        self.func_params[name] = self._collect_params(node)
+        self.func_locals[name] = set()
+        self.func_globals_declared[name] = set()
+        self.func_nonlocals_declared[name] = set()
+
+    def _exit_func(self):
+        self._func_stack.pop()
+
+    def _collect_params(self, node: ast.AST) -> Set[str]:
+        params: Set[str] = set()
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            a = node.args
+            for arg in (a.posonlyargs + a.args + a.kwonlyargs):
+                params.add(arg.arg)
+            if a.vararg:
+                params.add(a.vararg.arg)
+            if a.kwarg:
+                params.add(a.kwarg.arg)
+        return params
+
+    # locals via assignment/targets inside a function
+    def visit_Name(self, node: ast.Name):
+        if self._func_stack and isinstance(node.ctx, ast.Store):
+            self.func_locals[self._func_stack[-1]].add(node.id)
+        self.generic_visit(node)
+
+    def visit_For(self, node: ast.For):
+        if self._func_stack:
+            for name in _names_in_target(node.target):
+                self.func_locals[self._func_stack[-1]].add(name)
+        self.generic_visit(node)
+
+    def visit_With(self, node: ast.With):
+        if self._func_stack:
+            for item in node.items:
+                if item.optional_vars is not None:
+                    for name in _names_in_target(item.optional_vars):
+                        self.func_locals[self._func_stack[-1]].add(name)
+        self.generic_visit(node)
+
+    def visit_ExceptHandler(self, node: ast.ExceptHandler):
+        if self._func_stack and node.name:
+            self.func_locals[self._func_stack[-1]].add(node.name)
+        self.generic_visit(node)
+
+    def visit_Global(self, node: ast.Global):
+        if self._func_stack:
+            self.func_globals_declared[self._func_stack[-1]].update(node.names)
+        self.generic_visit(node)
+
+    def visit_Nonlocal(self, node: ast.Nonlocal):
+        if self._func_stack:
+            self.func_nonlocals_declared[self._func_stack[-1]].update(node.names)
+        self.generic_visit(node)
+
+
+def _names_in_target(target: ast.AST) -> Set[str]:
+    """Extract all simple names bound by an assignment/target expression."""
+    names: Set[str] = set()
+    if isinstance(target, ast.Name):
+        names.add(target.id)
+    elif isinstance(target, (ast.Tuple, ast.List)):
+        for elt in target.elts:
+            names.update(_names_in_target(elt))
+    # ignore attributes/subscripts—they don't bind simple names
+    return names
+
+
+class GlobalAccessVisitor(ast.NodeVisitor):
+    """
+    Tracks reads/writes of *true globals* in a function, given:
+      - module_assigned (module-level vars)
+      - module_imported (module-level imports, excluded)
+      - func_params, func_locals, func_globals_declared/nonlocals
+    """
+    def __init__(self,
+                 module_assigned: Set[str],
+                 module_imported: Set[str],
+                 func_params: Set[str],
+                 func_locals: Set[str],
+                 func_globals_declared: Set[str]):
+        self.module_assigned = set(module_assigned)
+        self.module_imported = set(module_imported)
+        self.func_params = set(func_params)
+        self.func_locals = set(func_locals)
+        self.func_globals_declared = set(func_globals_declared)
+
+        self.reads: Set[str] = set()
+        self.writes: Set[str] = set()
+
+    def _is_true_global(self, name: str) -> bool:
+        if name.startswith("__"):
+            return False
+        if name in self.func_params:
+            return False
+        if name in self.module_imported:
+            return False
+        # Treat as global if either declared global in this function
+        # OR it's a module-level assigned name.
+        # Note: Don't exclude func_locals here because variables declared as global
+        # are both in func_locals (due to assignment) and func_globals_declared
+        return (name in self.func_globals_declared) or (name in self.module_assigned)
+
+    def visit_Name(self, node: ast.Name):
+        if self._is_true_global(node.id):
+            if isinstance(node.ctx, ast.Load):
+                self.reads.add(node.id)
+            elif isinstance(node.ctx, ast.Store):
+                self.writes.add(node.id)
+        self.generic_visit(node)
 
 
 class CodeAnalyzer:
@@ -583,6 +726,9 @@ class CodeAnalyzer:
 
     def analyze(self):
         """Run the complete analysis pipeline."""
+        # Build symbol indexes first
+        self.build_symbol_indexes()
+        
         # Basic analysis
         self.find_globals()
         self.analyze_classes()
@@ -611,14 +757,44 @@ class CodeAnalyzer:
 
         # NEW: Extract function signatures (added feature)
         self.extract_function_signatures()
+        
+        # NEW: Map which functions read/write each global
+        self.map_global_accesses()
+
+    def build_symbol_indexes(self):
+        """Build scope indexes for this file's AST."""
+        self.scope_idx = ScopeIndexer()
+        self.scope_idx.visit(self.tree)
+
+    def _analyze_function_accesses(self, func_node: ast.AST, func_name: str):
+        """Populate reads/writes for a function using scope indexes."""
+        params = self.scope_idx.func_params.get(func_name, set())
+        locals_ = self.scope_idx.func_locals.get(func_name, set())
+        decl_globals = self.scope_idx.func_globals_declared.get(func_name, set())
+        gav = GlobalAccessVisitor(
+            module_assigned=self.scope_idx.module_assigned,
+            module_imported=self.scope_idx.module_imported,
+            func_params=params,
+            func_locals=locals_,
+            func_globals_declared=decl_globals
+        )
+        gav.visit(func_node)
+        self.functions.setdefault(func_name, {})
+        self.functions[func_name]["reads"] = gav.reads
+        self.functions[func_name]["writes"] = gav.writes
 
     def find_globals(self):
-        """Find all global variable assignments."""
-        for node in ast.walk(self.tree):
-            if isinstance(node, ast.Assign):
-                for target in node.targets:
-                    if isinstance(target, ast.Name):
-                        self.globals_found.add(target.id)
+        """Find all global variable assignments and references using proper scope analysis."""
+        # Use the new ScopeIndexer for accurate scope analysis
+        indexer = ScopeIndexer()
+        indexer.visit(self.tree)
+        
+        # Store the scope information for use in analyze_functions
+        self.scope_indexer = indexer
+        
+        # The globals_found will be determined by the GlobalAccessVisitor
+        # when it analyzes each function with proper scope context
+        self.globals_found = indexer.module_assigned
 
     def analyze_classes(self):
         """Analyze class definitions and their methods."""
@@ -633,7 +809,7 @@ class CodeAnalyzer:
     def analyze_functions(self):
         """Analyze function definitions and their behavior."""
         for node in ast.walk(self.tree):
-            if isinstance(node, ast.FunctionDef):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 info = {
                     'line': node.lineno,
                     'reads': set(),
@@ -641,19 +817,51 @@ class CodeAnalyzer:
                     'calls': set(),
                     'returns_value': False
                 }
+                
+                # ============================================================================
+                # DETECT GLOBAL READS / WRITES INSIDE THIS FUNCTION
+                # ============================================================================
+                # Use the new enhanced function access analysis
+                self._analyze_function_accesses(node, node.name)
+                func_name = node.name
+                
+                # Preserve reads/writes from scope analysis
+                existing_reads = self.functions.get(func_name, {}).get("reads", set())
+                existing_writes = self.functions.get(func_name, {}).get("writes", set())
+                info["reads"] = existing_reads
+                info["writes"] = existing_writes
+                
+                # Still need to track calls and return values
                 for sub in ast.walk(node):
-                    if isinstance(sub, ast.Name):
-                        if isinstance(sub.ctx, ast.Store):
-                            info['writes'].add(sub.id)
-                        elif isinstance(sub.ctx, ast.Load):
-                            info['reads'].add(sub.id)
-                    elif isinstance(sub, ast.Call):
+                    if isinstance(sub, ast.Call):
                         callee = self._call_to_name(sub.func)
                         if callee:
                             info['calls'].add(callee)
                     elif isinstance(sub, ast.Return) and sub.value is not None:
                         info['returns_value'] = True
-                self.functions[node.name] = info
+                        
+                self.functions[func_name] = info
+
+    def map_global_accesses(self):
+        """Map which functions read and write each global variable."""
+        self.shared_state_map: Dict[str, Dict[str, Set[str]]] = {}
+        
+        for func_name, func_info in self.functions.items():
+            for var in func_info.get("reads", set()) | func_info.get("writes", set()):
+                if var not in self.shared_state_map:
+                    self.shared_state_map[var] = {"readers": set(), "writers": set()}
+                
+                if var in func_info.get("reads", set()):
+                    self.shared_state_map[var]["readers"].add(func_name)
+                if var in func_info.get("writes", set()):
+                    self.shared_state_map[var]["writers"].add(func_name)
+        
+        # Merge with existing state_vars
+        for var, access_info in self.shared_state_map.items():
+            if var not in self.state_vars:
+                self.state_vars[var] = {"values": set(), "writers": set(), "readers": set()}
+            self.state_vars[var]["writers"].update(access_info["writers"])
+            self.state_vars[var]["readers"].update(access_info["readers"])
 
     def _is_local_module(self, module_name: str) -> bool:
         """Check if a module is local to the project."""

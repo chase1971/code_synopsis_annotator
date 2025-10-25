@@ -1,15 +1,15 @@
 #===============================================================================
 # CODE SYNOPSIS: file_io.py
-# SYNOPSIS_HASH: d746721ba18069c7728cf7934e1b770cba92c943607732d30b7baf3e4ffb0c96
-# Generated: 2025-10-24 22:17:09
+# SYNOPSIS_HASH: 7e18218b768389e6ebfddd2f58eaa40fcc773335519c0a2471663d80d458eb05
+# Generated: 2025-10-24 23:31:32
 # INTENT: Creates and manages user interface components. Creates various components.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 210
+#   Total Lines: 213
 #   Functions: 7
 #   Classes: 1
-#   Global Variables: 10
+#   Global Variables: 0
 #
 # Key Dependencies:
 #   - os
@@ -28,11 +28,11 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 22:17:09
+# LAST_ANALYZED: 2025-10-24 23:31:32
 # FILE: file_io.py
 # IMPORTS_EXTERNAL: os, sys, time, tkinter, traceback, typing
 # IMPORTS_LOCAL: behavioral_analysis, core_analyzer, synopsis_renderer
-# GLOBALS: analyzer, annotated_code, behavioral_analyzer, filepath, handler, renderer, results, root, success, synopsis_header
+# GLOBALS: 
 # FUNCTIONS: __init__, analyze_file, batch_analyze_files, create_annotated_file, get_analysis_summary, main, select_file_and_analyze
 # RETURNS: analyze_file, batch_analyze_files, get_analysis_summary
 # THREAD_TARGETS: 
@@ -80,55 +80,13 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   FileIOHandler (line 21):
+#   FileIOHandler (line 24):
 #     - FileIOHandler.__init__()
 #     - FileIOHandler.create_annotated_file()
 #     - FileIOHandler.select_file_and_analyze()
 #     - FileIOHandler.analyze_file()
 #     - FileIOHandler.batch_analyze_files()
 #     - FileIOHandler.get_analysis_summary()
-#===============================================================================
-#
-# CRITICAL GLOBAL VARIABLES:
-#
-# filepath:
-#   Modified by: main, select_file_and_analyze, batch_analyze_files
-#   Read by: main, select_file_and_analyze, analyze_file, batch_analyze_files
-#
-# analyzer:
-#   Modified by: select_file_and_analyze, analyze_file
-#   Read by: create_annotated_file, select_file_and_analyze, analyze_file, get_analysis_summary
-#
-#===============================================================================
-#
-# SHARED STATE CATEGORIES:
-#
-#   UI State:
-#     - root
-#   Timing State:
-#     - renderer
-#   Position State:
-#     - analyzer
-#     - behavioral_analyzer
-#     - synopsis_header
-#   Config State:
-#     - filepath
-#===============================================================================
-#
-# ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
-#
-# create_annotated_file() - line 33  (Returns: No)
-#   Modifies: annotated_code, behavioral_analyzer, renderer, synopsis_header
-#   Reads: analyzer, annotated_code, behavioral_analyzer, renderer, synopsis_header
-#
-# select_file_and_analyze() - line 47  (Returns: No)
-#   Modifies: analyzer, filepath, root
-#   Reads: analyzer, filepath, root
-#
-# main() - line 191  (Returns: No)
-#   Modifies: filepath, handler, success
-#   Reads: filepath, handler, success
-#
 #===============================================================================
 #
 # 🧠 FUNCTION BEHAVIORAL SUMMARIES:
@@ -163,25 +121,16 @@
 # 📊 DATA FLOW SUMMARY:
 #
 #   __init__() — pure/local computation; no return value
-#   create_annotated_file() — reads analyzer, annotated_code, behavioral_analyzer, renderer, synopsis_header; writes annotated_code, behavioral_analyzer, renderer, synopsis_header; calls BehavioralAnalyzer, Exception, SynopsisRenderer, f.write, open, renderer.generate_synopsis_header; no return value
-#   select_file_and_analyze() — reads analyzer, filepath, root; writes analyzer, filepath, root; calls CodeAnalyzer, analyzer.analyze, filedialog.askopenfilename, input, len, messagebox.showerror; no return value
-#   analyze_file() — reads analyzer, filepath; writes analyzer; calls CodeAnalyzer, analyzer.analyze, print, self.create_annotated_file; returns value
-#   batch_analyze_files() — reads filepath, results; writes filepath, results; calls print, self.analyze_file; returns value
-#   get_analysis_summary() — reads analyzer; calls len; returns value
-#   main() — reads filepath, handler, success; writes filepath, handler, success; calls FileIOHandler, handler.analyze_file, handler.select_file_and_analyze, len, print, sys.exit; no return value
+#   create_annotated_file() — calls BehavioralAnalyzer, Exception, SynopsisRenderer, f.write, open, renderer.generate_synopsis_header; no return value
+#   select_file_and_analyze() — calls CodeAnalyzer, analyzer.analyze, filedialog.askopenfilename, input, len, messagebox.showerror; no return value
+#   analyze_file() — calls CodeAnalyzer, analyzer.analyze, print, self.create_annotated_file; returns value
+#   batch_analyze_files() — calls print, self.analyze_file; returns value
+#   get_analysis_summary() — calls len; returns value
+#   main() — calls FileIOHandler, handler.analyze_file, handler.select_file_and_analyze, len, print, sys.exit; no return value
 #===============================================================================
 #
 # 🔧 MODULARIZATION RECOMMENDATIONS:
 #
-# ⚠️ GLOBAL STATE: Significant global variables found.
-#    1. Create a State class to hold all globals
-#    2. Pass state object instead of using globals
-#    3. Use getter/setter methods for thread-safe access
-#
-# When modularizing, consider splitting by:
-#   - Separate state management from business logic
-#   - Group related functions into modules
-#   - Separate UI code from core logic
 #===============================================================================
 #===============================================================================
 # 📞 FUNCTION CALL HIERARCHY:
@@ -209,6 +158,9 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 """

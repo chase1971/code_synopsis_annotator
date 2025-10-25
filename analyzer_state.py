@@ -1,13 +1,15 @@
 #===============================================================================
 # CODE SYNOPSIS: analyzer_state.py
-# Generated: 2025-10-24 22:24:43
+# SYNOPSIS_HASH: e1b0fd26f12cb569eb98fd7f25e2d74f30c37fdb5bbaf4e47945001a8f8b18b2
+# Generated: 2025-10-24 23:31:32
+# INTENT: Manages concurrent execution.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 156
+#   Total Lines: 158
 #   Functions: 7
 #   Classes: 1
-#   Global Variables: 3
+#   Global Variables: 21
 #
 # Key Dependencies:
 #   - __future__
@@ -22,11 +24,11 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 22:24:43
+# LAST_ANALYZED: 2025-10-24 23:31:32
 # FILE: analyzer_state.py
 # IMPORTS_EXTERNAL: __future__, dataclasses, datetime, json, threading, typing
 # IMPORTS_LOCAL: 
-# GLOBALS: current, d, state
+# GLOBALS: _lock, classes, config_state, exceptions, functions, generated_at, globals, hotkeys, imports_external, imports_local, io_reads, io_writes, notes, position_state, project_path, state, state_cats, threads, timing_state, ui_binds, version
 # FUNCTIONS: clear, merge, new_state, summary, to_dict, to_json, update
 # RETURNS: new_state, summary, to_dict
 # THREAD_TARGETS: 
@@ -41,6 +43,8 @@
 # STATE_MACHINES_COUNT: 1
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
+# INTENT: Manages concurrent execution.
+# FUNCTION_INTENTS: clear=Handles the target entities., merge=Handles the target entities., new_state=Handles state., summary=Handles the target entities., to_dict=Handles dict., to_json=Handles json., update=Handles the target entities.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
@@ -72,7 +76,7 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   AnalyzerState (line 28):
+#   AnalyzerState (line 30):
 #     - AnalyzerState.update()
 #     - AnalyzerState.merge()
 #     - AnalyzerState.clear()
@@ -87,8 +91,22 @@
 #
 # SHARED STATE CATEGORIES:
 #
+#   UI State:
+#     - ui_binds
 #   Control State:
+#     - config_state
+#     - position_state
 #     - state
+#     - state_cats
+#     - timing_state
+#   Position State:
+#     - exceptions
+#     - hotkeys
+#     - imports_external
+#     - position_state
+#   Config State:
+#     - config_state
+#     - project_path
 #===============================================================================
 #
 # 🧠 FUNCTION BEHAVIORAL SUMMARIES:
@@ -135,10 +153,10 @@
 #
 # 📊 DATA FLOW SUMMARY:
 #
-#   update() — reads current; writes current; calls AttributeError, TypeError, current.add, current.append, current.extend, current.update; no return value
+#   update() — calls AttributeError, TypeError, current.add, current.append, current.extend, current.update; no return value
 #   merge() — calls extend, getattr, isinstance, k.startswith, other.__dict__.items, setattr; no return value
 #   clear() — calls isinstance, self.__dict__.items, v.clear; no return value
-#   to_dict() — reads d; writes d; calls datetime.datetime.now, isinstance, isoformat, k.startswith, list, self.__dict__.items; returns value
+#   to_dict() — calls datetime.datetime.now, isinstance, isoformat, k.startswith, list, self.__dict__.items; returns value
 #   to_json() — calls json.dump, open, self.to_dict; no return value
 #   summary() — calls len; returns value
 #   new_state() — calls AnalyzerState; returns value
@@ -151,6 +169,10 @@
 #    2. Pass state object instead of using globals
 #    3. Use getter/setter methods for thread-safe access
 #
+# When modularizing, consider splitting by:
+#   - Separate state management from business logic
+#   - Group related functions into modules
+#   - Separate UI code from core logic
 #===============================================================================
 #===============================================================================
 # 📞 FUNCTION CALL HIERARCHY:
@@ -178,7 +200,9 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
-
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 #!/usr/bin/env python3
 # =============================================================================
 # ANALYZER STATE REGISTRY

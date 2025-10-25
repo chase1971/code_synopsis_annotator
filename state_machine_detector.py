@@ -1,15 +1,15 @@
 #===============================================================================
 # CODE SYNOPSIS: state_machine_detector.py
-# SYNOPSIS_HASH: deb6e8c82c25809acc353fa1274599f97ce0287550ce17fb050867c678bc98a1
-# Generated: 2025-10-24 22:17:09
+# SYNOPSIS_HASH: 1b77c46c171f62e4fef3c55b694077f56030eca38f6257a0453c7275d33fb3e5
+# Generated: 2025-10-24 23:31:32
 # INTENT: Generates, Renders functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 553
+#   Total Lines: 556
 #   Functions: 18
 #   Classes: 4
-#   Global Variables: 35
+#   Global Variables: 20
 #
 # Key Dependencies:
 #   - ast
@@ -23,11 +23,11 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 22:17:09
+# LAST_ANALYZED: 2025-10-24 23:31:32
 # FILE: state_machine_detector.py
 # IMPORTS_EXTERNAL: ast, collections, dataclasses, re, typing
 # IMPORTS_LOCAL: 
-# GLOBALS: STATE_VARIABLE_PATTERNS, all_values, analyzer, checked_values, clean_state, condition_checks_var, condition_str, current, detector, enclosing, from_state, from_states, left_name, lines, machine, parts, readers_str, related_transitions, results, source_states, states, test_code, to_state, trans_strs, trans_summary, transition, transitions_by_func, trigger, val, value, values_str, var_name, var_type, var_type_label, writers_str
+# GLOBALS: STATE_VARIABLE_PATTERNS, analyzer, comparisons, condition, detector, from_state, line_number, name, primary_variable, readers, related_variables, results, states, test_code, to_state, transitions, trigger_function, values, var_type, writers
 # FUNCTIONS: __init__, _analyze_transitions, _build_function_map, _classify_state_variable, _detect_guards, _detect_state_variables, _extract_name, _extract_value, _get_enclosing_function, _group_into_state_machines, _infer_source_states, _matches_variable, detect, detect_state_machines, generate_mermaid_diagram, generate_state_machine_diagram, render_state_machine_summary, render_summary
 # RETURNS: _classify_state_variable, _extract_name, _extract_value, _get_enclosing_function, _infer_source_states, _matches_variable, detect, detect_state_machines, generate_mermaid_diagram, generate_state_machine_diagram, render_state_machine_summary, render_summary
 # THREAD_TARGETS: 
@@ -38,7 +38,7 @@
 # IO_READS: 
 # IO_WRITES: 
 # CALLGRAPH_ROOTS: detect_state_machines,generate_state_machine_diagram,render_state_machine_summary,__init__,detect,_build_function_map,_detect_state_variables,_classify_state_variable,_analyze_transitions,_detect_guards,_group_into_state_machines,_matches_variable,_extract_value,_extract_name,_get_enclosing_function,_infer_source_states,generate_mermaid_diagram,render_summary
-# STATE_VARS: clean_state,from_state,to_state
+# STATE_VARS: STATE_VARIABLE_PATTERNS,clean_state,detector,from_state,states,to_state,var_type
 # STATE_MACHINES_COUNT: 3
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
@@ -108,10 +108,10 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   StateVariable (line 58):
-#   StateTransition (line 69):
-#   StateMachine (line 79):
-#   StateMachineDetector (line 87):
+#   StateVariable (line 61):
+#   StateTransition (line 72):
+#   StateMachine (line 82):
+#   StateMachineDetector (line 90):
 #     - StateMachineDetector.__init__()
 #     - StateMachineDetector.detect()
 #     - StateMachineDetector._build_function_map()
@@ -131,101 +131,35 @@
 #
 # CRITICAL GLOBAL VARIABLES:
 #
-# var_name:
-#   Modified by: _detect_state_variables, _analyze_transitions, _group_into_state_machines, render_summary
-#   Read by: _detect_state_variables, _classify_state_variable, _analyze_transitions, _group_into_state_machines, _matches_variable, _infer_source_states +1 more
-#
 # detector:
 #   Modified by: detect_state_machines, generate_state_machine_diagram, render_state_machine_summary
 #   Read by: detect_state_machines, generate_state_machine_diagram, render_state_machine_summary
-#
-# enclosing:
-#   Modified by: _detect_state_variables, _detect_guards
-#   Read by: _detect_state_variables, _detect_guards
-#
-# left_name:
-#   Modified by: _detect_guards, _infer_source_states
-#   Read by: _detect_guards, _infer_source_states
-#
-# from_state:
-#   Modified by: _analyze_transitions, generate_mermaid_diagram
-#   Read by: _analyze_transitions, generate_mermaid_diagram
 #
 # to_state:
 #   Modified by: _analyze_transitions, generate_mermaid_diagram
 #   Read by: _analyze_transitions, generate_mermaid_diagram
 #
-# transition:
+# from_state:
 #   Modified by: _analyze_transitions, generate_mermaid_diagram
 #   Read by: _analyze_transitions, generate_mermaid_diagram
-#
-# machine:
-#   Modified by: _group_into_state_machines, generate_mermaid_diagram
-#   Read by: _group_into_state_machines, generate_mermaid_diagram
 #
 # var_type:
 #   Modified by: _detect_state_variables, _classify_state_variable
 #   Read by: _detect_state_variables, _classify_state_variable
 #
-# lines:
-#   Modified by: generate_mermaid_diagram, render_summary
-#   Read by: generate_mermaid_diagram, render_summary
-#
-# analyzer:
-#   Read by: detect_state_machines, generate_state_machine_diagram, render_state_machine_summary
-#
 #===============================================================================
 #
 # SHARED STATE CATEGORIES:
 #
-#   UI State:
-#     - var_type_label
 #   Control State:
 #     - STATE_VARIABLE_PATTERNS
-#     - clean_state
 #     - from_state
-#     - from_states
-#     - source_states
 #     - states
 #     - to_state
 #   Position State:
 #     - analyzer
-#     - trans_summary
-#     - transitions_by_func
+#     - primary_variable
 #     - var_type
-#     - var_type_label
-#===============================================================================
-#
-# ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
-#
-# _detect_state_variables() - line 147  (Returns: No)
-#   Modifies: enclosing, var_name, var_type
-#   Reads: enclosing, var_name, var_type
-#
-# _analyze_transitions() - line 186  (Returns: No)
-#   Modifies: from_state, from_states, to_state, transition, var_name
-#   Reads: from_state, from_states, to_state, transition, var_name
-#
-# _detect_guards() - line 212  (Returns: No)
-#   Modifies: enclosing, left_name, value
-#   Reads: enclosing, left_name, value
-#
-# _group_into_state_machines() - line 233  (Returns: No)
-#   Modifies: machine, related_transitions, states, var_name
-#   Reads: machine, related_transitions, states, var_name
-#
-# _infer_source_states() - line 297  (Returns: Yes)
-#   Modifies: checked_values, condition_checks_var, left_name, source_states, val
-#   Reads: checked_values, condition_checks_var, left_name, source_states, val, var_name
-#
-# generate_mermaid_diagram() - line 332  (Returns: Yes)
-#   Modifies: clean_state, condition_str, from_state, lines, machine, to_state, transition, trigger
-#   Reads: clean_state, condition_str, from_state, lines, machine, to_state, transition, trigger
-#
-# render_summary() - line 370  (Returns: Yes)
-#   Modifies: all_values, lines, readers_str, trans_strs, trans_summary, transitions_by_func, values_str, var_name
-#   Reads: all_values, lines, readers_str, trans_strs, trans_summary, transitions_by_func, values_str, var_name
-#
 #===============================================================================
 #
 # 🧠 FUNCTION BEHAVIORAL SUMMARIES:
@@ -282,12 +216,13 @@
 #
 #   📍 from_state (State Variable):
 #      States: *
-#      Modified by: generate_mermaid_diagram
-#      Checked by: generate_mermaid_diagram
+#      Modified by: _analyze_transitions, generate_mermaid_diagram
+#      Checked by: _analyze_transitions, generate_mermaid_diagram
 #
 #   📍 to_state (State Variable):
 #      States: (values unknown)
 #      Modified by: _analyze_transitions, generate_mermaid_diagram
+#      Checked by: _analyze_transitions, generate_mermaid_diagram
 #
 #
 #===============================================================================
@@ -306,21 +241,21 @@
 #
 #   detect() — calls self._analyze_transitions, self._build_function_map, self._detect_guards, self._detect_state_variables, self._group_into_state_machines; returns value
 #   _build_function_map() — calls ast.walk, isinstance; no return value
-#   _detect_state_variables() — reads enclosing, var_name, var_type; writes enclosing, var_name, var_type; calls StateVariable, ast.walk, isinstance, self._classify_state_variable, self._get_enclosing_function, str; no return value
-#   _classify_state_variable() — reads STATE_VARIABLE_PATTERNS, var_name, var_type; writes var_type; calls STATE_VARIABLE_PATTERNS.items, re.match; returns value
-#   _analyze_transitions() — reads from_state, from_states, to_state, transition, var_name; writes from_state, from_states, to_state, transition, var_name; calls StateTransition, ast.walk, isinstance, self._extract_value, self._infer_source_states, self.function_contexts.items; no return value
-#   _detect_guards() — reads enclosing, left_name, value; writes enclosing, left_name, value; calls ast.walk, comparisons.add, isinstance, readers.add, self._extract_name, self._extract_value; no return value
-#   _group_into_state_machines() — reads machine, related_transitions, states, var_name; writes machine, related_transitions, states, var_name; calls StateMachine, self._matches_variable, self.state_machines.append, self.state_variables.items; no return value
-#   _matches_variable() — reads var_name; returns value
+#   _detect_state_variables() — reads var_type; writes var_type; calls StateVariable, ast.walk, isinstance, self._classify_state_variable, self._get_enclosing_function, str; no return value
+#   _classify_state_variable() — reads STATE_VARIABLE_PATTERNS, var_type; writes var_type; calls STATE_VARIABLE_PATTERNS.items, re.match; returns value
+#   _analyze_transitions() — reads from_state, to_state; writes from_state, to_state; calls StateTransition, ast.walk, isinstance, self._extract_value, self._infer_source_states, self.function_contexts.items; no return value
+#   _detect_guards() — calls ast.walk, comparisons.add, isinstance, readers.add, self._extract_name, self._extract_value; no return value
+#   _group_into_state_machines() — reads states; writes states; calls StateMachine, self._matches_variable, self.state_machines.append, self.state_variables.items; no return value
+#   _matches_variable() — pure/local computation; returns value
 #   _extract_value() — calls isinstance, self._extract_name, str; returns value
-#   _extract_name() — reads current, parts; writes current, parts; calls isinstance, join, parts.append, reversed; returns value
+#   _extract_name() — calls isinstance, join, parts.append, reversed; returns value
 #   _get_enclosing_function() — calls any, ast.walk, self.function_contexts.items; returns value
-#   _infer_source_states() — reads checked_values, condition_checks_var, left_name, source_states, val, var_name; writes checked_values, condition_checks_var, left_name, source_states, val; calls any, ast.walk, checked_values.append, isinstance, self._extract_name, self._extract_value; returns value
-#   generate_mermaid_diagram() — reads clean_state, condition_str, from_state, lines, machine, to_state; writes clean_state, condition_str, from_state, lines, machine, to_state; calls join, lines.append, list, replace, sorted, state.replace; returns value
-#   render_summary() — reads all_values, lines, readers_str, trans_strs, trans_summary, transitions_by_func; writes all_values, lines, readers_str, trans_strs, trans_summary, transitions_by_func; calls append, defaultdict, get, join, len, lines.append; returns value
-#   detect_state_machines() — reads analyzer, detector; writes detector; calls StateMachineDetector, detector.detect; returns value
-#   generate_state_machine_diagram() — reads analyzer, detector; writes detector; calls StateMachineDetector, detector.detect, detector.generate_mermaid_diagram; returns value
-#   render_state_machine_summary() — reads analyzer, detector; writes detector; calls StateMachineDetector, detector.detect, detector.render_summary; returns value
+#   _infer_source_states() — calls any, ast.walk, checked_values.append, isinstance, self._extract_name, self._extract_value; returns value
+#   generate_mermaid_diagram() — reads from_state, to_state; writes from_state, to_state; calls join, lines.append, list, replace, sorted, state.replace; returns value
+#   render_summary() — calls append, defaultdict, get, join, len, lines.append; returns value
+#   detect_state_machines() — reads detector; writes detector; calls StateMachineDetector, detector.detect; returns value
+#   generate_state_machine_diagram() — reads detector; writes detector; calls StateMachineDetector, detector.detect, detector.generate_mermaid_diagram; returns value
+#   render_state_machine_summary() — reads detector; writes detector; calls StateMachineDetector, detector.detect, detector.render_summary; returns value
 #   __init__() — calls ast.parse; no return value
 #===============================================================================
 #
@@ -362,6 +297,9 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 """
 State Machine Detector - AST-based state machine pattern detection
@@ -704,17 +642,17 @@ class StateMachineDetector:
         if not self.state_machines:
             return ""
         
-        lines = ["```mermaid", "stateDiagram-v2"]
+        lines = ["# ```mermaid", "# stateDiagram-v2"]
         
         for machine in self.state_machines:
-            lines.append(f"    [*] --> {list(machine.states)[0] if machine.states else 'Unknown'}")
+            lines.append(f"#     [*] --> {list(machine.states)[0] if machine.states else 'Unknown'}")
             
             # Add all states
             for state in sorted(machine.states):
                 # Clean state name for Mermaid
                 clean_state = state.replace(' ', '_').replace('=', '_').replace('"', '').replace("'", '')
                 if clean_state not in ['True', 'False', '*']:
-                    lines.append(f"    state \"{state}\" as {clean_state}")
+                    lines.append(f"#     state \"{state}\" as {clean_state}")
             
             # Add transitions
             for transition in machine.transitions:
@@ -724,12 +662,12 @@ class StateMachineDetector:
                 
                 if from_state == '*':
                     # Transition from any state
-                    lines.append(f"    {to_state} --> {to_state}: {trigger}()")
+                    lines.append(f"#     {to_state} --> {to_state}: {trigger}()")
                 else:
                     condition_str = f" [{transition.condition}]" if transition.condition else ""
-                    lines.append(f"    {from_state} --> {to_state}: {trigger}(){condition_str}")
+                    lines.append(f"#     {from_state} --> {to_state}: {trigger}(){condition_str}")
         
-        lines.append("```")
+        lines.append("# ```")
         return '\n'.join(lines)
     
     def render_summary(self) -> List[str]:

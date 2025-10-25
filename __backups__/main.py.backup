@@ -1,174 +1,6 @@
-#===============================================================================
-# CODE SYNOPSIS: main.py
-# SYNOPSIS_HASH: ec67de976d8877e80aaa2b24dabcc9a241f7c6ba6a6eea125a6f42a7e9645c64
-# Generated: 2025-10-24 17:51:16
-#===============================================================================
-#
-# OVERVIEW:
-#   Total Lines: 115
-#   Functions: 3
-#   Classes: 0
-#   Global Variables: 9
-#
-# Key Dependencies:
-#   - code_synopsis_annotator.behavioral_analysis
-#   - code_synopsis_annotator.core_analyzer
-#   - code_synopsis_annotator.file_io
-#   - code_synopsis_annotator.synopsis_renderer
-#   - os
-#   - sys
-#   - typing
-#
-#===============================================================================
-# ════════════════════
-# BEGIN MACHINE-READABLE DATA (for automated processing)
-# ════════════════════
-# SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 17:51:16
-# FILE: main.py
-# IMPORTS_EXTERNAL: code_synopsis_annotator.behavioral_analysis, code_synopsis_annotator.core_analyzer, code_synopsis_annotator.file_io, code_synopsis_annotator.synopsis_renderer, os, sys, typing
-# IMPORTS_LOCAL: 
-# GLOBALS: analyzer, behavioral_analyzer, filepath, handler, renderer, result, results, success, summary
-# FUNCTIONS: analyze_file, batch_analyze, main
-# RETURNS: analyze_file, batch_analyze
-# THREAD_TARGETS: 
-# HOTKEYS: 
-# TK_BINDS: 
-# COMMAND_BINDS: 
-# CLASSES: 
-# IO_READS: 
-# IO_WRITES: 
-# CALLGRAPH_ROOTS: main,batch_analyze
-# STATE_VARS: 
-# INIT_SEQUENCE: main()
-# END MACHINE-READABLE DATA
-# ════════════════════
-#===============================================================================
-#
-# CRITICAL GLOBAL VARIABLES:
-#
-# filepath:
-#   Modified by: main, batch_analyze
-#   Read by: main, analyze_file, batch_analyze
-#
-# handler:
-#   Modified by: main, analyze_file
-#   Read by: main, analyze_file
-#
-#===============================================================================
-#
-# SHARED STATE CATEGORIES:
-#
-#   Timing State:
-#     - renderer
-#   Position State:
-#     - analyzer
-#     - behavioral_analyzer
-#     - summary
-#   Config State:
-#     - filepath
-#===============================================================================
-#
-# ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
-#
-# main() - line 22  (Returns: No)
-#   Modifies: filepath, handler, success
-#   Reads: filepath, handler, success
-#
-# analyze_file() - line 60  (Returns: Yes)
-#   Modifies: analyzer, behavioral_analyzer, handler, renderer, summary
-#   Reads: analyzer, behavioral_analyzer, filepath, handler, renderer, summary
-#
-# batch_analyze() - line 93  (Returns: Yes)
-#   Modifies: filepath, result, results
-#   Reads: filepath, result, results
-#
-#===============================================================================
-#
-# FUNCTION CALL HIERARCHY (depth-limited):
-#
-# - main()
-#   - print()
-#   - len()
-#   - exit()
-#   - select_file_and_analyze()
-#   - exists()
-#   - FileIOHandler()
-#   - endswith()
-#   - analyze_file()
-#     - print()
-#     - CodeAnalyzer()
-#     - BehavioralAnalyzer()
-#     - get_analysis_summary()
-#     - SynopsisRenderer()
-#     - FileIOHandler()
-#     - analyze()
-#
-# - batch_analyze()
-#   - print()
-#   - analyze_file()
-#     - print()
-#     - CodeAnalyzer()
-#     - BehavioralAnalyzer()
-#     - get_analysis_summary()
-#     - SynopsisRenderer()
-#     - FileIOHandler()
-#     - analyze()
-#
-#===============================================================================
-#
-# 🚀 INITIALIZATION SEQUENCE:
-#
-#   1. main()
-#===============================================================================
-#
-# 📊 DATA FLOW SUMMARY:
-#
-#   main() — reads filepath, handler, success; writes filepath, handler, success; calls FileIOHandler, filepath.endswith, handler.analyze_file, handler.select_file_and_analyze, len, os.path.exists; no return value
-#   analyze_file() — reads analyzer, behavioral_analyzer, filepath, handler, renderer, summary; writes analyzer, behavioral_analyzer, handler, renderer, summary; calls BehavioralAnalyzer, CodeAnalyzer, FileIOHandler, SynopsisRenderer, analyzer.analyze, handler.get_analysis_summary; returns value
-#   batch_analyze() — reads filepath, result, results; writes filepath, result, results; calls analyze_file, print; returns value
-#===============================================================================
-#
-# 🔧 MODULARIZATION RECOMMENDATIONS:
-#
-# ⚠️ GLOBAL STATE: Significant global variables found.
-#    1. Create a State class to hold all globals
-#    2. Pass state object instead of using globals
-#    3. Use getter/setter methods for thread-safe access
-#
-# When modularizing, consider splitting by:
-#   - Separate state management from business logic
-#   - Group related functions into modules
-#   - Separate UI code from core logic
-#===============================================================================
-#===============================================================================
-# 📞 FUNCTION CALL HIERARCHY:
-#   main() → FileIOHandler, analyze_file, endswith, exists, exit, len, print, select_file_and_analyze
-#   analyze_file() → BehavioralAnalyzer, CodeAnalyzer, FileIOHandler, SynopsisRenderer, analyze, get_analysis_summary, print
-#   batch_analyze() → analyze_file, print
-#===============================================================================
-# 🔄 STATE MACHINE TRANSITIONS:
-#   (No *_state transitions detected.)
-#===============================================================================
-# ⌨️ HOTKEY BINDINGS:
-#   (No keyboard hotkeys detected.)
-#===============================================================================
-#
-# 🧩 MODULE INTEGRATION INTENT:
-#   Role: Single-file code analyzer that injects a synopsis header
-#   Used by: (future) system_synopsis_builder.py for folder-wide Markdown
-#   Inputs: Python source file path
-#   Outputs: Annotated source file (prepends this synopsis)
-#===============================================================================
-#
-# 📝 INSTRUCTIONS FOR AI:
-#   1. Preserve ALL global variable dependencies shown above
-#   2. Maintain thread safety for variables accessed by multiple threads
-#   3. Do NOT rename variables unless explicitly asked
-#   4. Ensure all function dependencies are preserved
-#   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
-#   6. Ensure hotkeys and binds still invoke the same callbacks
-#===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 #!/usr/bin/env python3
 """
@@ -241,11 +73,15 @@ def analyze_file(filepath: str, include_machine_block: bool = True) -> Optional[
         Dictionary with analysis results, or None if analysis failed
     """
     try:
-        analyzer = CodeAnalyzer(filepath, include_machine_block=include_machine_block)
+        # Create shared state for this analysis
+        from .analyzer_state import new_state
+        state = new_state()
+        
+        analyzer = CodeAnalyzer(filepath, state, include_machine_block=include_machine_block)
         analyzer.analyze()
         
-        behavioral_analyzer = BehavioralAnalyzer(analyzer)
-        renderer = SynopsisRenderer(analyzer, behavioral_analyzer)
+        behavioral_analyzer = BehavioralAnalyzer(analyzer, state)
+        renderer = SynopsisRenderer(analyzer, behavioral_analyzer, state)
         
         # Get analysis summary
         handler = FileIOHandler()

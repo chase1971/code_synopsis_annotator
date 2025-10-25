@@ -1,5 +1,5 @@
 # 🧩 PROJECT STRUCTURE SUMMARY
-**Generated:** 2025-10-24 22:17:13
+**Generated:** 2025-10-24 23:31:37
 
 This document provides a full architectural map of the project.
 
@@ -13,32 +13,38 @@ graph TD
     __init__.py --> intent_inference
     __init__.py --> synopsis_renderer
     __init__.py --> utils
+    batch_annotate_modular.py --> analyzer_state
     batch_annotate_modular.py --> behavioral_analysis
     batch_annotate_modular.py --> core_analyzer
     batch_annotate_modular.py --> intent_inference
     batch_annotate_modular.py --> project_architect
+    batch_annotate_modular.py --> state_tracker
     batch_annotate_modular.py --> synopsis_renderer
+    core_analyzer.py --> analyzer_state
     core_analyzer.py --> state_machine_detector
     file_io.py --> behavioral_analysis
     file_io.py --> core_analyzer
     file_io.py --> synopsis_renderer
     intent_enhancer_v2.py --> intent_inference
     intent_inference.py --> intent_enhancer_v2
+    main.py --> analyzer_state
 ```
 
 ## 🔄 Cross-Module Data Flow Map
 
 | Source Module | Target or Description |
 |----------------|----------------------|
+| analyzer_state.py | Functions: clear, merge, new_state, summary, to_dict, to_json, update |
 | batch_annotate_modular.py | Functions: __init__, _build_ui, _process_folder, _process_single, _run, compute_code_hash, extract_existing_hash, find_python_files, format_duration, generate_markdown, get_code_body, is_up_to_date, log, make_ba... |
 | behavioral_analysis.py | Functions: __init__, analyze_function_dependencies, analyze_high_priority_functions, build_machine_block, categorize_shared_state, dfs, generate_behavioral_summary, group_modules_generic, render_call_hierarchy, ... |
-| core_analyzer.py | Functions: __init__, _call_to_name, _enclosing_function_name, _extract_open_args, _format_call_name, _is_local_module, _render_arg, _safe_unparse, analyze, analyze_classes, analyze_functions, build_call_graph, d... |
+| core_analyzer.py | Functions: __init__, _analyze_function_accesses, _call_to_name, _collect_params, _enclosing_function_name, _enter_func, _exit_func, _extract_open_args, _format_call_name, _is_local_module, _is_true_global, _name... |
 | file_io.py | Functions: __init__, analyze_file, batch_analyze_files, create_annotated_file, get_analysis_summary, main, select_file_and_analyze |
 | intent_enhancer_v2.py | Functions: __init__, detect_domains, detect_function_patterns, extract_noun_from_functions, find_common_themes, generate_enhanced_module_intent, generate_smart_intent |
 | intent_inference.py | Functions: _infer_verb, _insert_human_readable_intent, _insert_machine_block_kv, _noun_phrase_from, _split_ident, generate_module_intent, infer_function_intent, inject_intent |
 | main.py | Functions: analyze_file, batch_analyze, main |
 | project_architect.py | Functions: build_project_summary, detect_exceptions, extract, extract_list |
 | state_machine_detector.py | Functions: __init__, _analyze_transitions, _build_function_map, _classify_state_variable, _detect_guards, _detect_state_variables, _extract_name, _extract_value, _get_enclosing_function, _group_into_state_machin... |
+| state_tracker.py | Functions: _strip_comment_prefix, append_to_project_structure, build_state_table, extract_blocks, extract_critical_globals, generate_state_markdown, merge_file_state_from_text, parse_block |
 | synopsis_renderer.py | Functions: __init__, _render_classes, _render_critical_globals, _render_data_flow_summary, _render_function_behavioral_summaries, _render_function_dependencies, _render_function_signatures, _render_high_priority... |
 | utils.py | Functions: call_to_name, categorize_shared_state, enclosing_function_name, extract_hotkey_bindings, extract_open_args, format_call_name, format_file_size, get_file_info, group_functions_by_purpose, is_local_modu... |
 
@@ -81,18 +87,55 @@ _No exception handlers detected._
 
 ---
 
+### `analyzer_state.py`
+
+**Intent:** Manages concurrent execution.
+
+**Classes:** AnalyzerState
+
+**Functions:** clear, merge, new_state, summary, to_dict, to_json, update
+
+**Globals:** _lock, classes, config_state, exceptions, functions, generated_at, globals, hotkeys, imports_external, imports_local, io_reads, io_writes, notes, position_state, project_path, state, state_cats, threads, timing_state, ui_binds, version
+
+
+**Local Imports:** _None_
+
+**External Imports:** __future__, dataclasses, datetime, json, threading, typing
+
+
+#### File I/O Summary
+
+- Reads: _None_
+
+- Writes: json.dump(...)
+
+
+#### Threading & UI Bindings
+
+- Threads: _None_
+
+- UI Binds: _None_
+
+
+#### Exception Paths
+
+_No exception handlers detected._
+
+
+---
+
 ### `batch_annotate_modular.py`
 
-**Intent:** Manages external processes. Processes various components.
+**Intent:** Creates and manages user interface components. Processes various components.
 
 **Classes:** AnnotatorGUI
 
-**Functions:** __init__, _build_ui, _process_folder, _process_single, _run, compute_code_hash, extract_existing_hash, find_python_files, format_duration, generate_markdown, get_code_body, is_up_to_date, log, make_backup, open_folder, open_folder_in_explorer, process_batch, process_single_file, run_batch, run_in_thread, run_single, select_file, select_folder
+**Functions:** __init__, _build_ui, _process_folder, _process_single, _run, compute_code_hash, extract_existing_hash, find_python_files, format_duration, generate_markdown, get_code_body, is_up_to_date, log, make_backup, open_folder, open_folder_in_explorer, process_batch, process_single_file, run_batch, run_in_thread, run_single, select_file, select_folder, strip_all_annotations
 
-**Globals:** ANNOTATOR_VERSION, HEADER_BOUNDARY, all_files, analyzer, app, args, backup_dir, backup_path, base_dir, behavioral_analyzer, btn_frame, category, code_body, code_hash, current_code, current_hash, duration, file, files, folder, frame, has_synopsis, header, header_lines, insert_at, lines, msg, opts, output, parser, path, rel_path, renderer, results, root, skip_patterns, start, stored_hash, synopsis_header, t, total, total_time, up_to_date, versioned_content
+**Globals:** ANNOTATOR_VERSION, HEADER_BOUNDARY, app, args, files, parser, project_structure_path, root, state_map, state_table
 
 
-**Local Imports:** behavioral_analysis, core_analyzer, intent_inference, project_architect, synopsis_renderer
+**Local Imports:** analyzer_state, behavioral_analysis, core_analyzer, intent_inference, project_architect, state_tracker, synopsis_renderer
 
 **External Imports:** argparse, datetime, glob, hashlib, os, pathlib, shutil, subprocess, sys, threading, tkinter
 
@@ -126,7 +169,7 @@ _No exception handlers detected._
 
 **Functions:** __init__, analyze_function_dependencies, analyze_high_priority_functions, build_machine_block, categorize_shared_state, dfs, generate_behavioral_summary, group_modules_generic, render_call_hierarchy, render_state_machines, render_ui_after_usage
 
-**Globals:** assigned, buckets, call_roots, cats, children, critical, fanout, fnames, globs, gr, gw, high_priority, indent, init_seq, lines, lname, num_machines, num_transitions, readers, results, sm, state_keys, trans, ts, ui_after, vals, writers
+**Globals:** _None_
 
 
 **Local Imports:** _None_
@@ -159,14 +202,14 @@ _No exception handlers detected._
 
 **Intent:** Locates or discovers, Extracts functionality for this module.
 
-**Classes:** CodeAnalyzer
+**Classes:** CodeAnalyzer, GlobalAccessVisitor, ScopeIndexer
 
-**Functions:** __init__, _call_to_name, _enclosing_function_name, _extract_open_args, _format_call_name, _is_local_module, _render_arg, _safe_unparse, analyze, analyze_classes, analyze_functions, build_call_graph, detect_state_machines, detect_ui_after_usage, extract_call_graph, extract_function_signatures, extract_hotkey_bindings, extract_state_transitions, find_file_io, find_globals, find_hotkeys_and_ui_binds, find_imports, find_threading, infer_function_behavior, parse_code, process_function, read_file, strip_existing_synopsis, summarize_initialization_sequence
+**Functions:** __init__, _analyze_function_accesses, _call_to_name, _collect_params, _enclosing_function_name, _enter_func, _exit_func, _extract_open_args, _format_call_name, _is_local_module, _is_true_global, _names_in_target, _render_arg, _safe_unparse, analyze, analyze_classes, analyze_functions, build_call_graph, build_symbol_indexes, detect_state_machines, detect_ui_after_usage, extract_call_graph, extract_function_signatures, extract_hotkey_bindings, extract_state_transitions, find_file_io, find_globals, find_hotkeys_and_ui_binds, find_imports, find_threading, infer_function_behavior, map_global_accesses, parse_code, process_function, read_file, strip_existing_synopsis, summarize_initialization_sequence, visit_AnnAssign, visit_Assign, visit_AsyncFunctionDef, visit_AugAssign, visit_ExceptHandler, visit_For, visit_FunctionDef, visit_Global, visit_Import, visit_ImportFrom, visit_Name, visit_Nonlocal, visit_With
 
-**Globals:** args, callee, candidate_pkg, candidate_py, cb, defaults_list, detector, enclosing, event, extra_calls, extra_transitions, found_end_marker, fullname, func, func_key, funcname, hk, info, kwarg_str, lines, methods, mode, module, node, parts, path, posonly, pretty, reads, regular_args, result, results, return_type, synopsis_end, transitions, vararg_str, writes
+**Globals:** _None_
 
 
-**Local Imports:** state_machine_detector
+**Local Imports:** analyzer_state, state_machine_detector
 
 **External Imports:** ast, collections, os, typing, warnings
 
@@ -200,7 +243,7 @@ _No exception handlers detected._
 
 **Functions:** __init__, analyze_file, batch_analyze_files, create_annotated_file, get_analysis_summary, main, select_file_and_analyze
 
-**Globals:** analyzer, annotated_code, behavioral_analyzer, filepath, handler, renderer, results, root, success, synopsis_header
+**Globals:** _None_
 
 
 **Local Imports:** behavioral_analysis, core_analyzer, synopsis_renderer
@@ -237,7 +280,7 @@ _No exception handlers detected._
 
 **Functions:** __init__, detect_domains, detect_function_patterns, extract_noun_from_functions, find_common_themes, generate_enhanced_module_intent, generate_smart_intent
 
-**Globals:** DOMAIN_INDICATORS, DOMAIN_PURPOSES, FUNCTION_PATTERNS, MODULE_NAME_HINTS, action, action_words, analyzer1, analyzer2, analyzer3, analyzer4, analyzer5, analyzer6, analyzer7, analyzer8, base_lower, base_name, cleaned, domain_desc, domain_purpose, domains, filename, first_sentence, func_names, hint, imp_lower, imports_external, module_docstring, name_words, nouns, pattern_counts, pattern_descriptions, patterns, primary_domain, subject, subject_words, theme_str, themes, top_pattern, top_patterns, verbs, word_counts, words
+**Globals:** DOMAIN_INDICATORS, DOMAIN_PURPOSES, FUNCTION_PATTERNS, MODULE_NAME_HINTS, analyzer1, analyzer2, analyzer3, analyzer4, analyzer5, analyzer6, analyzer7, analyzer8
 
 
 **Local Imports:** intent_inference
@@ -274,7 +317,7 @@ _No exception handlers detected._
 
 **Functions:** _infer_verb, _insert_human_readable_intent, _insert_machine_block_kv, _noun_phrase_from, _split_ident, generate_module_intent, infer_function_intent, inject_intent
 
-**Globals:** ACTION_MAP, DEFAULT_MODULE_INTENT, DEFAULT_VERB, after, base, before, block, block_start, camel, end, end_idx, func_names, head, insert_at, intent, intents, lines, module_intent, obj_phrase, parts, phrase, safe_intent, safe_name, short, start_idx, tokens, updated, verbs
+**Globals:** ACTION_MAP, DEFAULT_MODULE_INTENT, DEFAULT_VERB
 
 
 **Local Imports:** intent_enhancer_v2
@@ -311,10 +354,10 @@ _No exception handlers detected._
 
 **Functions:** analyze_file, batch_analyze, main
 
-**Globals:** analyzer, behavioral_analyzer, filepath, handler, renderer, result, results, success, summary
+**Globals:** _None_
 
 
-**Local Imports:** _None_
+**Local Imports:** analyzer_state
 
 **External Imports:** code_synopsis_annotator.behavioral_analysis, code_synopsis_annotator.core_analyzer, code_synopsis_annotator.file_io, code_synopsis_annotator.synopsis_renderer, os, sys, typing
 
@@ -348,7 +391,7 @@ _No exception handlers detected._
 
 **Functions:** build_project_summary, detect_exceptions, extract, extract_list
 
-**Globals:** block, classes, content, data_flow, dependencies, exceptions, file_name, files, folder, functions, globals_, hotkeys, imports_external, imports_local, intent_line, io_reads, io_writes, lines, m, md, output, output_path, path, pattern, result, src_node, summaries, threads, tk_binds, val
+**Globals:** folder, path
 
 
 **Local Imports:** _None_
@@ -385,12 +428,49 @@ _No exception handlers detected._
 
 **Functions:** __init__, _analyze_transitions, _build_function_map, _classify_state_variable, _detect_guards, _detect_state_variables, _extract_name, _extract_value, _get_enclosing_function, _group_into_state_machines, _infer_source_states, _matches_variable, detect, detect_state_machines, generate_mermaid_diagram, generate_state_machine_diagram, render_state_machine_summary, render_summary
 
-**Globals:** STATE_VARIABLE_PATTERNS, all_values, analyzer, checked_values, clean_state, condition_checks_var, condition_str, current, detector, enclosing, from_state, from_states, left_name, lines, machine, parts, readers_str, related_transitions, results, source_states, states, test_code, to_state, trans_strs, trans_summary, transition, transitions_by_func, trigger, val, value, values_str, var_name, var_type, var_type_label, writers_str
+**Globals:** STATE_VARIABLE_PATTERNS, analyzer, comparisons, condition, detector, from_state, line_number, name, primary_variable, readers, related_variables, results, states, test_code, to_state, transitions, trigger_function, values, var_type, writers
 
 
 **Local Imports:** _None_
 
 **External Imports:** ast, collections, dataclasses, re, typing
+
+
+#### File I/O Summary
+
+- Reads: _None_
+
+- Writes: _None_
+
+
+#### Threading & UI Bindings
+
+- Threads: _None_
+
+- UI Binds: _None_
+
+
+#### Exception Paths
+
+_No exception handlers detected._
+
+
+---
+
+### `state_tracker.py`
+
+**Intent:** Loads and manages configuration settings. Extracts various components.
+
+**Classes:** _None_
+
+**Functions:** _strip_comment_prefix, append_to_project_structure, build_state_table, extract_blocks, extract_critical_globals, generate_state_markdown, merge_file_state_from_text, parse_block
+
+**Globals:** BEGIN_MARK, BULLET_RE, CRIT_GLOBALS_HEADER, END_MARK, KEY_ALIASES, KEY_LINE_RE, VAR_HEADER_RE, folder, out_md, state
+
+
+**Local Imports:** _None_
+
+**External Imports:** datetime, json, os, pathlib, re, typing
 
 
 #### File I/O Summary
@@ -422,7 +502,7 @@ _No exception handlers detected._
 
 **Functions:** __init__, _render_classes, _render_critical_globals, _render_data_flow_summary, _render_function_behavioral_summaries, _render_function_dependencies, _render_function_signatures, _render_high_priority_functions, _render_hotkeys, _render_integration_intent, _render_io_summary, _render_modularization_recommendations, _render_patch_additions, _render_shared_state, _render_state_machine_diagrams, _render_thread_interactions, _render_threading_analysis, generate_synopsis_header
 
-**Globals:** args_str, behavior, critical, critical_vars, diagram, docstring, first_line, high_priority, inputs, intent, io_lines, joined, lines, outputs, parts, r, readers, reads, returns_str, rr, rv, rw, state_cats, summary, thr, w, writers, writes
+**Globals:** _None_
 
 
 **Local Imports:** _None_
@@ -459,7 +539,7 @@ _No exception handlers detected._
 
 **Functions:** call_to_name, categorize_shared_state, enclosing_function_name, extract_hotkey_bindings, extract_open_args, format_call_name, format_file_size, get_file_info, group_functions_by_purpose, is_local_module, safe_filename
 
-**Globals:** assigned, base, buckets, candidate_pkg, candidate_py, cats, chain, cleaned, fnames, func, globs, hotkey, invalid_chars, lname, matches, mode, path, pattern, safe_name, stat
+**Globals:** _None_
 
 
 **Local Imports:** _None_
@@ -508,3 +588,140 @@ _No exception handlers detected._
   }
 }
 ```
+
+
+---
+
+# 🧩 SHARED STATE TABLE
+**Generated:** 2025-10-24 23:31:37
+
+| File | Variable | Modified By | Read By |
+|------|-----------|-------------|---------|
+| __init__.py | `CALLGRAPH_ROOTS` | - | - |
+| __init__.py | `CLASSES` | - | - |
+| __init__.py | `COMMAND_BINDS` | - | - |
+| __init__.py | `FUNCTIONS` | - | - |
+| __init__.py | `HOTKEYS` | - | - |
+| __init__.py | `INIT_SEQUENCE` | - | - |
+| __init__.py | `IO_READS` | - | - |
+| __init__.py | `IO_WRITES` | - | - |
+| __init__.py | `RETURNS` | - | - |
+| __init__.py | `STATE_VARS` | - | - |
+| __init__.py | `THREAD_TARGETS` | - | - |
+| __init__.py | `TK_BINDS` | - | - |
+| analyzer_state.py | `COMMAND_BINDS` | - | - |
+| analyzer_state.py | `HOTKEYS` | - | - |
+| analyzer_state.py | `IMPORTS_LOCAL` | - | - |
+| analyzer_state.py | `INIT_SEQUENCE` | - | - |
+| analyzer_state.py | `IO_READS` | - | - |
+| analyzer_state.py | `THREAD_TARGETS` | - | - |
+| analyzer_state.py | `TK_BINDS` | - | - |
+| batch_annotate_modular.py | `COMMAND_BINDS` | - | - |
+| batch_annotate_modular.py | `HOTKEYS` | - | - |
+| batch_annotate_modular.py | `INIT_SEQUENCE` | - | - |
+| batch_annotate_modular.py | `IO_READS` | - | - |
+| batch_annotate_modular.py | `IO_WRITES` | - | - |
+| batch_annotate_modular.py | `TK_BINDS` | - | - |
+| batch_annotate_modular.py | `files` | _process_folder, find_python_files | _process_folder, find_python_files |
+| batch_annotate_modular.py | `state_map` | _run, generate_markdown, process_single_file | _run, generate_markdown |
+| batch_annotate_modular.py | `state_table` | _run, generate_markdown | _run, generate_markdown |
+| behavioral_analysis.py | `COMMAND_BINDS` | - | - |
+| behavioral_analysis.py | `GLOBALS` | - | - |
+| behavioral_analysis.py | `HOTKEYS` | - | - |
+| behavioral_analysis.py | `IMPORTS_LOCAL` | - | - |
+| behavioral_analysis.py | `INIT_SEQUENCE` | - | - |
+| behavioral_analysis.py | `IO_READS` | - | - |
+| behavioral_analysis.py | `IO_WRITES` | - | - |
+| behavioral_analysis.py | `STATE_VARS` | - | - |
+| behavioral_analysis.py | `THREAD_TARGETS` | - | - |
+| behavioral_analysis.py | `TK_BINDS` | - | - |
+| core_analyzer.py | `COMMAND_BINDS` | - | - |
+| core_analyzer.py | `GLOBALS` | - | - |
+| core_analyzer.py | `HOTKEYS` | - | - |
+| core_analyzer.py | `INIT_SEQUENCE` | - | - |
+| core_analyzer.py | `IO_READS` | - | - |
+| core_analyzer.py | `IO_WRITES` | - | - |
+| core_analyzer.py | `THREAD_TARGETS` | - | - |
+| core_analyzer.py | `TK_BINDS` | - | - |
+| file_io.py | `COMMAND_BINDS` | - | - |
+| file_io.py | `GLOBALS` | - | - |
+| file_io.py | `HOTKEYS` | - | - |
+| file_io.py | `INIT_SEQUENCE` | - | - |
+| file_io.py | `IO_READS` | - | - |
+| file_io.py | `IO_WRITES` | - | - |
+| file_io.py | `STATE_VARS` | - | - |
+| file_io.py | `THREAD_TARGETS` | - | - |
+| file_io.py | `TK_BINDS` | - | - |
+| intent_enhancer_v2.py | `CLASSES` | - | - |
+| intent_enhancer_v2.py | `COMMAND_BINDS` | - | - |
+| intent_enhancer_v2.py | `HOTKEYS` | - | - |
+| intent_enhancer_v2.py | `INIT_SEQUENCE` | - | - |
+| intent_enhancer_v2.py | `IO_READS` | - | - |
+| intent_enhancer_v2.py | `IO_WRITES` | - | - |
+| intent_enhancer_v2.py | `THREAD_TARGETS` | - | - |
+| intent_enhancer_v2.py | `TK_BINDS` | - | - |
+| intent_inference.py | `CLASSES` | - | - |
+| intent_inference.py | `COMMAND_BINDS` | - | - |
+| intent_inference.py | `HOTKEYS` | - | - |
+| intent_inference.py | `INIT_SEQUENCE` | - | - |
+| intent_inference.py | `IO_READS` | - | - |
+| intent_inference.py | `IO_WRITES` | - | - |
+| intent_inference.py | `THREAD_TARGETS` | - | - |
+| intent_inference.py | `TK_BINDS` | - | - |
+| main.py | `CLASSES` | - | - |
+| main.py | `COMMAND_BINDS` | - | - |
+| main.py | `GLOBALS` | - | - |
+| main.py | `HOTKEYS` | - | - |
+| main.py | `IO_READS` | - | - |
+| main.py | `IO_WRITES` | - | - |
+| main.py | `THREAD_TARGETS` | - | - |
+| main.py | `TK_BINDS` | - | - |
+| project_architect.py | `CLASSES` | - | - |
+| project_architect.py | `COMMAND_BINDS` | - | - |
+| project_architect.py | `HOTKEYS` | - | - |
+| project_architect.py | `IMPORTS_LOCAL` | - | - |
+| project_architect.py | `INIT_SEQUENCE` | - | - |
+| project_architect.py | `IO_READS` | - | - |
+| project_architect.py | `IO_WRITES` | - | - |
+| project_architect.py | `THREAD_TARGETS` | - | - |
+| project_architect.py | `TK_BINDS` | - | - |
+| state_machine_detector.py | `COMMAND_BINDS` | - | - |
+| state_machine_detector.py | `HOTKEYS` | - | - |
+| state_machine_detector.py | `IMPORTS_LOCAL` | - | - |
+| state_machine_detector.py | `INIT_SEQUENCE` | - | - |
+| state_machine_detector.py | `IO_READS` | - | - |
+| state_machine_detector.py | `IO_WRITES` | - | - |
+| state_machine_detector.py | `THREAD_TARGETS` | - | - |
+| state_machine_detector.py | `TK_BINDS` | - | - |
+| state_machine_detector.py | `detector` | detect_state_machines, generate_state_machine_diagram, render_state_machine_summary | detect_state_machines, generate_state_machine_diagram, render_state_machine_summary |
+| state_machine_detector.py | `from_state` | _analyze_transitions, generate_mermaid_diagram | _analyze_transitions, generate_mermaid_diagram |
+| state_machine_detector.py | `to_state` | _analyze_transitions, generate_mermaid_diagram | _analyze_transitions, generate_mermaid_diagram |
+| state_machine_detector.py | `var_type` | _analyze_transitions, _classify_state_variable, _detect_state_variables, generate_mermaid_diagram | _classify_state_variable, _detect_state_variables |
+| state_tracker.py | `CLASSES` | - | - |
+| state_tracker.py | `COMMAND_BINDS` | - | - |
+| state_tracker.py | `HOTKEYS` | - | - |
+| state_tracker.py | `IMPORTS_LOCAL` | - | - |
+| state_tracker.py | `INIT_SEQUENCE` | - | - |
+| state_tracker.py | `IO_READS` | - | - |
+| state_tracker.py | `IO_WRITES` | - | - |
+| state_tracker.py | `THREAD_TARGETS` | - | - |
+| state_tracker.py | `TK_BINDS` | - | - |
+| synopsis_renderer.py | `COMMAND_BINDS` | - | - |
+| synopsis_renderer.py | `GLOBALS` | - | - |
+| synopsis_renderer.py | `HOTKEYS` | - | - |
+| synopsis_renderer.py | `IMPORTS_LOCAL` | - | - |
+| synopsis_renderer.py | `INIT_SEQUENCE` | - | - |
+| synopsis_renderer.py | `IO_READS` | - | - |
+| synopsis_renderer.py | `IO_WRITES` | - | - |
+| synopsis_renderer.py | `STATE_VARS` | - | - |
+| synopsis_renderer.py | `THREAD_TARGETS` | - | - |
+| synopsis_renderer.py | `TK_BINDS` | - | - |
+| utils.py | `COMMAND_BINDS` | - | - |
+| utils.py | `GLOBALS` | - | - |
+| utils.py | `HOTKEYS` | - | - |
+| utils.py | `IMPORTS_LOCAL` | - | - |
+| utils.py | `INIT_SEQUENCE` | - | - |
+| utils.py | `IO_READS` | - | - |
+| utils.py | `IO_WRITES` | - | - |
+| utils.py | `THREAD_TARGETS` | - | - |
+| utils.py | `TK_BINDS` | - | - |

@@ -1,3 +1,6 @@
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 """
 Core Code Analyzer - Main analysis engine for Python code.
 
@@ -15,6 +18,184 @@ except ImportError:
     from state_machine_detector import StateMachineDetector  # Fallback for direct execution
 
 
+# =============================================================================
+# SCOPE & ACCESS ANALYZERS
+# =============================================================================
+class ScopeIndexer(ast.NodeVisitor):
+    """
+    Builds symbol indexes:
+      - module_assigned: names assigned at module level
+      - module_imported: names imported at module level (to exclude)
+      - func_params/locals/globals_declared: per-function local symbols
+    """
+    def __init__(self):
+        self.module_assigned: Set[str] = set()
+        self.module_imported: Set[str] = set()
+        self.func_params: Dict[str, Set[str]] = {}
+        self.func_locals: Dict[str, Set[str]] = {}
+        self.func_globals_declared: Dict[str, Set[str]] = {}
+        self.func_nonlocals_declared: Dict[str, Set[str]] = {}
+        self._func_stack: List[str] = []  # qualified names if you have nesting
+
+    # ---------- Module-level ----------
+    def visit_Assign(self, node: ast.Assign):
+        if not self._func_stack:  # at module scope
+            for t in node.targets:
+                if isinstance(t, ast.Name):
+                    self.module_assigned.add(t.id)
+        self.generic_visit(node)
+
+    def visit_AnnAssign(self, node: ast.AnnAssign):
+        if not self._func_stack and isinstance(node.target, ast.Name):
+            self.module_assigned.add(node.target.id)
+        self.generic_visit(node)
+
+    def visit_AugAssign(self, node: ast.AugAssign):
+        if not self._func_stack and isinstance(node.target, ast.Name):
+            self.module_assigned.add(node.target.id)
+        self.generic_visit(node)
+
+    def visit_Import(self, node: ast.Import):
+        if not self._func_stack:
+            for alias in node.names:
+                if alias.asname:
+                    self.module_imported.add(alias.asname)
+                else:
+                    # 'import pkg.subpkg' exposes 'pkg' in module scope
+                    self.module_imported.add(alias.name.split(".")[0])
+        self.generic_visit(node)
+
+    def visit_ImportFrom(self, node: ast.ImportFrom):
+        if not self._func_stack:
+            for alias in node.names:
+                self.module_imported.add(alias.asname or alias.name)
+        self.generic_visit(node)
+
+    # ---------- Functions & inner scopes ----------
+    def visit_FunctionDef(self, node: ast.FunctionDef):
+        self._enter_func(node.name, node)
+        self.generic_visit(node)
+        self._exit_func()
+
+    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef):
+        self._enter_func(node.name, node)
+        self.generic_visit(node)
+        self._exit_func()
+
+    def _enter_func(self, name: str, node: ast.AST):
+        self._func_stack.append(name)
+        self.func_params[name] = self._collect_params(node)
+        self.func_locals[name] = set()
+        self.func_globals_declared[name] = set()
+        self.func_nonlocals_declared[name] = set()
+
+    def _exit_func(self):
+        self._func_stack.pop()
+
+    def _collect_params(self, node: ast.AST) -> Set[str]:
+        params: Set[str] = set()
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            a = node.args
+            for arg in (a.posonlyargs + a.args + a.kwonlyargs):
+                params.add(arg.arg)
+            if a.vararg:
+                params.add(a.vararg.arg)
+            if a.kwarg:
+                params.add(a.kwarg.arg)
+        return params
+
+    # locals via assignment/targets inside a function
+    def visit_Name(self, node: ast.Name):
+        if self._func_stack and isinstance(node.ctx, ast.Store):
+            self.func_locals[self._func_stack[-1]].add(node.id)
+        self.generic_visit(node)
+
+    def visit_For(self, node: ast.For):
+        if self._func_stack:
+            for name in _names_in_target(node.target):
+                self.func_locals[self._func_stack[-1]].add(name)
+        self.generic_visit(node)
+
+    def visit_With(self, node: ast.With):
+        if self._func_stack:
+            for item in node.items:
+                if item.optional_vars is not None:
+                    for name in _names_in_target(item.optional_vars):
+                        self.func_locals[self._func_stack[-1]].add(name)
+        self.generic_visit(node)
+
+    def visit_ExceptHandler(self, node: ast.ExceptHandler):
+        if self._func_stack and node.name:
+            self.func_locals[self._func_stack[-1]].add(node.name)
+        self.generic_visit(node)
+
+    def visit_Global(self, node: ast.Global):
+        if self._func_stack:
+            self.func_globals_declared[self._func_stack[-1]].update(node.names)
+        self.generic_visit(node)
+
+    def visit_Nonlocal(self, node: ast.Nonlocal):
+        if self._func_stack:
+            self.func_nonlocals_declared[self._func_stack[-1]].update(node.names)
+        self.generic_visit(node)
+
+
+def _names_in_target(target: ast.AST) -> Set[str]:
+    """Extract all simple names bound by an assignment/target expression."""
+    names: Set[str] = set()
+    if isinstance(target, ast.Name):
+        names.add(target.id)
+    elif isinstance(target, (ast.Tuple, ast.List)):
+        for elt in target.elts:
+            names.update(_names_in_target(elt))
+    # ignore attributes/subscripts—they don't bind simple names
+    return names
+
+
+class GlobalAccessVisitor(ast.NodeVisitor):
+    """
+    Tracks reads/writes of *true globals* in a function, given:
+      - module_assigned (module-level vars)
+      - module_imported (module-level imports, excluded)
+      - func_params, func_locals, func_globals_declared/nonlocals
+    """
+    def __init__(self,
+                 module_assigned: Set[str],
+                 module_imported: Set[str],
+                 func_params: Set[str],
+                 func_locals: Set[str],
+                 func_globals_declared: Set[str]):
+        self.module_assigned = set(module_assigned)
+        self.module_imported = set(module_imported)
+        self.func_params = set(func_params)
+        self.func_locals = set(func_locals)
+        self.func_globals_declared = set(func_globals_declared)
+
+        self.reads: Set[str] = set()
+        self.writes: Set[str] = set()
+
+    def _is_true_global(self, name: str) -> bool:
+        if name.startswith("__"):
+            return False
+        if name in self.func_params:
+            return False
+        if name in self.module_imported:
+            return False
+        # Treat as global if either declared global in this function
+        # OR it's a module-level assigned name.
+        # Note: Don't exclude func_locals here because variables declared as global
+        # are both in func_locals (due to assignment) and func_globals_declared
+        return (name in self.func_globals_declared) or (name in self.module_assigned)
+
+    def visit_Name(self, node: ast.Name):
+        if self._is_true_global(node.id):
+            if isinstance(node.ctx, ast.Load):
+                self.reads.add(node.id)
+            elif isinstance(node.ctx, ast.Store):
+                self.writes.add(node.id)
+        self.generic_visit(node)
+
+
 class CodeAnalyzer:
     """
     Main code analyzer that coordinates analysis of Python source files.
@@ -23,12 +204,19 @@ class CodeAnalyzer:
     process and coordinating with specialized analysis modules.
     """
     
-    def __init__(self, filepath: str, *, include_machine_block: bool = True):
-        """Initialize the analyzer with a file path."""
+    def __init__(self, filepath: str, state=None, *, include_machine_block: bool = True):
+        """Initialize the analyzer with a file path and optional shared state."""
         self.filepath = filepath
         self.filename = os.path.basename(filepath)
         self.dirpath = os.path.dirname(os.path.abspath(filepath))
         self.include_machine_block = include_machine_block
+        
+        # Use shared state if provided, otherwise create local state
+        if state is not None:
+            self.state = state
+        else:
+            from .analyzer_state import new_state
+            self.state = new_state()
 
         # Core analysis stores
         self.globals_found: Set[str] = set()
@@ -110,6 +298,9 @@ class CodeAnalyzer:
 
     def analyze(self):
         """Run the complete analysis pipeline."""
+        # Build symbol indexes first
+        self.build_symbol_indexes()
+        
         # Basic analysis
         self.find_globals()
         self.analyze_classes()
@@ -138,14 +329,44 @@ class CodeAnalyzer:
 
         # NEW: Extract function signatures (added feature)
         self.extract_function_signatures()
+        
+        # NEW: Map which functions read/write each global
+        self.map_global_accesses()
+
+    def build_symbol_indexes(self):
+        """Build scope indexes for this file's AST."""
+        self.scope_idx = ScopeIndexer()
+        self.scope_idx.visit(self.tree)
+
+    def _analyze_function_accesses(self, func_node: ast.AST, func_name: str):
+        """Populate reads/writes for a function using scope indexes."""
+        params = self.scope_idx.func_params.get(func_name, set())
+        locals_ = self.scope_idx.func_locals.get(func_name, set())
+        decl_globals = self.scope_idx.func_globals_declared.get(func_name, set())
+        gav = GlobalAccessVisitor(
+            module_assigned=self.scope_idx.module_assigned,
+            module_imported=self.scope_idx.module_imported,
+            func_params=params,
+            func_locals=locals_,
+            func_globals_declared=decl_globals
+        )
+        gav.visit(func_node)
+        self.functions.setdefault(func_name, {})
+        self.functions[func_name]["reads"] = gav.reads
+        self.functions[func_name]["writes"] = gav.writes
 
     def find_globals(self):
-        """Find all global variable assignments."""
-        for node in ast.walk(self.tree):
-            if isinstance(node, ast.Assign):
-                for target in node.targets:
-                    if isinstance(target, ast.Name):
-                        self.globals_found.add(target.id)
+        """Find all global variable assignments and references using proper scope analysis."""
+        # Use the new ScopeIndexer for accurate scope analysis
+        indexer = ScopeIndexer()
+        indexer.visit(self.tree)
+        
+        # Store the scope information for use in analyze_functions
+        self.scope_indexer = indexer
+        
+        # The globals_found will be determined by the GlobalAccessVisitor
+        # when it analyzes each function with proper scope context
+        self.globals_found = indexer.module_assigned
 
     def analyze_classes(self):
         """Analyze class definitions and their methods."""
@@ -160,7 +381,7 @@ class CodeAnalyzer:
     def analyze_functions(self):
         """Analyze function definitions and their behavior."""
         for node in ast.walk(self.tree):
-            if isinstance(node, ast.FunctionDef):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 info = {
                     'line': node.lineno,
                     'reads': set(),
@@ -168,19 +389,51 @@ class CodeAnalyzer:
                     'calls': set(),
                     'returns_value': False
                 }
+                
+                # ============================================================================
+                # DETECT GLOBAL READS / WRITES INSIDE THIS FUNCTION
+                # ============================================================================
+                # Use the new enhanced function access analysis
+                self._analyze_function_accesses(node, node.name)
+                func_name = node.name
+                
+                # Preserve reads/writes from scope analysis
+                existing_reads = self.functions.get(func_name, {}).get("reads", set())
+                existing_writes = self.functions.get(func_name, {}).get("writes", set())
+                info["reads"] = existing_reads
+                info["writes"] = existing_writes
+                
+                # Still need to track calls and return values
                 for sub in ast.walk(node):
-                    if isinstance(sub, ast.Name):
-                        if isinstance(sub.ctx, ast.Store):
-                            info['writes'].add(sub.id)
-                        elif isinstance(sub.ctx, ast.Load):
-                            info['reads'].add(sub.id)
-                    elif isinstance(sub, ast.Call):
+                    if isinstance(sub, ast.Call):
                         callee = self._call_to_name(sub.func)
                         if callee:
                             info['calls'].add(callee)
                     elif isinstance(sub, ast.Return) and sub.value is not None:
                         info['returns_value'] = True
-                self.functions[node.name] = info
+                        
+                self.functions[func_name] = info
+
+    def map_global_accesses(self):
+        """Map which functions read and write each global variable."""
+        self.shared_state_map: Dict[str, Dict[str, Set[str]]] = {}
+        
+        for func_name, func_info in self.functions.items():
+            for var in func_info.get("reads", set()) | func_info.get("writes", set()):
+                if var not in self.shared_state_map:
+                    self.shared_state_map[var] = {"readers": set(), "writers": set()}
+                
+                if var in func_info.get("reads", set()):
+                    self.shared_state_map[var]["readers"].add(func_name)
+                if var in func_info.get("writes", set()):
+                    self.shared_state_map[var]["writers"].add(func_name)
+        
+        # Merge with existing state_vars
+        for var, access_info in self.shared_state_map.items():
+            if var not in self.state_vars:
+                self.state_vars[var] = {"values": set(), "writers": set(), "readers": set()}
+            self.state_vars[var]["writers"].update(access_info["writers"])
+            self.state_vars[var]["readers"].update(access_info["readers"])
 
     def _is_local_module(self, module_name: str) -> bool:
         """Check if a module is local to the project."""

@@ -1,15 +1,15 @@
 #===============================================================================
 # CODE SYNOPSIS: batch_annotate_modular.py
-# SYNOPSIS_HASH: 973fcfa02948997d80767afa493a0f313b075408a57094bbbb0f7720ed288fe5
-# Generated: 2025-10-24 22:17:09
-# INTENT: Manages external processes. Processes various components.
+# SYNOPSIS_HASH: 1d6908a00d3213f6ac941242ab922afbf505bc2e5a9ca69fea017d341f768471
+# Generated: 2025-10-24 23:31:32
+# INTENT: Creates and manages user interface components. Processes various components.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 398
-#   Functions: 23
+#   Total Lines: 464
+#   Functions: 24
 #   Classes: 1
-#   Global Variables: 44
+#   Global Variables: 10
 #
 # Key Dependencies:
 #   - argparse
@@ -24,10 +24,12 @@
 #   - threading
 #   - tkinter
 #   (Local modules):
+#     * analyzer_state
 #     * behavioral_analysis
 #     * core_analyzer
 #     * intent_inference
 #     * project_architect
+#     * state_tracker
 #     * synopsis_renderer
 #
 #===============================================================================
@@ -35,13 +37,13 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 22:17:09
+# LAST_ANALYZED: 2025-10-24 23:31:32
 # FILE: batch_annotate_modular.py
 # IMPORTS_EXTERNAL: argparse, datetime, glob, hashlib, os, pathlib, shutil, subprocess, sys, threading, tkinter
-# IMPORTS_LOCAL: behavioral_analysis, core_analyzer, intent_inference, project_architect, synopsis_renderer
-# GLOBALS: ANNOTATOR_VERSION, HEADER_BOUNDARY, all_files, analyzer, app, args, backup_dir, backup_path, base_dir, behavioral_analyzer, btn_frame, category, code_body, code_hash, current_code, current_hash, duration, file, files, folder, frame, has_synopsis, header, header_lines, insert_at, lines, msg, opts, output, parser, path, rel_path, renderer, results, root, skip_patterns, start, stored_hash, synopsis_header, t, total, total_time, up_to_date, versioned_content
-# FUNCTIONS: __init__, _build_ui, _process_folder, _process_single, _run, compute_code_hash, extract_existing_hash, find_python_files, format_duration, generate_markdown, get_code_body, is_up_to_date, log, make_backup, open_folder, open_folder_in_explorer, process_batch, process_single_file, run_batch, run_in_thread, run_single, select_file, select_folder
-# RETURNS: compute_code_hash, extract_existing_hash, find_python_files, format_duration, get_code_body, is_up_to_date, make_backup, process_batch, process_single_file
+# IMPORTS_LOCAL: analyzer_state, behavioral_analysis, core_analyzer, intent_inference, project_architect, state_tracker, synopsis_renderer
+# GLOBALS: ANNOTATOR_VERSION, HEADER_BOUNDARY, app, args, files, parser, project_structure_path, root, state_map, state_table
+# FUNCTIONS: __init__, _build_ui, _process_folder, _process_single, _run, compute_code_hash, extract_existing_hash, find_python_files, format_duration, generate_markdown, get_code_body, is_up_to_date, log, make_backup, open_folder, open_folder_in_explorer, process_batch, process_single_file, run_batch, run_in_thread, run_single, select_file, select_folder, strip_all_annotations
+# RETURNS: compute_code_hash, extract_existing_hash, find_python_files, format_duration, get_code_body, is_up_to_date, make_backup, process_batch, process_single_file, strip_all_annotations
 # THREAD_TARGETS: fn
 # HOTKEYS: 
 # TK_BINDS: 
@@ -50,12 +52,12 @@
 # IO_READS: 
 # IO_WRITES: 
 # CALLGRAPH_ROOTS: __init__,_build_ui,open_folder,log,select_file,select_folder,run_in_thread,run_single,run_batch,generate_markdown,_process_single,_process_folder,_run
-# STATE_VARS: 
-# STATE_MACHINES_COUNT: 0
+# STATE_VARS: ANNOTATOR_VERSION,HEADER_BOUNDARY,files,root,state,state_map,state_table
+# STATE_MACHINES_COUNT: 1
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
-# INTENT: Manages external processes. Processes various components.
-# FUNCTION_INTENTS: __init__=Handles the target entities., _build_ui=Constructs or generates ui., _process_folder=Handles or executes folder., _process_single=Handles or executes single., _run=Handles the target entities., compute_code_hash=Handles code hash., extract_existing_hash=Retrieves existing hash., find_python_files=Locates or gathers python files., format_duration=Handles duration., generate_markdown=Handles markdown., get_code_body=Handles code body., is_up_to_date=Handles up to date., log=Handles the target entities., make_backup=Handles backup., open_folder=Handles folder., open_folder_in_explorer=Handles folder in explorer., process_batch=Handles or executes batch., process_single_file=Handles or executes single file., run_batch=Handles batch., run_in_thread=Handles in thread., run_single=Handles single., select_file=Handles file., select_folder=Handles folder.
+# INTENT: Creates and manages user interface components. Processes various components.
+# FUNCTION_INTENTS: __init__=Handles the target entities., _build_ui=Constructs or generates ui., _process_folder=Handles or executes folder., _process_single=Handles or executes single., _run=Handles the target entities., compute_code_hash=Handles code hash., extract_existing_hash=Retrieves existing hash., find_python_files=Locates or gathers python files., format_duration=Handles duration., generate_markdown=Handles markdown., get_code_body=Handles code body., is_up_to_date=Handles up to date., log=Handles the target entities., make_backup=Handles backup., open_folder=Handles folder., open_folder_in_explorer=Handles folder in explorer., process_batch=Handles or executes batch., process_single_file=Handles or executes single file., run_batch=Handles batch., run_in_thread=Handles in thread., run_single=Handles single., select_file=Handles file., select_folder=Handles folder., strip_all_annotations=Handles all annotations.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
@@ -103,9 +105,12 @@
 # open_folder_in_explorer(path) -> None
 #   Open folder in file explorer (cross-platform).
 #
-# process_batch(files, dry_run = False, backup = True, skip_annotated = False) -> None
+# process_batch(files, dry_run = False, backup = True, skip_annotated = False, force_rewrite = False) -> None
 #
-# process_single_file(file_path, dry_run = False, backup = True) -> None
+# process_single_file(file_path, dry_run = False, backup = True, force_rewrite = False) -> None
+#
+# strip_all_annotations(file_path) -> None
+#   Completely remove all existing synopsis annotations from a file.
 #
 #===============================================================================
 #
@@ -118,7 +123,7 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   AnnotatorGUI (line 224):
+#   AnnotatorGUI (line 271):
 #     - AnnotatorGUI.__init__()
 #     - AnnotatorGUI._build_ui()
 #     - AnnotatorGUI.open_folder()
@@ -135,41 +140,17 @@
 #
 # CRITICAL GLOBAL VARIABLES:
 #
-# path:
-#   Modified by: find_python_files, open_folder, run_single, run_batch
-#   Read by: find_python_files, open_folder_in_explorer, open_folder, run_single, run_batch, _process_single
-#
-# folder:
-#   Modified by: open_folder_in_explorer, select_folder, generate_markdown
-#   Read by: open_folder_in_explorer, select_folder, generate_markdown, _process_folder, _run
-#
-# msg:
-#   Modified by: process_single_file, process_batch, _process_single
-#   Read by: process_single_file, process_batch, log, _process_single
-#
-# files:
-#   Modified by: find_python_files, _process_folder
-#   Read by: find_python_files, process_batch, _process_folder
-#
-# output:
+# state_table:
 #   Modified by: generate_markdown, _run
 #   Read by: generate_markdown, _run
 #
-# start:
-#   Modified by: process_single_file, process_batch
-#   Read by: process_single_file, process_batch
+# files:
+#   Modified by: find_python_files, _process_folder
+#   Read by: find_python_files, _process_folder
 #
-# results:
-#   Modified by: process_batch, _process_folder
-#   Read by: process_batch, _process_folder
-#
-# category:
-#   Modified by: process_single_file, process_batch
-#   Read by: process_single_file, process_batch
-#
-# root:
-#   Modified by: find_python_files
-#   Read by: find_python_files, __init__
+# state_map:
+#   Modified by: generate_markdown, _run
+#   Read by: generate_markdown, _run
 #
 #===============================================================================
 #
@@ -177,58 +158,14 @@
 #
 #   UI State:
 #     - root
-#   Timing State:
-#     - duration
-#     - renderer
-#     - start
-#     - total_time
+#   Control State:
+#     - state_map
+#     - state_table
 #   Position State:
 #     - HEADER_BOUNDARY
-#     - analyzer
-#     - behavioral_analyzer
-#     - category
-#     - code_body
-#     - has_synopsis
-#     - synopsis_header
 #   Config State:
-#     - all_files
-#     - backup_path
-#     - file
 #     - files
-#     - path
-#     - rel_path
-#===============================================================================
-#
-# ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
-#
-# make_backup() - line 70  (Returns: Yes)
-#   Modifies: backup_dir, backup_path, base_dir
-#   Reads: backup_dir, backup_path, base_dir
-#
-# is_up_to_date() - line 79  (Returns: Yes)
-#   Modifies: current_code, current_hash, stored_hash
-#   Reads: current_code, current_hash, stored_hash
-#
-# find_python_files() - line 88  (Returns: Yes)
-#   Modifies: all_files, files, path, root, skip_patterns
-#   Reads: all_files, files, path, root, skip_patterns
-#
-# process_single_file() - line 146  (Returns: Yes)
-#   Modifies: analyzer, behavioral_analyzer, category, code_body, code_hash, duration, has_synopsis, header_lines
-#   Reads: HEADER_BOUNDARY, analyzer, behavioral_analyzer, category, code_body, code_hash, duration, has_synopsis
-#
-# process_batch() - line 199  (Returns: Yes)
-#   Modifies: category, msg, rel_path, results, start, total_time
-#   Reads: category, files, msg, rel_path, results, start, total_time
-#
-# _build_ui() - line 241  (Returns: No)
-#   Modifies: btn_frame, frame, opts
-#   Reads: btn_frame, frame, opts
-#
-# _process_folder() - line 342  (Returns: No)
-#   Modifies: files, results, total
-#   Reads: files, folder, results, total
-#
+#     - project_structure_path
 #===============================================================================
 #
 # 🧠 FUNCTION BEHAVIORAL SUMMARIES:
@@ -266,37 +203,49 @@
 #
 #===============================================================================
 #
-# 🔄 STATE MACHINES:
+# 🔄 STATE MACHINES DETECTED:
 #
-#   (No state machines detected.)
+#   📍 state (State Variable):
+#      States: (values unknown)
+#      Modified by: process_single_file
+#
 #
 #===============================================================================
 #
+# 🔄 STATE MACHINE DIAGRAMS:
+#
+# ```mermaid
+# stateDiagram-v2
+#     [*] --> Unknown
+# ```
+#
+#
 # 📊 DATA FLOW SUMMARY:
 #
-#   compute_code_hash() — reads ANNOTATOR_VERSION, versioned_content; writes versioned_content; calls hashlib.sha256, hexdigest, versioned_content.encode; returns value
-#   extract_existing_hash() — reads header; writes header; calls f.read, header.splitlines, line.split, line.strip, open, startswith; returns value
-#   get_code_body() — reads HEADER_BOUNDARY, lines; writes lines; calls enumerate, f.readlines, join, line.strip, open; returns value
-#   make_backup() — reads backup_dir, backup_path, base_dir; writes backup_dir, backup_path, base_dir; calls os.makedirs, os.path.basename, os.path.dirname, os.path.join, shutil.copy2; returns value
-#   is_up_to_date() — reads current_code, current_hash, stored_hash; writes current_code, current_hash, stored_hash; calls compute_code_hash, extract_existing_hash, get_code_body; returns value
-#   find_python_files() — reads all_files, files, path, root, skip_patterns; writes all_files, files, path, root, skip_patterns; calls any, d.startswith, filename.endswith, filename.startswith, files.append, glob.glob; returns value
+#   compute_code_hash() — reads ANNOTATOR_VERSION; calls hashlib.sha256, hexdigest, versioned_content.encode; returns value
+#   extract_existing_hash() — calls f.read, header.splitlines, line.split, line.strip, open, startswith; returns value
+#   strip_all_annotations() — calls content.split, enumerate, f.read, join, len, line.startswith; returns value
+#   get_code_body() — reads HEADER_BOUNDARY; calls enumerate, f.readlines, join, line.strip, open; returns value
+#   make_backup() — calls os.makedirs, os.path.basename, os.path.dirname, os.path.join, shutil.copy2; returns value
+#   is_up_to_date() — calls compute_code_hash, extract_existing_hash, get_code_body; returns value
+#   find_python_files() — reads files, root; writes files, root; calls any, d.startswith, filename.endswith, filename.startswith, files.append, glob.glob; returns value
 #   format_duration() — calls divmod, int; returns value
-#   open_folder_in_explorer() — reads folder, path; writes folder; calls messagebox.showerror, os.path.dirname, os.path.exists, os.path.isdir, os.startfile, subprocess.Popen; no return value
-#   process_single_file() — reads HEADER_BOUNDARY, analyzer, behavioral_analyzer, category, code_body, code_hash; writes analyzer, behavioral_analyzer, category, code_body, code_hash, duration; calls BehavioralAnalyzer, CodeAnalyzer, SynopsisRenderer, analyzer.analyze, any, compute_code_hash; returns value
-#   process_batch() — reads category, files, msg, rel_path, results, start; writes category, msg, rel_path, results, start, total_time; calls append, datetime.now, enumerate, format_duration, is_up_to_date, len; returns value
-#   __init__() — reads root; calls self._build_ui, self.log, self.root.configure, self.root.geometry, self.root.resizable, self.root.title; no return value
-#   _build_ui() — reads btn_frame, frame, opts; writes btn_frame, frame, opts; calls btn_frame.pack, frame.pack, opts.pack, pack, scrolledtext.ScrolledText, self.log_box.config; no return value
-#   open_folder() — reads path; writes path; calls messagebox.showerror, open_folder_in_explorer, self.path_var.get, strip; no return value
-#   log() — reads msg, t; writes t; calls datetime.now, self.log_box.config, self.log_box.insert, self.log_box.see, self.root.update_idletasks, strftime; no return value
-#   select_file() — reads file; writes file; calls filedialog.askopenfilename, self.log, self.path_var.set; no return value
-#   select_folder() — reads folder; writes folder; calls filedialog.askdirectory, self.log, self.path_var.set; no return value
+#   open_folder_in_explorer() — calls messagebox.showerror, os.path.dirname, os.path.exists, os.path.isdir, os.startfile, subprocess.Popen; no return value
+#   process_single_file() — reads HEADER_BOUNDARY; calls BehavioralAnalyzer, CodeAnalyzer, SynopsisRenderer, analyzer.analyze, any, compute_code_hash; returns value
+#   process_batch() — calls append, datetime.now, enumerate, format_duration, is_up_to_date, len; returns value
+#   __init__() — calls self._build_ui, self.log, self.root.configure, self.root.geometry, self.root.resizable, self.root.title; no return value
+#   _build_ui() — calls btn_frame.pack, frame.pack, opts.pack, pack, scrolledtext.ScrolledText, self.log_box.config; no return value
+#   open_folder() — calls messagebox.showerror, open_folder_in_explorer, self.path_var.get, strip; no return value
+#   log() — calls datetime.now, self.log_box.config, self.log_box.insert, self.log_box.see, self.root.update_idletasks, strftime; no return value
+#   select_file() — calls filedialog.askopenfilename, self.log, self.path_var.set; no return value
+#   select_folder() — calls filedialog.askdirectory, self.log, self.path_var.set; no return value
 #   run_in_thread() — calls start, threading.Thread; no return value
-#   run_single() — reads path; writes path; calls messagebox.showerror, os.path.isfile, self._process_single, self.path_var.get, self.run_in_thread, strip; no return value
-#   run_batch() — reads path; writes path; calls messagebox.showerror, os.path.isdir, self._process_folder, self.path_var.get, self.run_in_thread, strip; no return value
-#   generate_markdown() — reads folder, output; writes folder, output; calls build_project_summary, messagebox.showerror, os.path.isdir, self.log, self.path_var.get, self.run_in_thread; no return value
-#   _run() — reads folder, output; writes output; calls build_project_summary, self.log; no return value
-#   _process_single() — reads msg, path; writes msg; calls format_duration, process_single_file, self.backup_var.get, self.dry_run_var.get, self.log; no return value
-#   _process_folder() — reads files, folder, results, total; writes files, results, total; calls find_python_files, len, process_batch, results.values, self.backup_var.get, self.dry_run_var.get; no return value
+#   run_single() — calls messagebox.showerror, os.path.isfile, self._process_single, self.path_var.get, self.run_in_thread, strip; no return value
+#   run_batch() — calls messagebox.showerror, os.path.isdir, self._process_folder, self.path_var.get, self.run_in_thread, strip; no return value
+#   generate_markdown() — reads state_map, state_table; writes state_map, state_table; calls build_project_summary, build_state_table, f.write, generate_state_markdown, messagebox.showerror, open; no return value
+#   _run() — reads state_map, state_table; writes state_map, state_table; calls build_project_summary, build_state_table, f.write, generate_state_markdown, open, self.log; no return value
+#   _process_single() — calls format_duration, process_single_file, self.backup_var.get, self.dry_run_var.get, self.force_rewrite_var.get, self.log; no return value
+#   _process_folder() — reads files; writes files; calls find_python_files, len, process_batch, results.values, self.backup_var.get, self.dry_run_var.get; no return value
 #===============================================================================
 #
 # 🔧 MODULARIZATION RECOMMENDATIONS:
@@ -344,6 +293,10 @@
 #===============================================================================
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 #!/usr/bin/env python3
 # =============================================================================
 # BATCH ANNOTATE MODULAR - DARK MODE GUI + FOLDER OPEN + PROJECT SUMMARY
@@ -371,6 +324,7 @@ try:
     from synopsis_renderer import SynopsisRenderer
     from intent_inference import inject_intent
     from project_architect import build_project_summary  # NEW
+    from state_tracker import build_state_table, generate_state_markdown
 except ImportError as e:
     print("ERROR: Cannot import required modules")
     print(f"Error details: {e}")
@@ -718,6 +672,16 @@ class AnnotatorGUI:
             try:
                 output = build_project_summary(folder)
                 self.log(f"✓ Project summary written to {output}", "updated")
+                
+                # Generate shared state table and append to PROJECT_STRUCTURE.md
+                self.log(f"Generating shared state table for: {folder}", "section")
+                state_map = build_state_table(folder)
+                state_table = generate_state_markdown(state_map)
+                # Append directly to the existing PROJECT_STRUCTURE.md
+                with open(output, "a", encoding="utf-8") as f:
+                    f.write("\n\n---\n\n")
+                    f.write(state_table)
+                self.log(f"✓ Shared state table appended to {output}", "updated")
             except Exception as e:
                 self.log(f"✗ Error generating summary: {e}", "error")
 
@@ -778,7 +742,14 @@ if __name__ == "__main__":
             files = find_python_files(args.path, args.recursive)
             process_batch(files, args.dry_run, not args.no_backup, args.skip_annotated)
             if args.markdown:
-                build_project_summary(args.path)
+                project_structure_path = build_project_summary(args.path)
+                # Generate shared state table
+                state_map = build_state_table(args.path)
+                state_table = generate_state_markdown(state_map)
+                # Append directly to the existing PROJECT_STRUCTURE.md
+                with open(project_structure_path, "a", encoding="utf-8") as f:
+                    f.write("\n\n---\n\n")
+                    f.write(state_table)
         else:
             print(f"Invalid path: {args.path}")
     else:

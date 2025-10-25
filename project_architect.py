@@ -1,15 +1,15 @@
 #===============================================================================
 # CODE SYNOPSIS: project_architect.py
-# SYNOPSIS_HASH: 1c46f5ecb712a75abd0f6e2cc420d54bcdad51bf3c2c0fbe24facc2cb37feb0d
-# Generated: 2025-10-24 22:17:09
+# SYNOPSIS_HASH: b74f4c6e03c7a20782ee46d6ab8ad1ad9ec7f91d8da1f97893869f4596224377
+# Generated: 2025-10-24 23:31:32
 # INTENT: Extracts, Detects or identifies patterns in functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 194
+#   Total Lines: 197
 #   Functions: 4
 #   Classes: 0
-#   Global Variables: 30
+#   Global Variables: 2
 #
 # Key Dependencies:
 #   - collections
@@ -22,11 +22,11 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 22:17:09
+# LAST_ANALYZED: 2025-10-24 23:31:32
 # FILE: project_architect.py
 # IMPORTS_EXTERNAL: collections, datetime, os, re
 # IMPORTS_LOCAL: 
-# GLOBALS: block, classes, content, data_flow, dependencies, exceptions, file_name, files, folder, functions, globals_, hotkeys, imports_external, imports_local, intent_line, io_reads, io_writes, lines, m, md, output, output_path, path, pattern, result, src_node, summaries, threads, tk_binds, val
+# GLOBALS: folder, path
 # FUNCTIONS: build_project_summary, detect_exceptions, extract, extract_list
 # RETURNS: build_project_summary, detect_exceptions, extract, extract_list
 # THREAD_TARGETS: 
@@ -37,7 +37,7 @@
 # IO_READS: 
 # IO_WRITES: 
 # CALLGRAPH_ROOTS: extract_list,detect_exceptions,build_project_summary
-# STATE_VARS: 
+# STATE_VARS: path
 # STATE_MACHINES_COUNT: 0
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
@@ -65,41 +65,12 @@
 #
 # CRITICAL GLOBAL VARIABLES:
 #
-# m:
-#   Modified by: extract, build_project_summary
-#   Read by: extract, build_project_summary
-#
-# block:
-#   Modified by: build_project_summary
-#   Read by: extract, extract_list, build_project_summary
-#
-# content:
-#   Modified by: build_project_summary
-#   Read by: detect_exceptions, build_project_summary
-#
 #===============================================================================
 #
 # SHARED STATE CATEGORIES:
 #
-#   Timing State:
-#     - dependencies
-#   Position State:
-#     - exceptions
-#     - hotkeys
-#     - imports_external
 #   Config State:
-#     - file_name
-#     - files
-#     - output_path
 #     - path
-#===============================================================================
-#
-# ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
-#
-# build_project_summary() - line 51  (Returns: Yes)
-#   Modifies: block, classes, content, data_flow, dependencies, exceptions, file_name, files
-#   Reads: block, classes, content, data_flow, dependencies, exceptions, file_name, files
-#
 #===============================================================================
 #
 # 🧠 FUNCTION BEHAVIORAL SUMMARIES:
@@ -125,10 +96,10 @@
 #
 # 📊 DATA FLOW SUMMARY:
 #
-#   extract() — reads block, m, pattern; writes m, pattern; calls m.group, re.search, strip; returns value
-#   extract_list() — reads block, val; writes val; calls extract, v.strip, val.split; returns value
-#   detect_exceptions() — reads content, lines, result; writes lines, result; calls content.splitlines, enumerate, line.strip, result.append, split, startswith; returns value
-#   build_project_summary() — reads block, classes, content, data_flow, dependencies, exceptions; writes block, classes, content, data_flow, dependencies, exceptions; calls append, data_flow.items, datetime.now, defaultdict, dependencies.items, extract; returns value
+#   extract() — calls m.group, re.search, strip; returns value
+#   extract_list() — calls extract, v.strip, val.split; returns value
+#   detect_exceptions() — calls content.splitlines, enumerate, line.strip, result.append, split, startswith; returns value
+#   build_project_summary() — reads path; writes path; calls append, data_flow.items, datetime.now, defaultdict, dependencies.items, extract; returns value
 #===============================================================================
 #
 # 🔧 MODULARIZATION RECOMMENDATIONS:
@@ -138,10 +109,6 @@
 #    2. Pass state object instead of using globals
 #    3. Use getter/setter methods for thread-safe access
 #
-# When modularizing, consider splitting by:
-#   - Separate state management from business logic
-#   - Group related functions into modules
-#   - Separate UI code from core logic
 #===============================================================================
 #===============================================================================
 # 📞 FUNCTION CALL HIERARCHY:
@@ -169,6 +136,9 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

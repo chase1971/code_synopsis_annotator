@@ -1,15 +1,15 @@
 #===============================================================================
 # CODE SYNOPSIS: behavioral_analysis.py
-# SYNOPSIS_HASH: 9774d4248dd0951db2eba95eda2b777113ffd0da7956a19b84f31a43ceeef83c
-# Generated: 2025-10-24 22:17:09
+# SYNOPSIS_HASH: 1fe6ef311197899e5de950e3c0a4394adb3d860b507f55ff92ba003a23036a01
+# Generated: 2025-10-24 23:31:32
 # INTENT: Renders, Analyzes functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 230
+#   Total Lines: 238
 #   Functions: 11
 #   Classes: 1
-#   Global Variables: 27
+#   Global Variables: 0
 #
 # Key Dependencies:
 #   - ast
@@ -22,11 +22,11 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 22:17:09
+# LAST_ANALYZED: 2025-10-24 23:31:32
 # FILE: behavioral_analysis.py
 # IMPORTS_EXTERNAL: ast, collections, datetime, typing
 # IMPORTS_LOCAL: 
-# GLOBALS: assigned, buckets, call_roots, cats, children, critical, fanout, fnames, globs, gr, gw, high_priority, indent, init_seq, lines, lname, num_machines, num_transitions, readers, results, sm, state_keys, trans, ts, ui_after, vals, writers
+# GLOBALS: 
 # FUNCTIONS: __init__, analyze_function_dependencies, analyze_high_priority_functions, build_machine_block, categorize_shared_state, dfs, generate_behavioral_summary, group_modules_generic, render_call_hierarchy, render_state_machines, render_ui_after_usage
 # RETURNS: analyze_function_dependencies, analyze_high_priority_functions, build_machine_block, categorize_shared_state, generate_behavioral_summary, group_modules_generic, render_call_hierarchy, render_state_machines, render_ui_after_usage
 # THREAD_TARGETS: 
@@ -49,8 +49,8 @@
 #
 # 📝 FUNCTION SIGNATURES:
 #
-# BehavioralAnalyzer.__init__(self, analyzer) -> None
-#   Initialize with reference to main analyzer.
+# BehavioralAnalyzer.__init__(self, analyzer, state = None) -> None
+#   Initialize with reference to main analyzer and optional shared state.
 #
 # BehavioralAnalyzer.analyze_function_dependencies(self) -> List[Tuple[str, List[str]]]
 #   Analyze functions with high fan-out (calling many other functions).
@@ -83,7 +83,7 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   BehavioralAnalyzer (line 15):
+#   BehavioralAnalyzer (line 18):
 #     - BehavioralAnalyzer.__init__()
 #     - BehavioralAnalyzer.render_call_hierarchy()
 #     - BehavioralAnalyzer.render_state_machines()
@@ -94,62 +94,6 @@
 #     - BehavioralAnalyzer.analyze_high_priority_functions()
 #     - BehavioralAnalyzer.analyze_function_dependencies()
 #     - BehavioralAnalyzer.generate_behavioral_summary()
-#===============================================================================
-#
-# CRITICAL GLOBAL VARIABLES:
-#
-# lines:
-#   Modified by: render_call_hierarchy, render_state_machines, render_ui_after_usage, build_machine_block, generate_behavioral_summary
-#   Read by: render_call_hierarchy, render_state_machines, render_ui_after_usage, build_machine_block, generate_behavioral_summary, dfs
-#
-# indent:
-#   Modified by: render_call_hierarchy, dfs
-#   Read by: render_call_hierarchy, dfs
-#
-# children:
-#   Modified by: render_call_hierarchy, dfs
-#   Read by: render_call_hierarchy, dfs
-#
-#===============================================================================
-#
-# SHARED STATE CATEGORIES:
-#
-#   UI State:
-#     - call_roots
-#     - ui_after
-#   Control State:
-#     - state_keys
-#   Position State:
-#     - high_priority
-#     - state_keys
-#===============================================================================
-#
-# ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
-#
-# render_call_hierarchy() - line 27  (Returns: Yes)
-#   Modifies: children, indent, lines
-#   Reads: children, indent, lines
-#
-# render_state_machines() - line 52  (Returns: Yes)
-#   Modifies: lines, readers, trans, vals, writers
-#   Reads: lines, readers, trans, vals, writers
-#
-# build_machine_block() - line 91  (Returns: Yes)
-#   Modifies: call_roots, init_seq, lines, num_machines, num_transitions, results, state_keys, ts
-#   Reads: call_roots, init_seq, lines, num_machines, num_transitions, results, state_keys, ts
-#
-# group_modules_generic() - line 150  (Returns: Yes)
-#   Modifies: assigned, buckets, fnames, lname
-#   Reads: assigned, buckets, fnames, lname
-#
-# analyze_high_priority_functions() - line 184  (Returns: Yes)
-#   Modifies: gr, gw, high_priority
-#   Reads: gr, gw, high_priority
-#
-# generate_behavioral_summary() - line 201  (Returns: Yes)
-#   Modifies: lines, sm, ui_after
-#   Reads: lines, sm, ui_after
-#
 #===============================================================================
 #
 # 🧠 FUNCTION BEHAVIORAL SUMMARIES:
@@ -189,25 +133,20 @@
 #
 # 📊 DATA FLOW SUMMARY:
 #
-#   __init__() — pure/local computation; no return value
-#   render_call_hierarchy() — reads children, indent, lines; writes children, indent, lines; calls dfs, len, lines.append, self.analyzer.call_graph.get, self.analyzer.functions.get, sorted; returns value
-#   dfs() — reads children, indent, lines; writes children, indent; calls dfs, len, lines.append, self.analyzer.call_graph.get, self.analyzer.functions.get, sorted; no return value
-#   render_state_machines() — reads lines, readers, trans, vals, writers; writes lines, readers, trans, vals, writers; calls hasattr, join, len, lines.append, list, self.analyzer.state_comparisons.get; returns value
-#   render_ui_after_usage() — reads lines; writes lines; calls lines.append, sorted; returns value
-#   build_machine_block() — reads call_roots, init_seq, lines, num_machines, num_transitions, results; writes call_roots, init_seq, lines, num_machines, num_transitions, results; calls d.get, datetime.now, hasattr, join, len, lines.append; returns value
-#   categorize_shared_state() — reads cats, globs; writes cats, globs; calls any, cats.items, g.lower, sorted; returns value
-#   group_modules_generic() — reads assigned, buckets, fnames, lname; writes assigned, buckets, fnames, lname; calls any, append, buckets.items, f.lower, list, self.analyzer.functions.keys; returns value
-#   analyze_high_priority_functions() — reads gr, gw, high_priority; writes gr, gw, high_priority; calls high_priority.append, len, self.analyzer.functions.items, sorted; returns value
-#   analyze_function_dependencies() — reads critical, fanout; writes critical, fanout; calls fanout.items, len, self.analyzer.call_graph.items, sorted; returns value
-#   generate_behavioral_summary() — reads lines, sm, ui_after; writes lines, sm, ui_after; calls enumerate, len, lines.append, lines.extend, self.render_call_hierarchy, self.render_state_machines; returns value
+#   __init__() — calls getattr; no return value
+#   render_call_hierarchy() — calls dfs, len, lines.append, self.analyzer.call_graph.get, self.analyzer.functions.get, sorted; returns value
+#   dfs() — calls dfs, len, lines.append, self.analyzer.call_graph.get, self.analyzer.functions.get, sorted; no return value
+#   render_state_machines() — calls hasattr, join, len, lines.append, list, self.analyzer.state_comparisons.get; returns value
+#   render_ui_after_usage() — calls lines.append, sorted; returns value
+#   build_machine_block() — calls d.get, datetime.now, hasattr, join, len, lines.append; returns value
+#   categorize_shared_state() — calls any, cats.items, g.lower, sorted; returns value
+#   group_modules_generic() — calls any, append, buckets.items, f.lower, list, self.analyzer.functions.keys; returns value
+#   analyze_high_priority_functions() — calls high_priority.append, len, self.analyzer.functions.items, sorted; returns value
+#   analyze_function_dependencies() — calls fanout.items, len, self.analyzer.call_graph.items, sorted; returns value
+#   generate_behavioral_summary() — calls enumerate, len, lines.append, lines.extend, self.render_call_hierarchy, self.render_state_machines; returns value
 #===============================================================================
 #
 # 🔧 MODULARIZATION RECOMMENDATIONS:
-#
-# ⚠️ GLOBAL STATE: Significant global variables found.
-#    1. Create a State class to hold all globals
-#    2. Pass state object instead of using globals
-#    3. Use getter/setter methods for thread-safe access
 #
 # When modularizing, consider splitting by:
 #   - Separate state management from business logic
@@ -240,6 +179,9 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 """

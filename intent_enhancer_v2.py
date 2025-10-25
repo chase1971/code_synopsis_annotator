@@ -1,15 +1,15 @@
 #===============================================================================
 # CODE SYNOPSIS: intent_enhancer_v2.py
-# SYNOPSIS_HASH: aa15745ee96a4c908ca4c23b87c74e7318b2c41fa4aa1562b408838ff32d2a3b
-# Generated: 2025-10-24 22:17:09
+# SYNOPSIS_HASH: 31b261c793bc9b3a7ce73ee556c843fe76b95ec13f1ceaf011cfa0302ab23cc1
+# Generated: 2025-10-24 23:31:32
 # INTENT: Detects or identifies patterns in, Generates functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 452
+#   Total Lines: 455
 #   Functions: 7
 #   Classes: 0
-#   Global Variables: 42
+#   Global Variables: 12
 #
 # Key Dependencies:
 #   - re
@@ -22,11 +22,11 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 22:17:09
+# LAST_ANALYZED: 2025-10-24 23:31:32
 # FILE: intent_enhancer_v2.py
 # IMPORTS_EXTERNAL: re, typing
 # IMPORTS_LOCAL: intent_inference
-# GLOBALS: DOMAIN_INDICATORS, DOMAIN_PURPOSES, FUNCTION_PATTERNS, MODULE_NAME_HINTS, action, action_words, analyzer1, analyzer2, analyzer3, analyzer4, analyzer5, analyzer6, analyzer7, analyzer8, base_lower, base_name, cleaned, domain_desc, domain_purpose, domains, filename, first_sentence, func_names, hint, imp_lower, imports_external, module_docstring, name_words, nouns, pattern_counts, pattern_descriptions, patterns, primary_domain, subject, subject_words, theme_str, themes, top_pattern, top_patterns, verbs, word_counts, words
+# GLOBALS: DOMAIN_INDICATORS, DOMAIN_PURPOSES, FUNCTION_PATTERNS, MODULE_NAME_HINTS, analyzer1, analyzer2, analyzer3, analyzer4, analyzer5, analyzer6, analyzer7, analyzer8
 # FUNCTIONS: __init__, detect_domains, detect_function_patterns, extract_noun_from_functions, find_common_themes, generate_enhanced_module_intent, generate_smart_intent
 # RETURNS: detect_domains, detect_function_patterns, extract_noun_from_functions, find_common_themes, generate_enhanced_module_intent, generate_smart_intent
 # THREAD_TARGETS: 
@@ -37,7 +37,7 @@
 # IO_READS: 
 # IO_WRITES: 
 # CALLGRAPH_ROOTS: generate_smart_intent,__init__
-# STATE_VARS: 
+# STATE_VARS: DOMAIN_INDICATORS,DOMAIN_PURPOSES,FUNCTION_PATTERNS,MODULE_NAME_HINTS
 # STATE_MACHINES_COUNT: 0
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
@@ -71,26 +71,6 @@
 #
 # CRITICAL GLOBAL VARIABLES:
 #
-# nouns:
-#   Modified by: extract_noun_from_functions, generate_enhanced_module_intent
-#   Read by: extract_noun_from_functions, find_common_themes, generate_enhanced_module_intent
-#
-# domains:
-#   Modified by: detect_domains, generate_enhanced_module_intent
-#   Read by: detect_domains, generate_enhanced_module_intent
-#
-# themes:
-#   Modified by: find_common_themes, generate_enhanced_module_intent
-#   Read by: find_common_themes, generate_enhanced_module_intent
-#
-# imports_external:
-#   Modified by: generate_enhanced_module_intent
-#   Read by: detect_domains, generate_enhanced_module_intent
-#
-# filename:
-#   Modified by: generate_enhanced_module_intent
-#   Read by: generate_enhanced_module_intent, __init__
-#
 #===============================================================================
 #
 # SHARED STATE CATEGORIES:
@@ -105,23 +85,6 @@
 #     - analyzer6
 #     - analyzer7
 #     - analyzer8
-#     - domain_purpose
-#     - imports_external
-#     - primary_domain
-#   Config State:
-#     - filename
-#===============================================================================
-#
-# ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
-#
-# find_common_themes() - line 214  (Returns: Yes)
-#   Modifies: themes, word_counts, words
-#   Reads: nouns, themes, word_counts, words
-#
-# generate_enhanced_module_intent() - line 229  (Returns: Yes)
-#   Modifies: action, action_words, base_lower, base_name, domain_desc, domain_purpose, domains, filename
-#   Reads: DOMAIN_PURPOSES, MODULE_NAME_HINTS, action, action_words, base_lower, base_name, domain_desc, domain_purpose
-#
 #===============================================================================
 #
 # 🧠 FUNCTION BEHAVIORAL SUMMARIES:
@@ -145,13 +108,13 @@
 #
 # 📊 DATA FLOW SUMMARY:
 #
-#   detect_domains() — reads DOMAIN_INDICATORS, domains, imp_lower, imports_external; writes domains, imp_lower; calls DOMAIN_INDICATORS.items, domains.add, imp.lower, set; returns value
-#   detect_function_patterns() — reads FUNCTION_PATTERNS, pattern_counts; writes pattern_counts; calls FUNCTION_PATTERNS.items, pattern_counts.get, re.match; returns value
-#   extract_noun_from_functions() — reads cleaned, nouns; writes cleaned, nouns; calls nouns.append, re.sub; returns value
-#   find_common_themes() — reads nouns, themes, word_counts, words; writes themes, word_counts, words; calls len, noun.lower, re.split, sorted, word_counts.get, word_counts.items; returns value
-#   generate_enhanced_module_intent() — reads DOMAIN_PURPOSES, MODULE_NAME_HINTS, action, action_words, base_lower, base_name; writes action, action_words, base_lower, base_name, domain_desc, domain_purpose; calls DOMAIN_PURPOSES.get, action_words.append, base_name.lower, capitalize, detect_domains, detect_function_patterns; returns value
+#   detect_domains() — reads DOMAIN_INDICATORS; calls DOMAIN_INDICATORS.items, domains.add, imp.lower, set; returns value
+#   detect_function_patterns() — reads FUNCTION_PATTERNS; calls FUNCTION_PATTERNS.items, pattern_counts.get, re.match; returns value
+#   extract_noun_from_functions() — calls nouns.append, re.sub; returns value
+#   find_common_themes() — calls len, noun.lower, re.split, sorted, word_counts.get, word_counts.items; returns value
+#   generate_enhanced_module_intent() — reads DOMAIN_PURPOSES, MODULE_NAME_HINTS; calls DOMAIN_PURPOSES.get, action_words.append, base_name.lower, capitalize, detect_domains, detect_function_patterns; returns value
 #   generate_smart_intent() — calls generate_enhanced_module_intent; returns value
-#   __init__() — reads filename; no return value
+#   __init__() — pure/local computation; no return value
 #===============================================================================
 #
 # 🔧 MODULARIZATION RECOMMENDATIONS:
@@ -192,6 +155,9 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 """
 Enhanced Intent Inference - Pattern-Based Semantic Analysis

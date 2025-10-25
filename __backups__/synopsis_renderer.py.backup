@@ -1,3 +1,6 @@
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 """
 Synopsis Renderer - Generate formatted synopsis headers.
 
@@ -17,10 +20,15 @@ class SynopsisRenderer:
     headers that include all analysis results in a readable format.
     """
     
-    def __init__(self, analyzer, behavioral_analyzer):
-        """Initialize with references to analyzers."""
+    def __init__(self, analyzer, behavioral_analyzer, state=None):
+        """Initialize with references to analyzers and optional shared state."""
         self.analyzer = analyzer
         self.behavioral_analyzer = behavioral_analyzer
+        # Use shared state if provided, otherwise use analyzer's state
+        if state is not None:
+            self.state = state
+        else:
+            self.state = getattr(analyzer, 'state', None)
     
     def generate_synopsis_header(self) -> str:
         """Generate the complete synopsis header."""

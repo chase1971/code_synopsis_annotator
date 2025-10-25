@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: __init__.py
-# SYNOPSIS_HASH: cc18293180e53ad9fc46ca5dd919d0c715560991bd40cad91b1cedda356e0457
-# Generated: 2025-10-24 22:17:09
+# SYNOPSIS_HASH: cacac2558d273c4740f8b90f1c52fc7db8ba7f248c87e375f4f03e9658147834
+# Generated: 2025-10-24 23:31:32
 # INTENT: Handles init functionality.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 33
+#   Total Lines: 36
 #   Functions: 0
 #   Classes: 0
 #   Global Variables: 3
@@ -27,7 +27,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 22:17:09
+# LAST_ANALYZED: 2025-10-24 23:31:32
 # FILE: __init__.py
 # IMPORTS_EXTERNAL: importlib, sys
 # IMPORTS_LOCAL: behavioral_analysis, core_analyzer, file_io, intent_inference, synopsis_renderer, utils
@@ -108,6 +108,9 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
