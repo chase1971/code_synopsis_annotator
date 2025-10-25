@@ -3,6 +3,7 @@
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 #!/usr/bin/env python3
 # =============================================================================
 # BATCH ANNOTATE MODULAR - DARK MODE GUI + FOLDER OPEN + PROJECT SUMMARY
@@ -30,7 +31,6 @@ try:
     from synopsis_renderer import SynopsisRenderer
     from intent_inference import inject_intent
     from project_architect import build_project_summary  # NEW
-    from state_tracker import build_state_table, generate_state_markdown
 except ImportError as e:
     print("ERROR: Cannot import required modules")
     print(f"Error details: {e}")
@@ -378,16 +378,6 @@ class AnnotatorGUI:
             try:
                 output = build_project_summary(folder)
                 self.log(f"✓ Project summary written to {output}", "updated")
-                
-                # Generate shared state table and append to PROJECT_STRUCTURE.md
-                self.log(f"Generating shared state table for: {folder}", "section")
-                state_map = build_state_table(folder)
-                state_table = generate_state_markdown(state_map)
-                # Append directly to the existing PROJECT_STRUCTURE.md
-                with open(output, "a", encoding="utf-8") as f:
-                    f.write("\n\n---\n\n")
-                    f.write(state_table)
-                self.log(f"✓ Shared state table appended to {output}", "updated")
             except Exception as e:
                 self.log(f"✗ Error generating summary: {e}", "error")
 

@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: main.py
-# SYNOPSIS_HASH: 45618e2751294c665cd688ebf58d4a011e2fa28bb039c63a0d043f787b29ccde
-# Generated: 2025-10-24 23:31:32
+# SYNOPSIS_HASH: fb53a8fba2e4b017d2adec5d658297f3eff7e704e8c6cbb40cd08471c508d2cd
+# Generated: 2025-10-25 11:18:38
 # INTENT: Main application entry point and orchestration.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 123
+#   Total Lines: 124
 #   Functions: 3
 #   Classes: 0
 #   Global Variables: 0
@@ -27,7 +27,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 23:31:32
+# LAST_ANALYZED: 2025-10-25 11:18:38
 # FILE: main.py
 # IMPORTS_EXTERNAL: code_synopsis_annotator.behavioral_analysis, code_synopsis_annotator.core_analyzer, code_synopsis_annotator.file_io, code_synopsis_annotator.synopsis_renderer, os, sys, typing
 # IMPORTS_LOCAL: analyzer_state
@@ -136,6 +136,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

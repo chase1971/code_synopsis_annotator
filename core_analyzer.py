@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: core_analyzer.py
-# SYNOPSIS_HASH: 34ed9db64a8afa5cb5d575dceb12f2e4395c67a3096dd19b3ae5fd9fdb944586
-# Generated: 2025-10-24 23:31:32
+# SYNOPSIS_HASH: 640176163f69efcc5d52e488ee8c31d67ead2524a1f3aa06bf6b3eb50a9ded34
+# Generated: 2025-10-25 11:18:38
 # INTENT: Locates or discovers, Extracts functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 764
+#   Total Lines: 765
 #   Functions: 50
 #   Classes: 3
 #   Global Variables: 0
@@ -26,7 +26,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 23:31:32
+# LAST_ANALYZED: 2025-10-25 11:18:38
 # FILE: core_analyzer.py
 # IMPORTS_EXTERNAL: ast, collections, os, typing, warnings
 # IMPORTS_LOCAL: analyzer_state, state_machine_detector
@@ -193,7 +193,7 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   ScopeIndexer (line 24):
+#   ScopeIndexer (line 25):
 #     - ScopeIndexer.__init__()
 #     - ScopeIndexer.visit_Assign()
 #     - ScopeIndexer.visit_AnnAssign()
@@ -211,11 +211,11 @@
 #     - ScopeIndexer.visit_ExceptHandler()
 #     - ScopeIndexer.visit_Global()
 #     - ScopeIndexer.visit_Nonlocal()
-#   GlobalAccessVisitor (line 155):
+#   GlobalAccessVisitor (line 156):
 #     - GlobalAccessVisitor.__init__()
 #     - GlobalAccessVisitor._is_true_global()
 #     - GlobalAccessVisitor.visit_Name()
-#   CodeAnalyzer (line 199):
+#   CodeAnalyzer (line 200):
 #     - CodeAnalyzer.__init__()
 #     - CodeAnalyzer.read_file()
 #     - CodeAnalyzer.strip_existing_synopsis()
@@ -425,6 +425,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

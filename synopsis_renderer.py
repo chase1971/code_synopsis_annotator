@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: synopsis_renderer.py
-# SYNOPSIS_HASH: b4679b90bdeb836142f93e569678fa24793181e50feab9ae26b9d5e0be776ff8
-# Generated: 2025-10-24 23:31:32
+# SYNOPSIS_HASH: 9618a353e947946c303a50b8014af2efe542779243436110b0a6c1f359eab927
+# Generated: 2025-10-25 11:18:38
 # INTENT: Generates functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 454
+#   Total Lines: 455
 #   Functions: 18
 #   Classes: 1
 #   Global Variables: 0
@@ -20,7 +20,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 23:31:32
+# LAST_ANALYZED: 2025-10-25 11:18:38
 # FILE: synopsis_renderer.py
 # IMPORTS_EXTERNAL: datetime, typing
 # IMPORTS_LOCAL: 
@@ -105,7 +105,7 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   SynopsisRenderer (line 15):
+#   SynopsisRenderer (line 16):
 #     - SynopsisRenderer.__init__()
 #     - SynopsisRenderer.generate_synopsis_header()
 #     - SynopsisRenderer._render_state_machine_diagrams()
@@ -232,6 +232,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

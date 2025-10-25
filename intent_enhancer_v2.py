@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: intent_enhancer_v2.py
-# SYNOPSIS_HASH: 31b261c793bc9b3a7ce73ee556c843fe76b95ec13f1ceaf011cfa0302ab23cc1
-# Generated: 2025-10-24 23:31:32
+# SYNOPSIS_HASH: 952eb64c6722d2e727657a5eca5f999009740618e332feb71ef3da4968b7fe0a
+# Generated: 2025-10-25 11:18:38
 # INTENT: Detects or identifies patterns in, Generates functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 455
+#   Total Lines: 456
 #   Functions: 7
 #   Classes: 0
 #   Global Variables: 12
@@ -22,7 +22,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 23:31:32
+# LAST_ANALYZED: 2025-10-25 11:18:38
 # FILE: intent_enhancer_v2.py
 # IMPORTS_EXTERNAL: re, typing
 # IMPORTS_LOCAL: intent_inference
@@ -155,6 +155,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

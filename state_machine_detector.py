@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: state_machine_detector.py
-# SYNOPSIS_HASH: 1b77c46c171f62e4fef3c55b694077f56030eca38f6257a0453c7275d33fb3e5
-# Generated: 2025-10-24 23:31:32
+# SYNOPSIS_HASH: 82b6b6c9bd28f74628f0185443e21574f06535f781cdbfa22da0a7dcb3f5b19d
+# Generated: 2025-10-25 11:18:38
 # INTENT: Generates, Renders functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 556
+#   Total Lines: 557
 #   Functions: 18
 #   Classes: 4
 #   Global Variables: 20
@@ -23,7 +23,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 23:31:32
+# LAST_ANALYZED: 2025-10-25 11:18:38
 # FILE: state_machine_detector.py
 # IMPORTS_EXTERNAL: ast, collections, dataclasses, re, typing
 # IMPORTS_LOCAL: 
@@ -108,10 +108,10 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   StateVariable (line 61):
-#   StateTransition (line 72):
-#   StateMachine (line 82):
-#   StateMachineDetector (line 90):
+#   StateVariable (line 62):
+#   StateTransition (line 73):
+#   StateMachine (line 83):
+#   StateMachineDetector (line 91):
 #     - StateMachineDetector.__init__()
 #     - StateMachineDetector.detect()
 #     - StateMachineDetector._build_function_map()
@@ -135,6 +135,10 @@
 #   Modified by: detect_state_machines, generate_state_machine_diagram, render_state_machine_summary
 #   Read by: detect_state_machines, generate_state_machine_diagram, render_state_machine_summary
 #
+# var_type:
+#   Modified by: _detect_state_variables, _classify_state_variable
+#   Read by: _detect_state_variables, _classify_state_variable
+#
 # to_state:
 #   Modified by: _analyze_transitions, generate_mermaid_diagram
 #   Read by: _analyze_transitions, generate_mermaid_diagram
@@ -142,10 +146,6 @@
 # from_state:
 #   Modified by: _analyze_transitions, generate_mermaid_diagram
 #   Read by: _analyze_transitions, generate_mermaid_diagram
-#
-# var_type:
-#   Modified by: _detect_state_variables, _classify_state_variable
-#   Read by: _detect_state_variables, _classify_state_variable
 #
 #===============================================================================
 #
@@ -297,6 +297,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

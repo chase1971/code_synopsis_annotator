@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: intent_inference.py
-# SYNOPSIS_HASH: 911266d3019f276ed09ba7ed2971df99ae3ba72f2ee77bab570162c1e5359ce3
-# Generated: 2025-10-24 23:31:32
+# SYNOPSIS_HASH: da4812ad8d5fb82f8ee87e0815723600294b44dc5c7049a7377fd2dc27158322
+# Generated: 2025-10-25 11:18:38
 # INTENT: Generates functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 229
+#   Total Lines: 230
 #   Functions: 8
 #   Classes: 0
 #   Global Variables: 3
@@ -23,7 +23,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 23:31:32
+# LAST_ANALYZED: 2025-10-25 11:18:38
 # FILE: intent_inference.py
 # IMPORTS_EXTERNAL: __future__, re, typing
 # IMPORTS_LOCAL: intent_enhancer_v2
@@ -146,6 +146,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

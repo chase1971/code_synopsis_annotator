@@ -1,6 +1,8 @@
 #===============================================================================
 # CODE SYNOPSIS: utils.py
-# Generated: 2025-10-25 10:48:32
+# SYNOPSIS_HASH: e1369d703da97c29a7981c99b5ec689630aeea771317e9adc2383218f791e2e5
+# Generated: 2025-10-25 11:18:38
+# INTENT: Utility functions and helper methods.
 #===============================================================================
 #
 # OVERVIEW:
@@ -20,7 +22,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-25 10:48:32
+# LAST_ANALYZED: 2025-10-25 11:18:38
 # FILE: utils.py
 # IMPORTS_EXTERNAL: ast, os, re, typing
 # IMPORTS_LOCAL: 
@@ -39,6 +41,8 @@
 # STATE_MACHINES_COUNT: 1
 # STATE_TRANSITIONS_COUNT: 2
 # INIT_SEQUENCE: 
+# INTENT: Utility functions and helper methods.
+# FUNCTION_INTENTS: call_to_name=Handles to name., categorize_shared_state=Handles shared state., enclosing_function_name=Handles function name., extract_hotkey_bindings=Retrieves hotkey bindings., extract_open_args=Retrieves open args., format_call_name=Handles call name., format_file_size=Handles file size., get_file_info=Handles file info., group_functions_by_purpose=Organizes functions by purpose., is_local_module=Handles local module., safe_filename=Handles filename.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
@@ -194,7 +198,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
-
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

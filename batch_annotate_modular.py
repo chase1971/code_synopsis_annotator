@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: batch_annotate_modular.py
-# SYNOPSIS_HASH: 1d6908a00d3213f6ac941242ab922afbf505bc2e5a9ca69fea017d341f768471
-# Generated: 2025-10-24 23:31:32
-# INTENT: Creates and manages user interface components. Processes various components.
+# SYNOPSIS_HASH: 20180ca89539d4c269ec4ec30fe91dfdbf5c657ccae9fbd0eb07c1d8e743ecba
+# Generated: 2025-10-25 11:18:38
+# INTENT: Manages concurrent execution. Processes various components.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 464
+#   Total Lines: 454
 #   Functions: 24
 #   Classes: 1
 #   Global Variables: 10
@@ -29,7 +29,6 @@
 #     * core_analyzer
 #     * intent_inference
 #     * project_architect
-#     * state_tracker
 #     * synopsis_renderer
 #
 #===============================================================================
@@ -37,10 +36,10 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 23:31:32
+# LAST_ANALYZED: 2025-10-25 11:18:38
 # FILE: batch_annotate_modular.py
 # IMPORTS_EXTERNAL: argparse, datetime, glob, hashlib, os, pathlib, shutil, subprocess, sys, threading, tkinter
-# IMPORTS_LOCAL: analyzer_state, behavioral_analysis, core_analyzer, intent_inference, project_architect, state_tracker, synopsis_renderer
+# IMPORTS_LOCAL: analyzer_state, behavioral_analysis, core_analyzer, intent_inference, project_architect, synopsis_renderer
 # GLOBALS: ANNOTATOR_VERSION, HEADER_BOUNDARY, app, args, files, parser, project_structure_path, root, state_map, state_table
 # FUNCTIONS: __init__, _build_ui, _process_folder, _process_single, _run, compute_code_hash, extract_existing_hash, find_python_files, format_duration, generate_markdown, get_code_body, is_up_to_date, log, make_backup, open_folder, open_folder_in_explorer, process_batch, process_single_file, run_batch, run_in_thread, run_single, select_file, select_folder, strip_all_annotations
 # RETURNS: compute_code_hash, extract_existing_hash, find_python_files, format_duration, get_code_body, is_up_to_date, make_backup, process_batch, process_single_file, strip_all_annotations
@@ -52,11 +51,11 @@
 # IO_READS: 
 # IO_WRITES: 
 # CALLGRAPH_ROOTS: __init__,_build_ui,open_folder,log,select_file,select_folder,run_in_thread,run_single,run_batch,generate_markdown,_process_single,_process_folder,_run
-# STATE_VARS: ANNOTATOR_VERSION,HEADER_BOUNDARY,files,root,state,state_map,state_table
+# STATE_VARS: ANNOTATOR_VERSION,HEADER_BOUNDARY,files,root,state
 # STATE_MACHINES_COUNT: 1
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
-# INTENT: Creates and manages user interface components. Processes various components.
+# INTENT: Manages concurrent execution. Processes various components.
 # FUNCTION_INTENTS: __init__=Handles the target entities., _build_ui=Constructs or generates ui., _process_folder=Handles or executes folder., _process_single=Handles or executes single., _run=Handles the target entities., compute_code_hash=Handles code hash., extract_existing_hash=Retrieves existing hash., find_python_files=Locates or gathers python files., format_duration=Handles duration., generate_markdown=Handles markdown., get_code_body=Handles code body., is_up_to_date=Handles up to date., log=Handles the target entities., make_backup=Handles backup., open_folder=Handles folder., open_folder_in_explorer=Handles folder in explorer., process_batch=Handles or executes batch., process_single_file=Handles or executes single file., run_batch=Handles batch., run_in_thread=Handles in thread., run_single=Handles single., select_file=Handles file., select_folder=Handles folder., strip_all_annotations=Handles all annotations.
 # END MACHINE-READABLE DATA
 # ════════════════════
@@ -140,17 +139,9 @@
 #
 # CRITICAL GLOBAL VARIABLES:
 #
-# state_table:
-#   Modified by: generate_markdown, _run
-#   Read by: generate_markdown, _run
-#
 # files:
 #   Modified by: find_python_files, _process_folder
 #   Read by: find_python_files, _process_folder
-#
-# state_map:
-#   Modified by: generate_markdown, _run
-#   Read by: generate_markdown, _run
 #
 #===============================================================================
 #
@@ -242,8 +233,8 @@
 #   run_in_thread() — calls start, threading.Thread; no return value
 #   run_single() — calls messagebox.showerror, os.path.isfile, self._process_single, self.path_var.get, self.run_in_thread, strip; no return value
 #   run_batch() — calls messagebox.showerror, os.path.isdir, self._process_folder, self.path_var.get, self.run_in_thread, strip; no return value
-#   generate_markdown() — reads state_map, state_table; writes state_map, state_table; calls build_project_summary, build_state_table, f.write, generate_state_markdown, messagebox.showerror, open; no return value
-#   _run() — reads state_map, state_table; writes state_map, state_table; calls build_project_summary, build_state_table, f.write, generate_state_markdown, open, self.log; no return value
+#   generate_markdown() — calls build_project_summary, messagebox.showerror, os.path.isdir, self.log, self.path_var.get, self.run_in_thread; no return value
+#   _run() — calls build_project_summary, self.log; no return value
 #   _process_single() — calls format_duration, process_single_file, self.backup_var.get, self.dry_run_var.get, self.force_rewrite_var.get, self.log; no return value
 #   _process_folder() — reads files; writes files; calls find_python_files, len, process_batch, results.values, self.backup_var.get, self.dry_run_var.get; no return value
 #===============================================================================
@@ -297,6 +288,7 @@
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 #!/usr/bin/env python3
 # =============================================================================
 # BATCH ANNOTATE MODULAR - DARK MODE GUI + FOLDER OPEN + PROJECT SUMMARY
@@ -324,7 +316,6 @@ try:
     from synopsis_renderer import SynopsisRenderer
     from intent_inference import inject_intent
     from project_architect import build_project_summary  # NEW
-    from state_tracker import build_state_table, generate_state_markdown
 except ImportError as e:
     print("ERROR: Cannot import required modules")
     print(f"Error details: {e}")
@@ -672,16 +663,6 @@ class AnnotatorGUI:
             try:
                 output = build_project_summary(folder)
                 self.log(f"✓ Project summary written to {output}", "updated")
-                
-                # Generate shared state table and append to PROJECT_STRUCTURE.md
-                self.log(f"Generating shared state table for: {folder}", "section")
-                state_map = build_state_table(folder)
-                state_table = generate_state_markdown(state_map)
-                # Append directly to the existing PROJECT_STRUCTURE.md
-                with open(output, "a", encoding="utf-8") as f:
-                    f.write("\n\n---\n\n")
-                    f.write(state_table)
-                self.log(f"✓ Shared state table appended to {output}", "updated")
             except Exception as e:
                 self.log(f"✗ Error generating summary: {e}", "error")
 

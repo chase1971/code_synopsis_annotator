@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: state_tracker.py
-# SYNOPSIS_HASH: 64fa03664b16fd3a1fd775cef117dfb41082031be4f306773659a1b11ff79580
-# Generated: 2025-10-24 23:31:32
+# SYNOPSIS_HASH: fb8143fe533bff3fdfe0ffcb5973d1acf0864873a353af75263c6c236817242e
+# Generated: 2025-10-25 11:18:38
 # INTENT: Loads and manages configuration settings. Extracts various components.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 286
+#   Total Lines: 287
 #   Functions: 8
 #   Classes: 0
 #   Global Variables: 10
@@ -24,7 +24,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 23:31:32
+# LAST_ANALYZED: 2025-10-25 11:18:38
 # FILE: state_tracker.py
 # IMPORTS_EXTERNAL: datetime, json, os, pathlib, re, typing
 # IMPORTS_LOCAL: 
@@ -175,6 +175,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 #!/usr/bin/env python3
 # =============================================================================

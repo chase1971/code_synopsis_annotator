@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: file_io.py
-# SYNOPSIS_HASH: 7e18218b768389e6ebfddd2f58eaa40fcc773335519c0a2471663d80d458eb05
-# Generated: 2025-10-24 23:31:32
+# SYNOPSIS_HASH: 36a2bae55bc8218719651ea2460e982075e86dcc4059e53b757b0da2e078de41
+# Generated: 2025-10-25 11:18:38
 # INTENT: Creates and manages user interface components. Creates various components.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 213
+#   Total Lines: 214
 #   Functions: 7
 #   Classes: 1
 #   Global Variables: 0
@@ -28,7 +28,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 23:31:32
+# LAST_ANALYZED: 2025-10-25 11:18:38
 # FILE: file_io.py
 # IMPORTS_EXTERNAL: os, sys, time, tkinter, traceback, typing
 # IMPORTS_LOCAL: behavioral_analysis, core_analyzer, synopsis_renderer
@@ -80,7 +80,7 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   FileIOHandler (line 24):
+#   FileIOHandler (line 25):
 #     - FileIOHandler.__init__()
 #     - FileIOHandler.create_annotated_file()
 #     - FileIOHandler.select_file_and_analyze()
@@ -158,6 +158,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: behavioral_analysis.py
-# SYNOPSIS_HASH: 1fe6ef311197899e5de950e3c0a4394adb3d860b507f55ff92ba003a23036a01
-# Generated: 2025-10-24 23:31:32
+# SYNOPSIS_HASH: a9e3bb36855a58fd3c9dc854217fd645b1afd0216e93fa96839cbff79d2511bd
+# Generated: 2025-10-25 11:18:38
 # INTENT: Renders, Analyzes functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 238
+#   Total Lines: 239
 #   Functions: 11
 #   Classes: 1
 #   Global Variables: 0
@@ -22,7 +22,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 23:31:32
+# LAST_ANALYZED: 2025-10-25 11:18:38
 # FILE: behavioral_analysis.py
 # IMPORTS_EXTERNAL: ast, collections, datetime, typing
 # IMPORTS_LOCAL: 
@@ -83,7 +83,7 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   BehavioralAnalyzer (line 18):
+#   BehavioralAnalyzer (line 19):
 #     - BehavioralAnalyzer.__init__()
 #     - BehavioralAnalyzer.render_call_hierarchy()
 #     - BehavioralAnalyzer.render_state_machines()
@@ -179,6 +179,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

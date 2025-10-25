@@ -1,5 +1,5 @@
 # 🧩 PROJECT STRUCTURE SUMMARY
-**Generated:** 2025-10-25 11:09:01
+**Generated:** 2025-10-25 11:27:46
 
 ## 🚀 APPLICATION OVERVIEW
 
@@ -18,7 +18,7 @@ This application is a **Code Synopsis Annotator** that automatically analyzes Py
 
 ### Architecture Summary
 - **Total Modules**: 14
-- **Total Functions**: 176
+- **Total Functions**: 181
 - **Total Classes**: 13
 
 ### Key Features
@@ -39,13 +39,13 @@ This application is a **Code Synopsis Annotator** that automatically analyzes Py
   - Entry functions: `main()`
 
 ### Batch Processing Entry Points
-- **`batch_annotate_modular.py`**: Creates and manages user interface components. Processes various components.
+- **`batch_annotate_modular.py`**: Manages concurrent execution. Processes various components.
   - Batch functions: `_process_folder, _process_single, process_batch, process_single_file, run_batch()`
 
 ### Utility Scripts
 - **`file_io.py`**: Creates and manages user interface components. Creates various components.
 - **`intent_enhancer_v2.py`**: Detects or identifies patterns in, Generates functionality for this module.
-- **`project_architect.py`**: Extracts, Detects or identifies patterns in functionality for this module.
+- **`project_architect.py`**: Generates, Extracts functionality for this module.
 
 ### Execution Flow
 1. **Start**: Run `python main.py` or `python main.py <filepath>`
@@ -73,117 +73,13 @@ python project_architect.py
 
 ## 🔄 SHARED STATE TABLE
 
-### Data
-
-| Variable | Modules | Purpose |
-|----------|---------|---------|
-| `ACTION_MAP` | intent_inference.py | Generates functionality for this module. |
-| `ANNOTATOR_VERSION` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
-| `BEGIN_MARK` | state_tracker.py | Loads and manages configuration settings. Extracts various components. |
-| `BULLET_RE` | state_tracker.py | Loads and manages configuration settings. Extracts various components. |
-| `CRIT_GLOBALS_HEADER` | state_tracker.py | Loads and manages configuration settings. Extracts various components. |
-| `DEFAULT_MODULE_INTENT` | intent_inference.py | Generates functionality for this module. |
-| `DEFAULT_VERB` | intent_inference.py | Generates functionality for this module. |
-| `DOMAIN_INDICATORS` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
-| `DOMAIN_PURPOSES` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
-| `END_MARK` | state_tracker.py | Loads and manages configuration settings. Extracts various components. |
-| `FUNCTION_PATTERNS` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
-| `HEADER_BOUNDARY` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
-| `KEY_ALIASES` | state_tracker.py | Loads and manages configuration settings. Extracts various components. |
-| `KEY_LINE_RE` | state_tracker.py | Loads and manages configuration settings. Extracts various components. |
-| `MODULE_NAME_HINTS` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
-| `VAR_HEADER_RE` | state_tracker.py | Loads and manages configuration settings. Extracts various components. |
-| `__all__` | __init__.py | Handles init functionality. |
-| `__author__` | __init__.py | Handles init functionality. |
-| `__version__` | __init__.py | Handles init functionality. |
-| `analyzer` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `analyzer1` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
-| `analyzer2` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
-| `analyzer3` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
-| `analyzer4` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
-| `analyzer5` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
-| `analyzer6` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
-| `analyzer7` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
-| `analyzer8` | intent_enhancer_v2.py | Detects or identifies patterns in, Generates functionality for this module. |
-| `app` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
-| `args` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
-| `classes` | analyzer_state.py | Manages concurrent execution. |
-| `comparisons` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `condition` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `detector` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `exceptions` | analyzer_state.py | Manages concurrent execution. |
-| `files` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
-| `folder` | project_architect.py, state_tracker.py | Extracts, Detects or identifies patterns in functionality for this module. |
-| `functions` | analyzer_state.py | Manages concurrent execution. |
-| `generated_at` | analyzer_state.py | Manages concurrent execution. |
-| `globals` | analyzer_state.py | Manages concurrent execution. |
-| `hotkeys` | analyzer_state.py | Manages concurrent execution. |
-| `imports_external` | analyzer_state.py | Manages concurrent execution. |
-| `imports_local` | analyzer_state.py | Manages concurrent execution. |
-| `io_reads` | analyzer_state.py | Manages concurrent execution. |
-| `io_writes` | analyzer_state.py | Manages concurrent execution. |
-| `line_number` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `name` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `notes` | analyzer_state.py | Manages concurrent execution. |
-| `out_md` | state_tracker.py | Loads and manages configuration settings. Extracts various components. |
-| `parser` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
-| `primary_variable` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `readers` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `related_variables` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `results` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `root` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
-| `test_code` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `threads` | analyzer_state.py | Manages concurrent execution. |
-| `transitions` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `trigger_function` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `ui_binds` | analyzer_state.py | Manages concurrent execution. |
-| `values` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `var_type` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `version` | analyzer_state.py | Manages concurrent execution. |
-| `writers` | state_machine_detector.py | Generates, Renders functionality for this module. |
-
-### File System
-
-| Variable | Modules | Purpose |
-|----------|---------|---------|
-| `path` | project_architect.py | Extracts, Detects or identifies patterns in functionality for this module. |
-| `project_path` | analyzer_state.py | Manages concurrent execution. |
-| `project_structure_path` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
-
-### State Management
-
-| Variable | Modules | Purpose |
-|----------|---------|---------|
-| `STATE_VARIABLE_PATTERNS` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `config_state` | analyzer_state.py | Manages concurrent execution. |
-| `from_state` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `position_state` | analyzer_state.py | Manages concurrent execution. |
-| `state` | analyzer_state.py, state_tracker.py | Manages concurrent execution. |
-| `state_cats` | analyzer_state.py | Manages concurrent execution. |
-| `state_map` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
-| `state_table` | batch_annotate_modular.py | Creates and manages user interface components. Processes various components. |
-| `states` | state_machine_detector.py | Generates, Renders functionality for this module. |
-| `timing_state` | analyzer_state.py | Manages concurrent execution. |
-| `to_state` | state_machine_detector.py | Generates, Renders functionality for this module. |
-
-### Synchronization
-
-| Variable | Modules | Purpose |
-|----------|---------|---------|
-| `_lock` | analyzer_state.py | Manages concurrent execution. |
-
-### State Relationships
-
-**Modules with Shared State:**
-- `analyzer_state.py` ↔ `state_tracker.py`: `state`
-- `project_architect.py` ↔ `state_tracker.py`: `folder`
-
-### Threading Considerations
-
-**Threaded Modules:** `batch_annotate_modular.py`
-
-⚠️ **Warning**: The following modules use threading and may access shared state concurrently:
-- `batch_annotate_modular.py`
+| File | Variable | Modified By | Read By |
+|------|----------|-------------|---------|
+| batch_annotate_modular.py | `files` | _process_folder, find_python_files, process_single_file | _process_folder, find_python_files |
+| state_machine_detector.py | `detector` | detect_state_machines, generate_state_machine_diagram, render_state_machine_summary | detect_state_machines, generate_state_machine_diagram, render_state_machine_summary |
+| state_machine_detector.py | `from_state` | _analyze_transitions, generate_mermaid_diagram | _analyze_transitions, generate_mermaid_diagram |
+| state_machine_detector.py | `to_state` | _analyze_transitions, generate_mermaid_diagram | _analyze_transitions, generate_mermaid_diagram |
+| state_machine_detector.py | `var_type` | _classify_state_variable, _detect_state_variables | _classify_state_variable, _detect_state_variables |
 
 ---
 
@@ -204,7 +100,6 @@ graph TD
     batch_annotate_modular.py --> core_analyzer
     batch_annotate_modular.py --> intent_inference
     batch_annotate_modular.py --> project_architect
-    batch_annotate_modular.py --> state_tracker
     batch_annotate_modular.py --> synopsis_renderer
     core_analyzer.py --> analyzer_state
     core_analyzer.py --> state_machine_detector
@@ -214,6 +109,7 @@ graph TD
     intent_enhancer_v2.py --> intent_inference
     intent_inference.py --> intent_enhancer_v2
     main.py --> analyzer_state
+    project_architect.py --> state_tracker
 ```
 
 ## 🔄 Cross-Module Data Flow Map
@@ -228,7 +124,7 @@ graph TD
 | intent_enhancer_v2.py | Functions: __init__, detect_domains, detect_function_patterns, extract_noun_from_functions, find_common_themes, generate_enhanced_module_intent, generate_smart_intent |
 | intent_inference.py | Functions: _infer_verb, _insert_human_readable_intent, _insert_machine_block_kv, _noun_phrase_from, _split_ident, generate_module_intent, infer_function_intent, inject_intent |
 | main.py | Functions: analyze_file, batch_analyze, main |
-| project_architect.py | Functions: build_project_summary, detect_exceptions, extract, extract_list |
+| project_architect.py | Functions: build_project_summary, detect_exceptions, extract, extract_function_signatures_from_content, extract_list, generate_application_overview, generate_detailed_shared_state_table, generate_entry_points_se... |
 | state_machine_detector.py | Functions: __init__, _analyze_transitions, _build_function_map, _classify_state_variable, _detect_guards, _detect_state_variables, _extract_name, _extract_value, _get_enclosing_function, _group_into_state_machin... |
 | state_tracker.py | Functions: _strip_comment_prefix, append_to_project_structure, build_state_table, extract_blocks, extract_critical_globals, generate_state_markdown, merge_file_state_from_text, parse_block |
 | synopsis_renderer.py | Functions: __init__, _render_classes, _render_critical_globals, _render_data_flow_summary, _render_function_behavioral_summaries, _render_function_dependencies, _render_function_signatures, _render_high_priority... |
@@ -285,7 +181,7 @@ _No exception handlers detected._
 
 ### `analyzer_state.py`
 
-**Intent:** Manages concurrent execution.
+**Intent:** Loads and manages configuration settings.
 
 **Classes:** AnalyzerState
 
@@ -356,7 +252,7 @@ _No exception handlers detected._
 
 ### `batch_annotate_modular.py`
 
-**Intent:** Creates and manages user interface components. Processes various components.
+**Intent:** Manages concurrent execution. Processes various components.
 
 **Classes:** AnnotatorGUI
 
@@ -365,7 +261,7 @@ _No exception handlers detected._
 **Globals:** ANNOTATOR_VERSION, HEADER_BOUNDARY, app, args, files, parser, project_structure_path, root, state_map, state_table
 
 
-**Local Imports:** analyzer_state, behavioral_analysis, core_analyzer, intent_inference, project_architect, state_tracker, synopsis_renderer
+**Local Imports:** analyzer_state, behavioral_analysis, core_analyzer, intent_inference, project_architect, synopsis_renderer
 
 **External Imports:** argparse, datetime, glob, hashlib, os, pathlib, shutil, subprocess, sys, threading, tkinter
 
@@ -1105,16 +1001,16 @@ _No exception handlers detected._
 
 ### `project_architect.py`
 
-**Intent:** Extracts, Detects or identifies patterns in functionality for this module.
+**Intent:** Generates, Extracts functionality for this module.
 
 **Classes:** _None_
 
-**Functions:** build_project_summary, detect_exceptions, extract, extract_list
+**Functions:** build_project_summary, detect_exceptions, extract, extract_function_signatures_from_content, extract_list, generate_application_overview, generate_detailed_shared_state_table, generate_entry_points_section, parse_function_intents
 
 **Globals:** folder, path
 
 
-**Local Imports:** _None_
+**Local Imports:** state_tracker
 
 **External Imports:** collections, datetime, os, re
 
@@ -1127,7 +1023,17 @@ _No exception handlers detected._
 
 - `extract(block: str, key: str) -> str`
 
+- `extract_function_signatures_from_content(content: str) -> list[str]`
+
 - `extract_list(block: str, key: str) -> list[str]`
+
+- `generate_application_overview(summaries: list[dict]) -> list[str]`
+
+- `generate_detailed_shared_state_table(folder: str) -> list[str]`
+
+- `generate_entry_points_section(summaries: list[dict]) -> list[str]`
+
+- `parse_function_intents(function_intents_str: str) -> dict[str, str]`
 
 
 #### 🎯 Function Intents
@@ -1138,7 +1044,17 @@ _No exception handlers detected._
 
 - **extract()**: Retrieves the target entities.
 
+- **extract_function_signatures_from_content()**: Retrieves function signatures from content.
+
 - **extract_list()**: Retrieves list.
+
+- **generate_application_overview()**: Handles application overview.
+
+- **generate_detailed_shared_state_table()**: Handles detailed shared state table.
+
+- **generate_entry_points_section()**: Handles entry points section.
+
+- **parse_function_intents()**: Parses function intents.
 
 
 #### File I/O Summary
@@ -1473,6 +1389,8 @@ _No exception handlers detected._
 
 ### `utils.py`
 
+**Intent:** Utility functions and helper methods.
+
 **Classes:** CodeUtils
 
 **Functions:** call_to_name, categorize_shared_state, enclosing_function_name, extract_hotkey_bindings, extract_open_args, format_call_name, format_file_size, get_file_info, group_functions_by_purpose, is_local_module, safe_filename
@@ -1514,7 +1432,27 @@ _No exception handlers detected._
 
 #### 🎯 Function Intents
 
-_No function intents available._
+- **call_to_name()**: Handles to name.
+
+- **categorize_shared_state()**: Handles shared state.
+
+- **enclosing_function_name()**: Handles function name.
+
+- **extract_hotkey_bindings()**: Retrieves hotkey bindings.
+
+- **extract_open_args()**: Retrieves open args.
+
+- **format_call_name()**: Handles call name.
+
+- **format_file_size()**: Handles file size.
+
+- **get_file_info()**: Handles file info.
+
+- **group_functions_by_purpose()**: Organizes functions by purpose.
+
+- **is_local_module()**: Handles local module.
+
+- **safe_filename()**: Handles filename.
 
 
 #### File I/O Summary

@@ -1,13 +1,13 @@
 #===============================================================================
 # CODE SYNOPSIS: project_architect.py
-# SYNOPSIS_HASH: b74f4c6e03c7a20782ee46d6ab8ad1ad9ec7f91d8da1f97893869f4596224377
-# Generated: 2025-10-24 23:31:32
-# INTENT: Extracts, Detects or identifies patterns in functionality for this module.
+# SYNOPSIS_HASH: 990f191e07d54a5e94409e086eddb0e7db08d8696a177a507b2ae9d12f9eb834
+# Generated: 2025-10-25 11:18:38
+# INTENT: Generates, Extracts functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 197
-#   Functions: 4
+#   Total Lines: 528
+#   Functions: 9
 #   Classes: 0
 #   Global Variables: 2
 #
@@ -16,19 +16,21 @@
 #   - datetime
 #   - os
 #   - re
+#   (Local modules):
+#     * state_tracker
 #
 #===============================================================================
 # ════════════════════
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 23:31:32
+# LAST_ANALYZED: 2025-10-25 11:18:38
 # FILE: project_architect.py
 # IMPORTS_EXTERNAL: collections, datetime, os, re
-# IMPORTS_LOCAL: 
+# IMPORTS_LOCAL: state_tracker
 # GLOBALS: folder, path
-# FUNCTIONS: build_project_summary, detect_exceptions, extract, extract_list
-# RETURNS: build_project_summary, detect_exceptions, extract, extract_list
+# FUNCTIONS: build_project_summary, detect_exceptions, extract, extract_function_signatures_from_content, extract_list, generate_application_overview, generate_detailed_shared_state_table, generate_entry_points_section, parse_function_intents
+# RETURNS: build_project_summary, detect_exceptions, extract, extract_function_signatures_from_content, extract_list, generate_application_overview, generate_detailed_shared_state_table, generate_entry_points_section, parse_function_intents
 # THREAD_TARGETS: 
 # HOTKEYS: 
 # TK_BINDS: 
@@ -41,8 +43,8 @@
 # STATE_MACHINES_COUNT: 0
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
-# INTENT: Extracts, Detects or identifies patterns in functionality for this module.
-# FUNCTION_INTENTS: build_project_summary=Constructs or generates project summary., detect_exceptions=Identifies exceptions., extract=Retrieves the target entities., extract_list=Retrieves list.
+# INTENT: Generates, Extracts functionality for this module.
+# FUNCTION_INTENTS: build_project_summary=Constructs or generates project summary., detect_exceptions=Identifies exceptions., extract=Retrieves the target entities., extract_function_signatures_from_content=Retrieves function signatures from content., extract_list=Retrieves list., generate_application_overview=Handles application overview., generate_detailed_shared_state_table=Handles detailed shared state table., generate_entry_points_section=Handles entry points section., parse_function_intents=Parses function intents.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
@@ -58,8 +60,23 @@
 # extract(block: str, key: str) -> str
 #   Extract value for a given key from a MACHINE-READABLE DATA block.
 #
+# extract_function_signatures_from_content(content: str) -> list[str]
+#   Extract function signatures from the FUNCTION SIGNATURES section.
+#
 # extract_list(block: str, key: str) -> list[str]
 #   Extract comma-separated list for a key.
+#
+# generate_application_overview(summaries: list[dict]) -> list[str]
+#   Generate an Application Overview section based on module intents and key components.
+#
+# generate_detailed_shared_state_table(folder: str) -> list[str]
+#   Generate a detailed Shared State Table using state_tracker functions.
+#
+# generate_entry_points_section(summaries: list[dict]) -> list[str]
+#   Generate an Entry Points section showing how the application starts and flows.
+#
+# parse_function_intents(function_intents_str: str) -> dict[str, str]
+#   Parse function intents from the FUNCTION_INTENTS string.
 #
 #===============================================================================
 #
@@ -98,6 +115,11 @@
 #
 #   extract() — calls m.group, re.search, strip; returns value
 #   extract_list() — calls extract, v.strip, val.split; returns value
+#   extract_function_signatures_from_content() — calls line.startswith, line.strip, match.group, re.search, section_content.split, signature.startswith; returns value
+#   parse_function_intents() — calls func_name.strip, function_intents_str.split, intent.strip, part.split, part.strip; returns value
+#   generate_application_overview() — calls core_analyzers.append, file_name.lower, intent.lower, join, key_features.add, len; returns value
+#   generate_entry_points_section() — calls any, batch_files.append, batch_funcs.append, f.strip, file_name.endswith, file_name.lower; returns value
+#   generate_detailed_shared_state_table() — calls build_state_table, globals_dict.items, join, lines.append, rel.get, sorted; returns value
 #   detect_exceptions() — calls content.splitlines, enumerate, line.strip, result.append, split, startswith; returns value
 #   build_project_summary() — reads path; writes path; calls append, data_flow.items, datetime.now, defaultdict, dependencies.items, extract; returns value
 #===============================================================================
@@ -142,6 +164,7 @@
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 #!/usr/bin/env python3
 """
 project_architect.py
@@ -161,6 +184,12 @@ import os
 import re
 from datetime import datetime
 from collections import defaultdict
+
+# Import state tracker functions for detailed state table
+try:
+    from .state_tracker import build_state_table
+except ImportError:
+    from state_tracker import build_state_table
 
 
 def extract(block: str, key: str) -> str:
@@ -427,129 +456,43 @@ def generate_entry_points_section(summaries: list[dict]) -> list[str]:
     return lines
 
 
-def generate_shared_state_table(summaries: list[dict]) -> list[str]:
-    """Generate a Shared State Table showing state variables and their relationships."""
+def generate_detailed_shared_state_table(folder: str) -> list[str]:
+    """Generate a detailed Shared State Table using state_tracker functions."""
     lines = []
     
-    # Collect shared state information from all modules
-    shared_state_vars = {}
-    state_categories = {}
-    
-    for summary in summaries:
-        file_name = summary['file']
-        globals_ = summary.get('globals', '')
-        intent = summary.get('intent', '')
+    try:
+        # Use the state_tracker to build the detailed state table
+        state_map = build_state_table(folder)
         
-        # Extract global variables
-        if globals_ and globals_ != '_None_':
-            global_list = [g.strip() for g in globals_.split(',') if g.strip()]
-            for var in global_list:
-                if var not in shared_state_vars:
-                    shared_state_vars[var] = {
-                        'modules': [],
-                        'intents': [],
-                        'category': 'Unknown'
-                    }
-                shared_state_vars[var]['modules'].append(file_name)
-                shared_state_vars[var]['intents'].append(intent)
+        if not state_map:
+            return lines
+        
+        lines.append("## 🔄 SHARED STATE TABLE")
+        lines.append("")
+        lines.append("| File | Variable | Modified By | Read By |")
+        lines.append("|------|----------|-------------|---------|")
+        
+        # Generate the detailed table with Modified By | Read By
+        # Only show variables that have actual tracking data
+        for file_name, globals_dict in sorted(state_map.items()):
+            for var, rel in sorted(globals_dict.items()):
+                mods = ", ".join(rel.get("modified_by", [])) or "-"
+                reads = ", ".join(rel.get("read_by", [])) or "-"
                 
-                # Categorize state variables
-                var_lower = var.lower()
-                if 'state' in var_lower or 'mode' in var_lower:
-                    shared_state_vars[var]['category'] = 'State Management'
-                elif 'config' in var_lower or 'setting' in var_lower:
-                    shared_state_vars[var]['category'] = 'Configuration'
-                elif 'cache' in var_lower or 'buffer' in var_lower:
-                    shared_state_vars[var]['category'] = 'Caching'
-                elif 'lock' in var_lower or 'mutex' in var_lower:
-                    shared_state_vars[var]['category'] = 'Synchronization'
-                elif 'path' in var_lower or 'dir' in var_lower:
-                    shared_state_vars[var]['category'] = 'File System'
-                else:
-                    shared_state_vars[var]['category'] = 'Data'
-    
-    if not shared_state_vars:
-        return lines
-    
-    lines.append("## 🔄 SHARED STATE TABLE")
-    lines.append("")
-    
-    # Group by category
-    categories = {}
-    for var, info in shared_state_vars.items():
-        category = info['category']
-        if category not in categories:
-            categories[category] = []
-        categories[category].append((var, info))
-    
-    # Generate table for each category
-    for category, vars_list in sorted(categories.items()):
-        lines.append(f"### {category}")
-        lines.append("")
-        lines.append("| Variable | Modules | Purpose |")
-        lines.append("|----------|---------|---------|")
-        
-        for var, info in sorted(vars_list):
-            modules_str = ", ".join(info['modules'][:3])  # Limit to first 3 modules
-            if len(info['modules']) > 3:
-                modules_str += f" (+{len(info['modules'])-3} more)"
-            
-            # Get purpose from intents
-            purpose = "Unknown"
-            if info['intents']:
-                # Use the first non-empty intent
-                for intent in info['intents']:
-                    if intent and intent.strip():
-                        purpose = intent
-                        break
-            
-            lines.append(f"| `{var}` | {modules_str} | {purpose} |")
+                # Filter out variables with no tracking data
+                if mods != "-" or reads != "-":
+                    lines.append(f"| {file_name} | `{var}` | {mods} | {reads} |")
         
         lines.append("")
-    
-    # Add state relationships
-    lines.append("### State Relationships")
-    lines.append("")
-    
-    # Find modules that share state
-    state_connections = {}
-    for var, info in shared_state_vars.items():
-        if len(info['modules']) > 1:
-            modules = sorted(info['modules'])
-            for i in range(len(modules)):
-                for j in range(i+1, len(modules)):
-                    key = tuple(sorted([modules[i], modules[j]]))
-                    if key not in state_connections:
-                        state_connections[key] = []
-                    state_connections[key].append(var)
-    
-    if state_connections:
-        lines.append("**Modules with Shared State:**")
-        for (mod1, mod2), vars_list in sorted(state_connections.items()):
-            vars_str = ", ".join([f"`{v}`" for v in vars_list[:5]])
-            if len(vars_list) > 5:
-                vars_str += f" (+{len(vars_list)-5} more)"
-            lines.append(f"- `{mod1}` ↔ `{mod2}`: {vars_str}")
+        lines.append("---")
         lines.append("")
-    
-    # Add threading considerations
-    threaded_modules = []
-    for summary in summaries:
-        if summary.get('threads') and summary.get('threads') != '_None_':
-            threaded_modules.append(summary['file'])
-    
-    if threaded_modules:
-        lines.append("### Threading Considerations")
+        
+    except Exception as e:
+        # Fallback if state_tracker fails
+        lines.append("## 🔄 SHARED STATE TABLE")
         lines.append("")
-        lines.append("**Threaded Modules:** " + ", ".join([f"`{m}`" for m in threaded_modules]))
+        lines.append("_State tracking unavailable._")
         lines.append("")
-        lines.append("⚠️ **Warning**: The following modules use threading and may access shared state concurrently:")
-        for module in threaded_modules:
-            lines.append(f"- `{module}`")
-        lines.append("")
-    
-    lines.append("---")
-    lines.append("")
     
     return lines
 
@@ -661,8 +604,8 @@ def build_project_summary(folder: str, output_path: str = None) -> str:
     # Add Entry Points section
     md.extend(generate_entry_points_section(summaries))
     
-    # Add Shared State Table section
-    md.extend(generate_shared_state_table(summaries))
+    # Add Detailed Shared State Table section
+    md.extend(generate_detailed_shared_state_table(folder))
     
     md.append("This document provides a full architectural map of the project.\n")
 

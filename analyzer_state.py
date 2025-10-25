@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: analyzer_state.py
-# SYNOPSIS_HASH: e1b0fd26f12cb569eb98fd7f25e2d74f30c37fdb5bbaf4e47945001a8f8b18b2
-# Generated: 2025-10-24 23:31:32
-# INTENT: Manages concurrent execution.
+# SYNOPSIS_HASH: 418a74841d19b7536e76c5a289c79a69e15dc286954980d4668d1b6300446a8e
+# Generated: 2025-10-25 11:18:38
+# INTENT: Loads and manages configuration settings.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 158
+#   Total Lines: 159
 #   Functions: 7
 #   Classes: 1
 #   Global Variables: 21
@@ -24,7 +24,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 23:31:32
+# LAST_ANALYZED: 2025-10-25 11:18:38
 # FILE: analyzer_state.py
 # IMPORTS_EXTERNAL: __future__, dataclasses, datetime, json, threading, typing
 # IMPORTS_LOCAL: 
@@ -43,7 +43,7 @@
 # STATE_MACHINES_COUNT: 1
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
-# INTENT: Manages concurrent execution.
+# INTENT: Loads and manages configuration settings.
 # FUNCTION_INTENTS: clear=Handles the target entities., merge=Handles the target entities., new_state=Handles state., summary=Handles the target entities., to_dict=Handles dict., to_json=Handles json., update=Handles the target entities.
 # END MACHINE-READABLE DATA
 # ════════════════════
@@ -76,7 +76,7 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   AnalyzerState (line 30):
+#   AnalyzerState (line 31):
 #     - AnalyzerState.update()
 #     - AnalyzerState.merge()
 #     - AnalyzerState.clear()
@@ -200,6 +200,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
