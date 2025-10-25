@@ -1,15 +1,15 @@
 #===============================================================================
 # CODE SYNOPSIS: project_architect.py
-# SYNOPSIS_HASH: a4e9dcdbac635d546c15d2b089cdb99fb873802abc87b7bfc3db64cb41f2194d
-# Generated: 2025-10-24 19:14:51
-# INTENT: Constructs, identifies, retrieves core behaviors for this module, derived from its primary routines.
+# SYNOPSIS_HASH: 1c46f5ecb712a75abd0f6e2cc420d54bcdad51bf3c2c0fbe24facc2cb37feb0d
+# Generated: 2025-10-24 22:17:09
+# INTENT: Extracts, Detects or identifies patterns in functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 189
+#   Total Lines: 194
 #   Functions: 4
 #   Classes: 0
-#   Global Variables: 29
+#   Global Variables: 30
 #
 # Key Dependencies:
 #   - collections
@@ -22,11 +22,11 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 19:14:51
+# LAST_ANALYZED: 2025-10-24 22:17:09
 # FILE: project_architect.py
 # IMPORTS_EXTERNAL: collections, datetime, os, re
 # IMPORTS_LOCAL: 
-# GLOBALS: block, classes, content, data_flow, dependencies, exceptions, file_name, files, folder, functions, globals_, hotkeys, imports_external, imports_local, intent_line, io_reads, io_writes, lines, m, md, output, path, pattern, result, src_node, summaries, threads, tk_binds, val
+# GLOBALS: block, classes, content, data_flow, dependencies, exceptions, file_name, files, folder, functions, globals_, hotkeys, imports_external, imports_local, intent_line, io_reads, io_writes, lines, m, md, output, output_path, path, pattern, result, src_node, summaries, threads, tk_binds, val
 # FUNCTIONS: build_project_summary, detect_exceptions, extract, extract_list
 # RETURNS: build_project_summary, detect_exceptions, extract, extract_list
 # THREAD_TARGETS: 
@@ -38,11 +38,29 @@
 # IO_WRITES: 
 # CALLGRAPH_ROOTS: extract_list,detect_exceptions,build_project_summary
 # STATE_VARS: 
-# INIT_SEQUENCE: print(); print()
-# INTENT: Constructs, identifies, retrieves core behaviors for this module, derived from its primary routines.
+# STATE_MACHINES_COUNT: 0
+# STATE_TRANSITIONS_COUNT: 0
+# INIT_SEQUENCE: 
+# INTENT: Extracts, Detects or identifies patterns in functionality for this module.
 # FUNCTION_INTENTS: build_project_summary=Constructs or generates project summary., detect_exceptions=Identifies exceptions., extract=Retrieves the target entities., extract_list=Retrieves list.
 # END MACHINE-READABLE DATA
 # ════════════════════
+#===============================================================================
+#
+# 📝 FUNCTION SIGNATURES:
+#
+# build_project_summary(folder: str, output_path: str = None) -> str
+#   Scans annotated Python files, parses the MACHINE-READABLE DATA block, and
+#
+# detect_exceptions(content: str) -> list[str]
+#   Detect simple try/except exception handlers.
+#
+# extract(block: str, key: str) -> str
+#   Extract value for a given key from a MACHINE-READABLE DATA block.
+#
+# extract_list(block: str, key: str) -> list[str]
+#   Extract comma-separated list for a key.
+#
 #===============================================================================
 #
 # CRITICAL GLOBAL VARIABLES:
@@ -72,52 +90,37 @@
 #   Config State:
 #     - file_name
 #     - files
+#     - output_path
 #     - path
 #===============================================================================
 #
 # ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
 #
-# build_project_summary() - line 50  (Returns: Yes)
+# build_project_summary() - line 51  (Returns: Yes)
 #   Modifies: block, classes, content, data_flow, dependencies, exceptions, file_name, files
 #   Reads: block, classes, content, data_flow, dependencies, exceptions, file_name, files
+#
+#===============================================================================
+#
+# 🧠 FUNCTION BEHAVIORAL SUMMARIES:
+#
 #
 #===============================================================================
 #
 # FUNCTION CALL HIERARCHY (depth-limited):
 #
 # - extract_list()
-#   - split()
-#   - strip()
-#   - extract()
-#     - group()
-#     - strip()
-#     - search()
 #
 # - detect_exceptions()
-#   - split()
-#   - append()
-#   - startswith()
-#   - splitlines()
-#   - enumerate()
-#   - strip()
 #
 # - build_project_summary()
-#   ... +more
-#   - sorted()
-#   - set()
-#   - now()
-#   - strip()
-#   - walk()
-#   - strftime()
-#   - basename()
-#   - sort()
 #
 #===============================================================================
 #
-# 🚀 INITIALIZATION SEQUENCE:
+# 🔄 STATE MACHINES:
 #
-#   1. print()
-#   2. print()
+#   (No state machines detected.)
+#
 #===============================================================================
 #
 # 📊 DATA FLOW SUMMARY:
@@ -142,10 +145,7 @@
 #===============================================================================
 #===============================================================================
 # 📞 FUNCTION CALL HIERARCHY:
-#   extract() → group, search, strip
-#   extract_list() → extract, split, strip
-#   detect_exceptions() → append, enumerate, split, splitlines, startswith, strip
-#   build_project_summary() → append, basename, defaultdict, endswith, extract, get, group, items, join, len, now, open, read, search, set, sort, sorted, split, strftime, strip, walk, write
+#   (No intra-module function calls detected.)
 #===============================================================================
 # 🔄 STATE MACHINE TRANSITIONS:
 #   (No *_state transitions detected.)
@@ -169,6 +169,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 #!/usr/bin/env python3

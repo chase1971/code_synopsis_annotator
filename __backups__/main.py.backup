@@ -1,7 +1,7 @@
 #===============================================================================
 # CODE SYNOPSIS: main.py
 # SYNOPSIS_HASH: ec67de976d8877e80aaa2b24dabcc9a241f7c6ba6a6eea125a6f42a7e9645c64
-# Generated: 2025-10-24 17:47:07
+# Generated: 2025-10-24 17:51:16
 #===============================================================================
 #
 # OVERVIEW:
@@ -24,7 +24,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 17:47:07
+# LAST_ANALYZED: 2025-10-24 17:51:16
 # FILE: main.py
 # IMPORTS_EXTERNAL: code_synopsis_annotator.behavioral_analysis, code_synopsis_annotator.core_analyzer, code_synopsis_annotator.file_io, code_synopsis_annotator.synopsis_renderer, os, sys, typing
 # IMPORTS_LOCAL: 
@@ -88,32 +88,32 @@
 # FUNCTION CALL HIERARCHY (depth-limited):
 #
 # - main()
-#   - len()
-#   - select_file_and_analyze()
-#   - FileIOHandler()
 #   - print()
+#   - len()
 #   - exit()
+#   - select_file_and_analyze()
 #   - exists()
+#   - FileIOHandler()
 #   - endswith()
 #   - analyze_file()
-#     - analyze()
-#     - BehavioralAnalyzer()
+#     - print()
 #     - CodeAnalyzer()
+#     - BehavioralAnalyzer()
+#     - get_analysis_summary()
 #     - SynopsisRenderer()
 #     - FileIOHandler()
-#     - print()
-#     - get_analysis_summary()
+#     - analyze()
 #
 # - batch_analyze()
 #   - print()
 #   - analyze_file()
-#     - analyze()
-#     - BehavioralAnalyzer()
+#     - print()
 #     - CodeAnalyzer()
+#     - BehavioralAnalyzer()
+#     - get_analysis_summary()
 #     - SynopsisRenderer()
 #     - FileIOHandler()
-#     - print()
-#     - get_analysis_summary()
+#     - analyze()
 #
 #===============================================================================
 #
@@ -169,6 +169,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 #!/usr/bin/env python3
 """
 Code Synopsis Annotator - Main Entry Point

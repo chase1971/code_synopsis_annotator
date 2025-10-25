@@ -1,7 +1,7 @@
 #===============================================================================
 # CODE SYNOPSIS: utils.py
 # SYNOPSIS_HASH: 5d24488658cff82f8662222c2414f0bb05c486065697bc586a9d747b607fb5e1
-# Generated: 2025-10-24 17:47:07
+# Generated: 2025-10-24 17:51:16
 #===============================================================================
 #
 # OVERVIEW:
@@ -21,7 +21,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 17:47:07
+# LAST_ANALYZED: 2025-10-24 17:51:16
 # FILE: utils.py
 # IMPORTS_EXTERNAL: ast, os, re, typing
 # IMPORTS_LOCAL: 
@@ -94,8 +94,8 @@
 #
 # - is_local_module()
 #   - exists()
-#   - join()
 #   - replace()
+#   - join()
 #
 # - format_call_name()
 #   - isinstance()
@@ -104,32 +104,32 @@
 #     - call_to_name()  (cycle)
 #
 # - enclosing_function_name()
-#   - any()
 #   - walk()
 #   - isinstance()
+#   - any()
 #
 # - extract_open_args()
 #   - len()
 #   - isinstance()
 #
 # - categorize_shared_state()
-#   - any()
-#   - sorted()
-#   - items()
 #   - lower()
+#   - items()
+#   - sorted()
+#   - any()
 #
 # - group_functions_by_purpose()
+#   - items()
+#   - list()
+#   - append()
 #   - any()
 #   - keys()
-#   - items()
-#   - append()
 #   - lower()
-#   - list()
 #
 # - extract_hotkey_bindings()
 #   - findall()
-#   - strip()
 #   - append()
+#   - strip()
 #
 # - safe_filename()
 #   - replace()
@@ -202,6 +202,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 """
 Utilities - Helper functions and common utilities.
 

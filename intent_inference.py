@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: intent_inference.py
-# SYNOPSIS_HASH: a94070e03b8b2143991d11a18bd609249dc669c72bcf0476d9762c22b93c61b5
-# Generated: 2025-10-24 19:14:51
-# INTENT: Handles core behaviors for this module, derived from its primary routines.
+# SYNOPSIS_HASH: 96b63c0917b8653f879c5f7a22e8226fca3a327f0ad17582e781ddf891852107
+# Generated: 2025-10-24 22:17:09
+# INTENT: Generates functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 217
+#   Total Lines: 226
 #   Functions: 8
 #   Classes: 0
 #   Global Variables: 28
@@ -15,16 +15,18 @@
 #   - __future__
 #   - re
 #   - typing
+#   (Local modules):
+#     * intent_enhancer_v2
 #
 #===============================================================================
 # ════════════════════
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 19:14:51
+# LAST_ANALYZED: 2025-10-24 22:17:09
 # FILE: intent_inference.py
 # IMPORTS_EXTERNAL: __future__, re, typing
-# IMPORTS_LOCAL: 
+# IMPORTS_LOCAL: intent_enhancer_v2
 # GLOBALS: ACTION_MAP, DEFAULT_MODULE_INTENT, DEFAULT_VERB, after, base, before, block, block_start, camel, end, end_idx, func_names, head, insert_at, intent, intents, lines, module_intent, obj_phrase, parts, phrase, safe_intent, safe_name, short, start_idx, tokens, updated, verbs
 # FUNCTIONS: _infer_verb, _insert_human_readable_intent, _insert_machine_block_kv, _noun_phrase_from, _split_ident, generate_module_intent, infer_function_intent, inject_intent
 # RETURNS: _infer_verb, _insert_human_readable_intent, _insert_machine_block_kv, _noun_phrase_from, _split_ident, generate_module_intent, infer_function_intent, inject_intent
@@ -36,12 +38,38 @@
 # IO_READS: 
 # IO_WRITES: 
 # CALLGRAPH_ROOTS: inject_intent
-# STATE_VARS: ACTION_MAP,DEFAULT_MODULE_INTENT,DEFAULT_VERB
+# STATE_VARS: 
+# STATE_MACHINES_COUNT: 0
+# STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
-# INTENT: Handles core behaviors for this module, derived from its primary routines.
+# INTENT: Generates functionality for this module.
 # FUNCTION_INTENTS: _infer_verb=Handles verb., _insert_human_readable_intent=Handles human readable intent., _insert_machine_block_kv=Handles machine block kv., _noun_phrase_from=Handles phrase from., _split_ident=Handles ident., generate_module_intent=Handles module intent., infer_function_intent=Handles function intent., inject_intent=Handles intent.
 # END MACHINE-READABLE DATA
 # ════════════════════
+#===============================================================================
+#
+# 📝 FUNCTION SIGNATURES:
+#
+# _infer_verb(tokens: List[str]) -> Tuple[str, str]
+#
+# _insert_human_readable_intent(header_text: str, human_intent: str) -> str
+#   Insert a '# INTENT: ...' line near the top (after SYNOPSIS_HASH if present).
+#
+# _insert_machine_block_kv(header_text: str, key: str, value: str) -> str
+#   Insert or update a key: value inside the MACHINE-READABLE DATA block.
+#
+# _noun_phrase_from(tokens: List[str], skip_first: bool = True) -> str
+#
+# _split_ident(name: str) -> List[str]
+#
+# generate_module_intent(analyzer) -> str
+#   Use function names and imports to synthesize a short module purpose line.
+#
+# infer_function_intent(func_name: str) -> str
+#
+# inject_intent(header_text: str, analyzer, behavioral_analyzer) -> str
+#   Public entry point. Returns a NEW header string with:
+#
 #===============================================================================
 #
 # CRITICAL GLOBAL VARIABLES:
@@ -50,13 +78,13 @@
 #   Modified by: _noun_phrase_from, infer_function_intent, generate_module_intent
 #   Read by: _infer_verb, _noun_phrase_from, infer_function_intent, generate_module_intent
 #
-# obj_phrase:
-#   Modified by: infer_function_intent, generate_module_intent
-#   Read by: infer_function_intent, generate_module_intent
-#
 # head:
 #   Modified by: _infer_verb, generate_module_intent
 #   Read by: _infer_verb, generate_module_intent
+#
+# obj_phrase:
+#   Modified by: infer_function_intent, generate_module_intent
+#   Read by: infer_function_intent, generate_module_intent
 #
 #===============================================================================
 #
@@ -77,87 +105,34 @@
 #
 # ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
 #
-# generate_module_intent() - line 97  (Returns: Yes)
+# generate_module_intent() - line 98  (Returns: Yes)
 #   Modifies: base, func_names, head, intents, obj_phrase, short, tokens, verbs
 #   Reads: DEFAULT_MODULE_INTENT, base, func_names, head, intents, obj_phrase, short, tokens
 #
-# _insert_machine_block_kv() - line 155  (Returns: Yes)
+# _insert_machine_block_kv() - line 164  (Returns: Yes)
 #   Modifies: after, before, block, block_start, end, end_idx, start_idx
 #   Reads: after, before, block, block_start, end, end_idx, start_idx
 #
-# inject_intent() - line 186  (Returns: Yes)
+# inject_intent() - line 195  (Returns: Yes)
 #   Modifies: intent, module_intent, safe_intent, safe_name, updated
 #   Reads: intent, module_intent, safe_intent, safe_name, updated
 #
 #===============================================================================
 #
-# 🔗 FUNCTION DEPENDENCIES (high fan-out):
+# 🧠 FUNCTION BEHAVIORAL SUMMARIES:
 #
-# generate_module_intent() calls:
-#   - _infer_verb()
-#   - _noun_phrase_from()
-#   - _split_ident()
-#   - infer_function_intent()
-#
-# inject_intent() calls:
-#   - _insert_human_readable_intent()
-#   - _insert_machine_block_kv()
-#   - generate_module_intent()
-#   - infer_function_intent()
 #
 #===============================================================================
 #
 # FUNCTION CALL HIERARCHY (depth-limited):
 #
 # - inject_intent()
-#   ... +more
-#   - sorted()
-#   - append()
-#   - keys()
-#   - join()
-#   - replace()
-#   - infer_function_intent()
-#     - _split_ident()
-#       - split()
-#       - append()
-#       - lower()
-#       - extend()
-#       - findall()
-#     - _infer_verb()
-#       - get()
-#     - _noun_phrase_from()
-#       - join()
-#       - len()
-#   - generate_module_intent()
-#     ... +more
-#     - split()
-#     - sorted()
-#     - append()
-#     - fromkeys()
-#     - getattr()
-#     - keys()
-#     - list()
-#     - capitalize()
-#   - _insert_human_readable_intent()
-#     - len()
-#     - startswith()
-#     - splitlines()
-#     - insert()
-#     - join()
-#     - min()
-#     - enumerate()
-#     - strip()
 #
 #===============================================================================
 #
-# STATE MACHINES (heuristic):
+# 🔄 STATE MACHINES:
 #
-#   ACTION_MAP: (values unknown)
-#     Checked by: _infer_verb, _noun_phrase_from
-#   DEFAULT_MODULE_INTENT: Provides functionality related to code structure analysis and summary generation.
-#     Checked by: generate_module_intent
-#   DEFAULT_VERB: Handles
-#     Checked by: _infer_verb
+#   (No state machines detected.)
 #
 #===============================================================================
 #
@@ -167,7 +142,7 @@
 #   _infer_verb() — reads ACTION_MAP, DEFAULT_VERB, head, phrase, tokens; writes head, phrase; calls ACTION_MAP.get; returns value
 #   _noun_phrase_from() — reads ACTION_MAP, tokens; writes tokens; calls join, len; returns value
 #   infer_function_intent() — reads obj_phrase, tokens; writes obj_phrase, tokens; calls _infer_verb, _noun_phrase_from, _split_ident; returns value
-#   generate_module_intent() — reads DEFAULT_MODULE_INTENT, base, func_names, head, intents, obj_phrase; writes base, func_names, head, intents, obj_phrase, short; calls _infer_verb, _noun_phrase_from, _split_ident, dict.fromkeys, getattr, head.capitalize; returns value
+#   generate_module_intent() — reads DEFAULT_MODULE_INTENT, base, func_names, head, intents, obj_phrase; writes base, func_names, head, intents, obj_phrase, short; calls _infer_verb, _noun_phrase_from, _split_ident, dict.fromkeys, generate_smart_intent, getattr; returns value
 #   _insert_human_readable_intent() — reads insert_at, lines; writes insert_at, lines; calls enumerate, header_text.splitlines, join, len, lines.insert, ln.strip; returns value
 #   _insert_machine_block_kv() — reads after, before, block, block_start, end, end_idx; writes after, before, block, block_start, end, end_idx; calls block.replace, block_start.start, end.end, re.escape, re.search, re.sub; returns value
 #   inject_intent() — reads intent, module_intent, safe_intent, safe_name, updated; writes intent, module_intent, safe_intent, safe_name, updated; calls _insert_human_readable_intent, _insert_machine_block_kv, fn_intents.append, fname.replace, generate_module_intent, infer_function_intent; returns value
@@ -187,14 +162,7 @@
 #===============================================================================
 #===============================================================================
 # 📞 FUNCTION CALL HIERARCHY:
-#   _split_ident() → append, extend, findall, lower, split
-#   _infer_verb() → get
-#   _noun_phrase_from() → join, len
-#   infer_function_intent() → _infer_verb, _noun_phrase_from, _split_ident
-#   generate_module_intent() → _infer_verb, _noun_phrase_from, _split_ident, append, capitalize, endswith, fromkeys, getattr, infer_function_intent, join, keys, list, lower, replace, sorted, split
-#   _insert_human_readable_intent() → enumerate, insert, join, len, min, splitlines, startswith, strip
-#   _insert_machine_block_kv() → end, escape, replace, search, start, sub
-#   inject_intent() → _insert_human_readable_intent, _insert_machine_block_kv, append, generate_module_intent, infer_function_intent, join, keys, replace, sorted
+#   (No intra-module function calls detected.)
 #===============================================================================
 # 🔄 STATE MACHINE TRANSITIONS:
 #   (No *_state transitions detected.)
@@ -218,6 +186,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 #!/usr/bin/env python3
 # =============================================================================
@@ -319,6 +288,14 @@ def generate_module_intent(analyzer) -> str:
     """
     Use function names and imports to synthesize a short module purpose line.
     """
+    # USE ENHANCED INTENT GENERATOR
+    try:
+        from intent_enhancer_v2 import generate_smart_intent
+        return generate_smart_intent(analyzer)
+    except ImportError:
+        pass  # Fall back to original implementation below
+    
+    # Original implementation (fallback)
     func_names = sorted((analyzer.functions or {}).keys())
     if not func_names:
         # fall back to file name

@@ -1,3 +1,469 @@
+#===============================================================================
+# CODE SYNOPSIS: core_analyzer.py
+# SYNOPSIS_HASH: c248c511bb0949e1e7beb2063b59143dc58c96566086e1e0d5c179934d7fd37a
+# Generated: 2025-10-24 22:17:09
+# INTENT: Locates or discovers, Extracts functionality for this module.
+#===============================================================================
+#
+# OVERVIEW:
+#   Total Lines: 511
+#   Functions: 29
+#   Classes: 1
+#   Global Variables: 37
+#
+# Key Dependencies:
+#   - ast
+#   - collections
+#   - os
+#   - typing
+#   - warnings
+#   (Local modules):
+#     * state_machine_detector
+#
+#===============================================================================
+# ════════════════════
+# BEGIN MACHINE-READABLE DATA (for automated processing)
+# ════════════════════
+# SYNOPSIS_ANNOTATED: YES
+# LAST_ANALYZED: 2025-10-24 22:17:09
+# FILE: core_analyzer.py
+# IMPORTS_EXTERNAL: ast, collections, os, typing, warnings
+# IMPORTS_LOCAL: state_machine_detector
+# GLOBALS: args, callee, candidate_pkg, candidate_py, cb, defaults_list, detector, enclosing, event, extra_calls, extra_transitions, found_end_marker, fullname, func, func_key, funcname, hk, info, kwarg_str, lines, methods, mode, module, node, parts, path, posonly, pretty, reads, regular_args, result, results, return_type, synopsis_end, transitions, vararg_str, writes
+# FUNCTIONS: __init__, _call_to_name, _enclosing_function_name, _extract_open_args, _format_call_name, _is_local_module, _render_arg, _safe_unparse, analyze, analyze_classes, analyze_functions, build_call_graph, detect_state_machines, detect_ui_after_usage, extract_call_graph, extract_function_signatures, extract_hotkey_bindings, extract_state_transitions, find_file_io, find_globals, find_hotkeys_and_ui_binds, find_imports, find_threading, infer_function_behavior, parse_code, process_function, read_file, strip_existing_synopsis, summarize_initialization_sequence
+# RETURNS: _call_to_name, _enclosing_function_name, _extract_open_args, _format_call_name, _is_local_module, _render_arg, _safe_unparse, extract_call_graph, extract_hotkey_bindings, extract_state_transitions, infer_function_behavior, read_file, strip_existing_synopsis
+# THREAD_TARGETS: 
+# HOTKEYS: 
+# TK_BINDS: 
+# COMMAND_BINDS: 
+# CLASSES: CodeAnalyzer
+# IO_READS: 
+# IO_WRITES: 
+# CALLGRAPH_ROOTS: __init__,read_file,strip_existing_synopsis,parse_code,analyze,find_globals,analyze_classes,analyze_functions,_is_local_module,find_imports,find_threading,find_hotkeys_and_ui_binds,find_file_io,_extract_open_args,build_call_graph,detect_state_machines,detect_ui_after_usage,summarize_initialization_sequence,_call_to_name,_format_call_name,_enclosing_function_name,extract_call_graph,extract_state_transitions,extract_hotkey_bindings,infer_function_behavior,_safe_unparse,_render_arg,extract_function_signatures
+# STATE_VARS: mode
+# STATE_MACHINES_COUNT: 1
+# STATE_TRANSITIONS_COUNT: 1
+# INIT_SEQUENCE: 
+# INTENT: Locates or discovers, Extracts functionality for this module.
+# FUNCTION_INTENTS: __init__=Handles the target entities., _call_to_name=Handles to name., _enclosing_function_name=Handles function name., _extract_open_args=Retrieves open args., _format_call_name=Handles call name., _is_local_module=Handles local module., _render_arg=Produces or displays arg., _safe_unparse=Handles unparse., analyze=Examines and summarizes the target entities., analyze_classes=Examines and summarizes classes., analyze_functions=Examines and summarizes functions., build_call_graph=Constructs or generates call graph., detect_state_machines=Identifies state machines., detect_ui_after_usage=Identifies ui after usage., extract_call_graph=Retrieves call graph., extract_function_signatures=Retrieves function signatures., extract_hotkey_bindings=Retrieves hotkey bindings., extract_state_transitions=Retrieves state transitions., find_file_io=Locates or gathers file io., find_globals=Locates or gathers globals., find_hotkeys_and_ui_binds=Locates or gathers hotkeys and ui binds., find_imports=Locates or gathers imports., find_threading=Locates or gathers threading., infer_function_behavior=Handles function behavior., parse_code=Parses code., process_function=Handles or executes function., read_file=Reads file., strip_existing_synopsis=Handles existing synopsis., summarize_initialization_sequence=Condenses results of initialization sequence.
+# END MACHINE-READABLE DATA
+# ════════════════════
+#===============================================================================
+#
+# 📝 FUNCTION SIGNATURES:
+#
+# CodeAnalyzer.__init__(self, filepath: str, *, include_machine_block: bool = True) -> None
+#   Initialize the analyzer with a file path.
+#
+# CodeAnalyzer._call_to_name(self, func_node) -> str
+#   Convert a call function node to a string name.
+#
+# CodeAnalyzer._enclosing_function_name(self, node: ast.AST) -> Optional[str]
+#   Find the name of the function enclosing this node.
+#
+# CodeAnalyzer._extract_open_args(self, call_node: ast.Call) -> Tuple[Optional[str], str]
+#   Extract file path and mode from open() call.
+#
+# CodeAnalyzer._format_call_name(self, call_node: ast.Call) -> str
+#   Format a call node as a string.
+#
+# CodeAnalyzer._is_local_module(self, module_name: str) -> bool
+#   Check if a module is local to the project.
+#
+# CodeAnalyzer._render_arg(self, arg: ast.arg, default: Optional[ast.AST]) -> str
+#   Render a function argument with its annotation and default.
+#
+# CodeAnalyzer._safe_unparse(self, node: Optional[ast.AST]) -> str
+#   Safely convert AST node to string, avoiding heavy operations.
+#
+# CodeAnalyzer.analyze(self) -> None
+#   Run the complete analysis pipeline.
+#
+# CodeAnalyzer.analyze_classes(self) -> None
+#   Analyze class definitions and their methods.
+#
+# CodeAnalyzer.analyze_functions(self) -> None
+#   Analyze function definitions and their behavior.
+#
+# CodeAnalyzer.build_call_graph(self) -> None
+#   Build a call graph of function calls.
+#
+# CodeAnalyzer.detect_state_machines(self) -> None
+#   Detect state machine patterns using StateMachineDetector.
+#
+# CodeAnalyzer.detect_ui_after_usage(self) -> None
+#   Detect usage of UI after callbacks.
+#
+# CodeAnalyzer.extract_call_graph(self, tree: ast.AST) -> Dict[str, Set[str]]
+#   Extract call graph from AST.
+#
+# CodeAnalyzer.extract_function_signatures(self) -> None
+#   Extract function signatures with type hints and defaults.
+#
+# CodeAnalyzer.extract_hotkey_bindings(self) -> List[str]
+#   Extract hotkey bindings in a pretty format.
+#
+# CodeAnalyzer.extract_state_transitions(self, tree: ast.AST) -> Dict[str, Set[str]]
+#   Extract state transitions from AST.
+#
+# CodeAnalyzer.find_file_io(self) -> None
+#   Find file I/O operations.
+#
+# CodeAnalyzer.find_globals(self) -> None
+#   Find all global variable assignments.
+#
+# CodeAnalyzer.find_hotkeys_and_ui_binds(self) -> None
+#   Find hotkey and UI binding patterns.
+#
+# CodeAnalyzer.find_imports(self) -> None
+#   Find and categorize imports.
+#
+# CodeAnalyzer.find_threading(self) -> None
+#   Find threading usage and interactions.
+#
+# CodeAnalyzer.infer_function_behavior(self, func_name: str) -> Dict[str, object]
+#   Infer behavioral intent of a function.
+#
+# CodeAnalyzer.parse_code(self) -> None
+#   Parse the Python code into an AST.
+#
+# CodeAnalyzer.read_file(self) -> str
+#   Read the source file.
+#
+# CodeAnalyzer.strip_existing_synopsis(self, code: str) -> str
+#   Remove existing synopsis headers from code.
+#
+# CodeAnalyzer.summarize_initialization_sequence(self) -> None
+#   Summarize module initialization sequence.
+#
+#===============================================================================
+#
+# 🧱 CLASSES FOUND:
+#
+#   CodeAnalyzer (line 18):
+#     - CodeAnalyzer.__init__()
+#     - CodeAnalyzer.read_file()
+#     - CodeAnalyzer.strip_existing_synopsis()
+#     - CodeAnalyzer.parse_code()
+#     - CodeAnalyzer.analyze()
+#     - CodeAnalyzer.find_globals()
+#     - CodeAnalyzer.analyze_classes()
+#     - CodeAnalyzer.analyze_functions()
+#     - CodeAnalyzer._is_local_module()
+#     - CodeAnalyzer.find_imports()
+#     - CodeAnalyzer.find_threading()
+#     - CodeAnalyzer.find_hotkeys_and_ui_binds()
+#     - CodeAnalyzer.find_file_io()
+#     - CodeAnalyzer._extract_open_args()
+#     - CodeAnalyzer.build_call_graph()
+#     - CodeAnalyzer.detect_state_machines()
+#     - CodeAnalyzer.detect_ui_after_usage()
+#     - CodeAnalyzer.summarize_initialization_sequence()
+#     - CodeAnalyzer._call_to_name()
+#     - CodeAnalyzer._format_call_name()
+#     - CodeAnalyzer._enclosing_function_name()
+#     - CodeAnalyzer.extract_call_graph()
+#     - CodeAnalyzer.extract_state_transitions()
+#     - CodeAnalyzer.extract_hotkey_bindings()
+#     - CodeAnalyzer.infer_function_behavior()
+#     - CodeAnalyzer._safe_unparse()
+#     - CodeAnalyzer._render_arg()
+#     - CodeAnalyzer.extract_function_signatures()
+#===============================================================================
+#
+# CRITICAL GLOBAL VARIABLES:
+#
+# node:
+#   Modified by: find_globals, analyze_classes, analyze_functions, find_imports, find_threading, find_hotkeys_and_ui_binds +6 more
+#   Read by: find_globals, analyze_classes, analyze_functions, find_imports, find_threading, find_hotkeys_and_ui_binds +8 more
+#
+# parts:
+#   Modified by: _call_to_name, extract_function_signatures, process_function
+#   Read by: _call_to_name, extract_function_signatures, process_function
+#
+# func_key:
+#   Modified by: extract_function_signatures, process_function
+#   Read by: extract_function_signatures, process_function
+#
+# defaults_list:
+#   Modified by: extract_function_signatures, process_function
+#   Read by: extract_function_signatures, process_function
+#
+# vararg_str:
+#   Modified by: extract_function_signatures, process_function
+#   Read by: extract_function_signatures, process_function
+#
+# path:
+#   Modified by: find_file_io, _extract_open_args
+#   Read by: find_file_io, _extract_open_args
+#
+# hk:
+#   Modified by: find_hotkeys_and_ui_binds, extract_hotkey_bindings
+#   Read by: find_hotkeys_and_ui_binds, extract_hotkey_bindings
+#
+# regular_args:
+#   Modified by: extract_function_signatures, process_function
+#   Read by: extract_function_signatures, process_function
+#
+# callee:
+#   Modified by: analyze_functions, build_call_graph
+#   Read by: analyze_functions, build_call_graph
+#
+# cb:
+#   Modified by: find_hotkeys_and_ui_binds, extract_hotkey_bindings
+#   Read by: find_hotkeys_and_ui_binds, extract_hotkey_bindings
+#
+# result:
+#   Modified by: _safe_unparse, _render_arg
+#   Read by: _safe_unparse, _render_arg
+#
+# mode:
+#   Modified by: find_file_io, _extract_open_args
+#   Read by: find_file_io, _extract_open_args
+#
+# args:
+#   Modified by: extract_function_signatures, process_function
+#   Read by: extract_function_signatures, process_function
+#
+# funcname:
+#   Modified by: find_hotkeys_and_ui_binds, detect_ui_after_usage
+#   Read by: find_hotkeys_and_ui_binds, detect_ui_after_usage
+#
+# kwarg_str:
+#   Modified by: extract_function_signatures, process_function
+#   Read by: extract_function_signatures, process_function
+#
+# return_type:
+#   Modified by: extract_function_signatures, process_function
+#   Read by: extract_function_signatures, process_function
+#
+# func:
+#   Modified by: find_threading, _enclosing_function_name
+#   Read by: find_threading, _enclosing_function_name
+#
+# posonly:
+#   Modified by: extract_function_signatures, process_function
+#   Read by: extract_function_signatures, process_function
+#
+#===============================================================================
+#
+# SHARED STATE CATEGORIES:
+#
+#   Control State:
+#     - mode
+#   Timing State:
+#     - found_end_marker
+#     - synopsis_end
+#   Position State:
+#     - candidate_py
+#     - extra_calls
+#     - extra_transitions
+#     - func_key
+#     - posonly
+#     - pretty
+#     - return_type
+#     - synopsis_end
+#   Config State:
+#     - path
+#===============================================================================
+#
+# ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
+#
+# strip_existing_synopsis() - line 86  (Returns: Yes)
+#   Modifies: found_end_marker, lines, synopsis_end
+#   Reads: found_end_marker, lines, synopsis_end
+#
+# analyze_functions() - line 160  (Returns: No)
+#   Modifies: callee, info, node
+#   Reads: callee, info, node
+#
+# find_threading() - line 209  (Returns: No)
+#   Modifies: func, node, reads, writes
+#   Reads: func, node, reads, writes
+#
+# find_hotkeys_and_ui_binds() - line 225  (Returns: No)
+#   Modifies: cb, event, funcname, hk, node
+#   Reads: cb, event, funcname, hk, node
+#
+# find_file_io() - line 257  (Returns: No)
+#   Modifies: fullname, mode, node, path
+#   Reads: fullname, mode, node, path
+#
+# detect_ui_after_usage() - line 332  (Returns: No)
+#   Modifies: enclosing, funcname, node
+#   Reads: enclosing, funcname, node
+#
+# extract_hotkey_bindings() - line 390  (Returns: Yes)
+#   Modifies: cb, hk, pretty
+#   Reads: cb, hk, pretty
+#
+# extract_function_signatures() - line 446  (Returns: No)
+#   Modifies: args, defaults_list, func_key, kwarg_str, node, parts, posonly, regular_args
+#   Reads: args, defaults_list, func_key, kwarg_str, node, parts, posonly, regular_args
+#
+# process_function() - line 454  (Returns: No)
+#   Modifies: args, defaults_list, func_key, kwarg_str, parts, posonly, regular_args, return_type
+#   Reads: args, defaults_list, func_key, kwarg_str, parts, posonly, regular_args, return_type
+#
+#===============================================================================
+#
+# 🧠 FUNCTION BEHAVIORAL SUMMARIES:
+#
+#
+#===============================================================================
+#
+# FUNCTION CALL HIERARCHY (depth-limited):
+#
+# - __init__()
+#
+# - read_file()
+#
+# - strip_existing_synopsis()
+#
+# - parse_code()
+#
+# - analyze()
+#
+# - find_globals()
+#
+# - analyze_classes()
+#
+# - analyze_functions()
+#
+# - _is_local_module()
+#
+# - find_imports()
+#
+# - find_threading()
+#
+# - find_hotkeys_and_ui_binds()
+#
+# - find_file_io()
+#
+# - _extract_open_args()
+#
+# - build_call_graph()
+#
+# - detect_state_machines()
+#
+# - detect_ui_after_usage()
+#
+# - summarize_initialization_sequence()
+#
+# - _call_to_name()
+#
+# - _format_call_name()
+#
+# - _enclosing_function_name()
+#
+# - extract_call_graph()
+#
+# - extract_state_transitions()
+#
+# - extract_hotkey_bindings()
+#
+# - infer_function_behavior()
+#
+# - _safe_unparse()
+#
+# - _render_arg()
+#
+# - extract_function_signatures()
+#
+#===============================================================================
+#
+# 🔄 STATE MACHINES DETECTED:
+#
+#   📍 mode (Mode Variable):
+#      States: r
+#      Modified by: _extract_open_args
+#
+#   🔀 Key Transitions:
+#      _extract_open_args(): *→r
+#
+#===============================================================================
+#
+# 🔄 STATE MACHINE DIAGRAMS:
+#
+# ```mermaid
+# stateDiagram-v2
+#     [*] --> r
+#     state "r" as r
+# ```
+#
+#
+# 📊 DATA FLOW SUMMARY:
+#
+#   __init__() — calls defaultdict, os.path.abspath, os.path.basename, os.path.dirname, self.parse_code, self.read_file; no return value
+#   read_file() — calls Exception, f.read, open; returns value
+#   strip_existing_synopsis() — reads found_end_marker, lines, synopsis_end; writes found_end_marker, lines, synopsis_end; calls code.split, enumerate, join, len, line.startswith, startswith; returns value
+#   parse_code() — calls Exception, ast.parse; no return value
+#   analyze() — reads extra_calls, extra_transitions; writes extra_calls, extra_transitions; calls extra_calls.items, extra_transitions.items, self.analyze_classes, self.analyze_functions, self.build_call_graph, self.detect_state_machines; no return value
+#   find_globals() — reads node; writes node; calls ast.walk, isinstance, self.globals_found.add; no return value
+#   analyze_classes() — reads methods, node; writes methods, node; calls isinstance; no return value
+#   analyze_functions() — reads callee, info, node; writes callee, info, node; calls add, ast.walk, isinstance, self._call_to_name, set; no return value
+#   _is_local_module() — reads candidate_pkg, candidate_py; writes candidate_pkg, candidate_py; calls module_name.replace, os.path.exists, os.path.join; returns value
+#   find_imports() — reads module, node; writes module, node; calls add, ast.walk, getattr, isinstance, self._is_local_module, self.imports.append; no return value
+#   find_threading() — reads func, node, reads, writes; writes func, node, reads, writes; calls ast.walk, isinstance, self.threads_found.append, sorted; no return value
+#   find_hotkeys_and_ui_binds() — reads cb, event, funcname, hk, node; writes cb, event, funcname, hk, node; calls ast.walk, funcname.endswith, isinstance, len, self._call_to_name, self.hotkeys_command_bind.append; no return value
+#   find_file_io() — reads fullname, mode, node, path; writes fullname, mode, node, path; calls add, any, ast.walk, fullname.endswith, isinstance, self._call_to_name; no return value
+#   _extract_open_args() — reads mode, path; writes mode, path; calls isinstance, len, str; returns value
+#   build_call_graph() — reads callee; writes callee; calls add, self.functions.items; no return value
+#   detect_state_machines() — reads detector, results; writes detector, results; calls StateMachineDetector, detector.detect, items, set, update, warnings.warn; no return value
+#   detect_ui_after_usage() — reads enclosing, funcname, node; writes enclosing, funcname, node; calls ast.walk, funcname.endswith, isinstance, self._call_to_name, self._enclosing_function_name, self.ui_after_users.add; no return value
+#   summarize_initialization_sequence() — reads node; writes node; calls isinstance, self._call_to_name, self.init_sequence.append; no return value
+#   _call_to_name() — reads node, parts; writes node, parts; calls isinstance, join, parts.append, reversed; returns value
+#   _format_call_name() — calls self._call_to_name; returns value
+#   _enclosing_function_name() — reads func, node; writes func; calls any, ast.walk, isinstance; returns value
+#   extract_call_graph() — calls self.call_graph.items, v.copy; returns value
+#   extract_state_transitions() — reads node, transitions; writes node, transitions; calls add, ast.walk, defaultdict, isinstance, str, target.id.endswith; returns value
+#   extract_hotkey_bindings() — reads cb, hk, pretty; writes cb, hk, pretty; calls pretty.append; returns value
+#   infer_function_behavior() — pure/local computation; returns value
+#   _safe_unparse() — reads node, result; writes result; calls ast.unparse, isinstance, len; returns value
+#   _render_arg() — reads result; writes result; calls self._safe_unparse; returns value
+#   extract_function_signatures() — reads args, defaults_list, func_key, kwarg_str, node, parts; writes args, defaults_list, func_key, kwarg_str, node, parts; calls ast.get_docstring, getattr, isinstance, len, list, parts.append; no return value
+#   process_function() — reads args, defaults_list, func_key, kwarg_str, parts, posonly; writes args, defaults_list, func_key, kwarg_str, parts, posonly; calls ast.get_docstring, getattr, len, list, parts.append, self._render_arg; no return value
+#===============================================================================
+#
+# 🔧 MODULARIZATION RECOMMENDATIONS:
+#
+# ⚠️ GLOBAL STATE: Significant global variables found.
+#    1. Create a State class to hold all globals
+#    2. Pass state object instead of using globals
+#    3. Use getter/setter methods for thread-safe access
+#
+# When modularizing, consider splitting by:
+#   - Separate state management from business logic
+#   - Group related functions into modules
+#   - Separate UI code from core logic
+#===============================================================================
+#===============================================================================
+# 📞 FUNCTION CALL HIERARCHY:
+#   (No intra-module function calls detected.)
+#===============================================================================
+# 🔄 STATE MACHINE TRANSITIONS:
+#   (No *_state transitions detected.)
+#===============================================================================
+# ⌨️ HOTKEY BINDINGS:
+#   (No keyboard hotkeys detected.)
+#===============================================================================
+#
+# 🧩 MODULE INTEGRATION INTENT:
+#   Role: Single-file code analyzer that injects a synopsis header
+#   Used by: (future) system_synopsis_builder.py for folder-wide Markdown
+#   Inputs: Python source file path
+#   Outputs: Annotated source file (prepends this synopsis)
+#===============================================================================
+#
+# 📝 INSTRUCTIONS FOR AI:
+#   1. Preserve ALL global variable dependencies shown above
+#   2. Maintain thread safety for variables accessed by multiple threads
+#   3. Do NOT rename variables unless explicitly asked
+#   4. Ensure all function dependencies are preserved
+#   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
+#   6. Ensure hotkeys and binds still invoke the same callbacks
+#===============================================================================
+# === END SYNOPSIS HEADER ===
 """
 Core Code Analyzer - Main analysis engine for Python code.
 
@@ -9,6 +475,10 @@ import ast
 import os
 from typing import Dict, List, Set, Tuple, Optional
 from collections import defaultdict
+try:
+    from .state_machine_detector import StateMachineDetector  # NEW
+except ImportError:
+    from state_machine_detector import StateMachineDetector  # Fallback for direct execution
 
 
 class CodeAnalyzer:
@@ -19,12 +489,19 @@ class CodeAnalyzer:
     process and coordinating with specialized analysis modules.
     """
     
-    def __init__(self, filepath: str, *, include_machine_block: bool = True):
-        """Initialize the analyzer with a file path."""
+    def __init__(self, filepath: str, state=None, *, include_machine_block: bool = True):
+        """Initialize the analyzer with a file path and optional shared state."""
         self.filepath = filepath
         self.filename = os.path.basename(filepath)
         self.dirpath = os.path.dirname(os.path.abspath(filepath))
         self.include_machine_block = include_machine_block
+        
+        # Use shared state if provided, otherwise create local state
+        if state is not None:
+            self.state = state
+        else:
+            from .analyzer_state import new_state
+            self.state = new_state()
 
         # Core analysis stores
         self.globals_found: Set[str] = set()
@@ -59,6 +536,11 @@ class CodeAnalyzer:
 
         # NEW: Function signatures
         self.function_signatures: Dict[str, Dict[str, any]] = {}
+        
+        # ADD THESE LINES:
+        # State machine detection results
+        self.state_machine_results: Optional[Dict[str, any]] = None
+        self.state_machine_detector: Optional[StateMachineDetector] = None
 
         # Parse the code
         self.original_code = self.read_file()
@@ -284,8 +766,41 @@ class CodeAnalyzer:
         self.call_roots = [f for f in self.functions if f not in self.called_by]
 
     def detect_state_machines(self):
-        """Detect state machine patterns."""
-        pass
+        """Detect state machine patterns using StateMachineDetector."""
+        try:
+            detector = StateMachineDetector(self)
+            results = detector.detect()
+            
+            # Store results in analyzer
+            self.state_machine_results = results
+            self.state_machine_detector = detector
+            
+            # Update existing state_vars with enhanced detection
+            for var_name, var_data in results['state_variables'].items():
+                if var_name not in self.state_vars:
+                    self.state_vars[var_name] = {
+                        "values": var_data.values,
+                        "writers": var_data.writers,
+                        "readers": var_data.readers
+                    }
+                else:
+                    # Merge with existing detection
+                    self.state_vars[var_name]["values"].update(var_data.values)
+                    self.state_vars[var_name]["writers"].update(var_data.writers)
+                    self.state_vars[var_name]["readers"].update(var_data.readers)
+            
+            # Also update state_comparisons
+            for var_name, var_data in results['state_variables'].items():
+                if var_data.comparisons:
+                    if var_name not in self.state_comparisons:
+                        self.state_comparisons[var_name] = set()
+                    self.state_comparisons[var_name].update(var_data.comparisons)
+        except Exception as e:
+            # Graceful fallback - don't break if state machine detection fails
+            import warnings
+            warnings.warn(f"State machine detection failed: {e}")
+            self.state_machine_results = None
+            self.state_machine_detector = None
 
     def detect_ui_after_usage(self):
         """Detect usage of UI after callbacks."""

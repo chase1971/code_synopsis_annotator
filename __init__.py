@@ -1,17 +1,19 @@
 #===============================================================================
 # CODE SYNOPSIS: __init__.py
-# SYNOPSIS_HASH: 2ff565536f107dbf5c2fe14707a1ba214cbd95863ff358cf65078c23c931b130
-# Generated: 2025-10-24 19:14:51
-# INTENT: Handles the target entities.
+# SYNOPSIS_HASH: cc18293180e53ad9fc46ca5dd919d0c715560991bd40cad91b1cedda356e0457
+# Generated: 2025-10-24 22:17:09
+# INTENT: Handles init functionality.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 27
+#   Total Lines: 33
 #   Functions: 0
 #   Classes: 0
 #   Global Variables: 3
 #
 # Key Dependencies:
+#   - importlib
+#   - sys
 #   (Local modules):
 #     * behavioral_analysis
 #     * core_analyzer
@@ -25,9 +27,9 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 19:14:51
+# LAST_ANALYZED: 2025-10-24 22:17:09
 # FILE: __init__.py
-# IMPORTS_EXTERNAL: 
+# IMPORTS_EXTERNAL: importlib, sys
 # IMPORTS_LOCAL: behavioral_analysis, core_analyzer, file_io, intent_inference, synopsis_renderer, utils
 # GLOBALS: __all__, __author__, __version__
 # FUNCTIONS: 
@@ -41,8 +43,10 @@
 # IO_WRITES: 
 # CALLGRAPH_ROOTS: 
 # STATE_VARS: 
+# STATE_MACHINES_COUNT: 0
+# STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
-# INTENT: Handles the target entities.
+# INTENT: Handles init functionality.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
@@ -51,7 +55,18 @@
 #
 #===============================================================================
 #
+# 🧠 FUNCTION BEHAVIORAL SUMMARIES:
+#
+#
+#===============================================================================
+#
 # FUNCTION CALL HIERARCHY (depth-limited):
+#
+#===============================================================================
+#
+# 🔄 STATE MACHINES:
+#
+#   (No state machines detected.)
 #
 #===============================================================================
 #
@@ -93,6 +108,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 """

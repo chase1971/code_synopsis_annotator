@@ -1,114 +1,116 @@
-#!/usr/bin/env python3
-# =============================================================================
-# CORE ANALYZER (safe, non-blocking) — AST-based static analyzer
-# - Preserves original public surface used by the rest of your pipeline
-# - Adds FUNCTION_SIGNATURES with heavy-guarded unparse to avoid stalls
-# =============================================================================
+"""
+Core Code Analyzer - Main analysis engine for Python code.
 
-from __future__ import annotations
+This module contains the primary CodeAnalyzer class that orchestrates
+the analysis of Python source code and coordinates with other modules.
+"""
+
 import ast
 import os
-import re
+from typing import Dict, List, Set, Tuple, Optional
 from collections import defaultdict
-from typing import Dict, List, Set, Tuple, Any, Optional
-
-
-HEADER_END_MARKS = (
-    "# === END SYNOPSIS HEADER ===",
-    "# ════════════════════",  # fallback if older headers
-)
+try:
+    from .state_machine_detector import StateMachineDetector  # NEW
+except ImportError:
+    from state_machine_detector import StateMachineDetector  # Fallback for direct execution
 
 
 class CodeAnalyzer:
-    # -------------------------------------------------------------------------
-    # Construction / fields expected by other modules
-    # -------------------------------------------------------------------------
-    def __init__(self, filepath: str, include_machine_block: bool = False):
-        self.filepath: str = os.path.abspath(filepath)
-        self.filename: str = os.path.basename(self.filepath)
+    """
+    Main code analyzer that coordinates analysis of Python source files.
+    
+    This class serves as the central orchestrator, managing the analysis
+    process and coordinating with specialized analysis modules.
+    """
+    
+    def __init__(self, filepath: str, *, include_machine_block: bool = True):
+        """Initialize the analyzer with a file path."""
+        self.filepath = filepath
+        self.filename = os.path.basename(filepath)
+        self.dirpath = os.path.dirname(os.path.abspath(filepath))
+        self.include_machine_block = include_machine_block
 
-        # Raw content / AST
-        self.source_code: str = ""
-        self.tree: Optional[ast.AST] = None
+        # Core analysis stores
+        self.globals_found: Set[str] = set()
+        self.functions: Dict[str, Dict[str, object]] = {}
+        self.classes: Dict[str, Dict[str, object]] = {}
 
-        # Core artifacts consumed by BehavioralAnalyzer / SynopsisRenderer
-        self.functions: Dict[str, Dict[str, Any]] = {}      # name -> info dict
-        self.classes: Dict[str, Dict[str, Any]] = {}        # name -> info dict
-        self.call_graph: Dict[str, Set[str]] = defaultdict(set)  # caller -> callees
-
-        # Globals / IO / imports / threading / hotkeys
-        self.globals: Set[str] = set()
+        # Imports
+        self.imports: List[str] = []
         self.imports_external: Set[str] = set()
         self.imports_local: Set[str] = set()
-        self.thread_targets: Set[str] = set()
-        self.file_reads: List[Tuple[str, str]] = []   # [(path, mode)]
-        self.file_writes: List[Tuple[str, str]] = []
 
-        # State machine-ish placeholders used downstream
-        self.state_vars: Dict[str, Dict[str, Any]] = defaultdict(lambda: {"values": set()})
-        self.state_transitions: Dict[str, Set[str]] = defaultdict(set)
-        self.hotkeys: List[Tuple[str, str]] = []  # [(func, hotkey)]
+        # Concurrency / hotkeys
+        self.threads_found: List[str] = []
+        self.thread_interactions: Dict[str, Dict[str, List[str]]] = {}
+        self.hotkeys_found: List[Tuple[str, str]] = []  # (binding, callback)
+        self.hotkeys_tkbind: List[Tuple[str, str]] = []  # (event, callback)
+        self.hotkeys_command_bind: List[Tuple[str, str]] = []  # (widget?, callback)
+
+        # File I/O
+        self.io_reads: Set[str] = set()
+        self.io_writes: Set[str] = set()
+
+        # Behavioral layers
+        self.call_graph: Dict[str, Set[str]] = defaultdict(set)  # caller -> {callees}
+        self.called_by: Dict[str, Set[str]] = defaultdict(set)   # callee -> {callers}
+        self.call_roots: List[str] = []                          # functions not called by others
+        self.state_vars: Dict[str, Dict[str, Set[str]]] = defaultdict(lambda: {"values": set(), "writers": set(), "readers": set()})
+        self.state_comparisons: Dict[str, Set[str]] = defaultdict(set)  # var -> {value}
+        self.init_sequence: List[str] = []
+        self.ui_after_users: Set[str] = set()  # functions that call tk.after
         self.hotkeys_pretty: List[str] = []
 
-        # NEW: function signatures (guarded)
-        self.function_signatures: Dict[str, Dict[str, Any]] = {}
+        # NEW: Function signatures
+        self.function_signatures: Dict[str, Dict[str, any]] = {}
+        
+        # ADD THESE LINES:
+        # State machine detection results
+        self.state_machine_results: Optional[Dict[str, any]] = None
+        self.state_machine_detector: Optional[StateMachineDetector] = None
 
-        # Header strip markers cache
-        self._found_end_marker: bool = False
-        self._synopsis_end_line: int = -1
-
-    # -------------------------------------------------------------------------
-    # File handling
-    # -------------------------------------------------------------------------
-    def read_file(self) -> str:
-        try:
-            with open(self.filepath, "r", encoding="utf-8") as f:
-                self.source_code = f.read()
-        except Exception as e:
-            self.source_code = ""
-            raise
-        return self.source_code
-
-    def strip_existing_synopsis(self, code: str) -> Tuple[str, Dict[str, Any]]:
-        """
-        Remove prior injected synopsis header so we parse only the code body.
-        Returns (stripped_code, info)
-        """
-        lines = code.splitlines()
-        end_idx = -1
-        for i, line in enumerate(lines[:400]):  # scan only early header area
-            if any(line.strip().startswith(mark) for mark in HEADER_END_MARKS):
-                end_idx = i
-                break
-
-        self._found_end_marker = end_idx != -1
-        self._synopsis_end_line = end_idx
-
-        if end_idx == -1:
-            return code, {"removed": False, "lines": 0}
-
-        # keep the line after the end marker
-        body = "\n".join(lines[end_idx + 1 :])
-        return body, {"removed": True, "lines": end_idx + 1}
-
-    def parse_code(self) -> ast.AST:
-        if not self.source_code:
-            self.read_file()
-        # Strip header if present
-        code, info = self.strip_existing_synopsis(self.source_code)
-        try:
-            self.tree = ast.parse(code)
-        except Exception:
-            # If parsing stripped body fails, try raw as a fallback
-            self.tree = ast.parse(self.source_code)
-        return self.tree
-
-    # -------------------------------------------------------------------------
-    # Main pipeline (order chosen to match the expectations in your other modules)
-    # -------------------------------------------------------------------------
-    def analyze(self) -> None:
+        # Parse the code
+        self.original_code = self.read_file()
+        self.code = self.strip_existing_synopsis(self.original_code)
+        self.tree: ast.AST = None
         self.parse_code()
 
+    def read_file(self) -> str:
+        """Read the source file."""
+        try:
+            with open(self.filepath, 'r', encoding='utf-8') as f:
+                return f.read()
+        except Exception as e:
+            raise Exception(f"Could not read file: {e}")
+
+    def strip_existing_synopsis(self, code: str) -> str:
+        """Remove existing synopsis headers from code."""
+        lines = code.split('\n')
+        if lines and lines[0].startswith('#' + '=' * 79):
+            synopsis_end = 0
+            found_end_marker = False
+            for i, line in enumerate(lines):
+                if line.startswith('#' + '=' * 79):
+                    found_end_marker = True
+                    synopsis_end = i + 1
+                elif found_end_marker and line and not line.startswith('#'):
+                    while synopsis_end < len(lines) and not lines[synopsis_end].strip():
+                        synopsis_end += 1
+                    break
+            if synopsis_end > 0:
+                return '\n'.join(lines[synopsis_end:])
+        return code
+
+    def parse_code(self):
+        """Parse the Python code into an AST."""
+        try:
+            self.tree = ast.parse(self.code, filename=self.filename)
+        except SyntaxError as e:
+            raise Exception(f"Syntax error in code: {e}")
+
+    def analyze(self):
+        """Run the complete analysis pipeline."""
+        # Basic analysis
         self.find_globals()
         self.analyze_classes()
         self.analyze_functions()
@@ -117,352 +119,393 @@ class CodeAnalyzer:
         self.find_hotkeys_and_ui_binds()
         self.find_file_io()
         self.build_call_graph()
+        
+        # Behavioral analysis
         self.detect_state_machines()
         self.detect_ui_after_usage()
         self.summarize_initialization_sequence()
 
-        # Optional extractions that your other modules sometimes call
+        # Additional behavioral analysis
         extra_calls = self.extract_call_graph(self.tree)
         for caller, callees in extra_calls.items():
             self.call_graph[caller].update(callees)
 
         extra_transitions = self.extract_state_transitions(self.tree)
-        self.state_transitions = extra_transitions
         for var, vals in extra_transitions.items():
             self.state_vars[var]["values"].update(vals)
 
         self.hotkeys_pretty = self.extract_hotkey_bindings()
 
-        # NEW: safe function-signature capture (guarded; non-blocking)
+        # NEW: Extract function signatures (added feature)
         self.extract_function_signatures()
 
-    # -------------------------------------------------------------------------
-    # Globals
-    # -------------------------------------------------------------------------
-    def find_globals(self) -> None:
-        if not self.tree:
-            return
+    def find_globals(self):
+        """Find all global variable assignments."""
         for node in ast.walk(self.tree):
             if isinstance(node, ast.Assign):
-                for t in node.targets:
-                    if isinstance(t, ast.Name):
-                        self.globals.add(t.id)
+                for target in node.targets:
+                    if isinstance(target, ast.Name):
+                        self.globals_found.add(target.id)
 
-    # -------------------------------------------------------------------------
-    # Classes
-    # -------------------------------------------------------------------------
-    def analyze_classes(self) -> None:
-        if not self.tree:
-            return
+    def analyze_classes(self):
+        """Analyze class definitions and their methods."""
         for node in self.tree.body:
             if isinstance(node, ast.ClassDef):
-                attrs = set()
-                methods = []
-                # Collect attributes from __init__
-                for sub in node.body:
-                    if isinstance(sub, ast.FunctionDef):
-                        methods.append(sub.name)
-                        if sub.name == "__init__":
-                            for stmt in ast.walk(sub):
-                                if isinstance(stmt, ast.Assign):
-                                    for t in stmt.targets:
-                                        if isinstance(t, ast.Attribute) and isinstance(t.value, ast.Name) and t.value.id == "self":
-                                            attrs.add(t.attr)
+                methods = [n.name for n in node.body if isinstance(n, ast.FunctionDef)]
                 self.classes[node.name] = {
-                    "attributes": sorted(attrs),
-                    "methods": sorted(methods),
-                    "lineno": getattr(node, "lineno", None),
+                    'line': node.lineno,
+                    'methods': methods
                 }
 
-    # -------------------------------------------------------------------------
-    # Functions
-    # -------------------------------------------------------------------------
-    def analyze_functions(self) -> None:
-        if not self.tree:
-            return
+    def analyze_functions(self):
+        """Analyze function definitions and their behavior."""
         for node in ast.walk(self.tree):
             if isinstance(node, ast.FunctionDef):
-                reads: Set[str] = set()
-                writes: Set[str] = set()
-                # Simple RW heuristic
+                info = {
+                    'line': node.lineno,
+                    'reads': set(),
+                    'writes': set(),
+                    'calls': set(),
+                    'returns_value': False
+                }
                 for sub in ast.walk(node):
                     if isinstance(sub, ast.Name):
-                        if isinstance(sub.ctx, ast.Load):
-                            reads.add(sub.id)
-                        elif isinstance(sub.ctx, ast.Store):
-                            writes.add(sub.id)
-                self.functions[node.name] = {
-                    "lineno": getattr(node, "lineno", None),
-                    "reads": sorted(reads),
-                    "writes": sorted(writes),
-                }
+                        if isinstance(sub.ctx, ast.Store):
+                            info['writes'].add(sub.id)
+                        elif isinstance(sub.ctx, ast.Load):
+                            info['reads'].add(sub.id)
+                    elif isinstance(sub, ast.Call):
+                        callee = self._call_to_name(sub.func)
+                        if callee:
+                            info['calls'].add(callee)
+                    elif isinstance(sub, ast.Return) and sub.value is not None:
+                        info['returns_value'] = True
+                self.functions[node.name] = info
 
-    # -------------------------------------------------------------------------
-    # Imports
-    # -------------------------------------------------------------------------
-    def _is_local_module(self, name: str) -> bool:
-        # Treat dotted names' head as module
-        head = name.split(".")[0]
-        # crude heuristic: if a sibling .py exists, call it local
-        folder = os.path.dirname(self.filepath)
-        return os.path.exists(os.path.join(folder, f"{head}.py"))
+    def _is_local_module(self, module_name: str) -> bool:
+        """Check if a module is local to the project."""
+        if not module_name:
+            return False
+        candidate_py = os.path.join(self.dirpath, module_name.replace('.', os.sep) + '.py')
+        candidate_pkg = os.path.join(self.dirpath, module_name.replace('.', os.sep), '__init__.py')
+        return os.path.exists(candidate_py) or os.path.exists(candidate_pkg)
 
-    def find_imports(self) -> None:
-        if not self.tree:
-            return
+    def find_imports(self):
+        """Find and categorize imports."""
         for node in ast.walk(self.tree):
             if isinstance(node, ast.Import):
                 for alias in node.names:
+                    self.imports.append(alias.name)
                     (self.imports_local if self._is_local_module(alias.name) else self.imports_external).add(alias.name)
             elif isinstance(node, ast.ImportFrom):
-                mod = node.module or ""
-                (self.imports_local if self._is_local_module(mod) else self.imports_external).add(mod)
+                module = node.module or ""
+                if getattr(node, 'level', 0) and node.level > 0:
+                    self.imports_local.add(module or ".")
+                else:
+                    (self.imports_local if self._is_local_module(module) else self.imports_external).add(module or "*")
+                for alias in node.names:
+                    self.imports.append(f"{module}.{alias.name}" if module else alias.name)
 
-    # -------------------------------------------------------------------------
-    # Threading / UI-after
-    # -------------------------------------------------------------------------
-    def find_threading(self) -> None:
-        if not self.tree:
-            return
-        for node in ast.walk(self.tree):
-            if isinstance(node, ast.Call):
-                # threading.Thread(target=foo)
-                if isinstance(node.func, ast.Attribute) and node.func.attr == "Thread":
-                    for kw in node.keywords or []:
-                        if kw.arg == "target":
-                            t = kw.value
-                            if isinstance(t, ast.Name):
-                                self.thread_targets.add(t.id)
-
-    def detect_ui_after_usage(self) -> None:
-        # Detect tk.after(...) usage (heuristic)
-        if not self.tree:
-            return
+    def find_threading(self):
+        """Find threading usage and interactions."""
         for node in ast.walk(self.tree):
             if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
-                if node.func.attr == "after":
-                    # mark after usage by creating a pseudo state var
-                    self.state_vars["_ui_after"]  # ensure existence
+                if isinstance(node.func.value, ast.Name) and node.func.value.id == 'threading' and node.func.attr == 'Thread':
+                    for kw in node.keywords:
+                        if kw.arg == 'target' and isinstance(kw.value, ast.Name):
+                            func = kw.value.id
+                            self.threads_found.append(func)
+                            if func in self.functions:
+                                reads = self.functions[func]['reads'] & self.globals_found
+                                writes = self.functions[func]['writes'] & self.globals_found
+                                self.thread_interactions[func] = {
+                                    'reads': sorted(reads), 'writes': sorted(writes)
+                                }
 
-    # -------------------------------------------------------------------------
-    # Hotkeys / binds
-    # -------------------------------------------------------------------------
-    _BIND_RE = re.compile(r"\.bind\(\s*['\"](?P<combo>[^'\"]+)['\"]\s*,\s*(?P<fn>[a-zA-Z_]\w*)")
+    def find_hotkeys_and_ui_binds(self):
+        """Find hotkey and UI binding patterns."""
+        for node in ast.walk(self.tree):
+            if isinstance(node, ast.Call):
+                funcname = self._call_to_name(node.func)
+                # Keyboard library
+                if funcname == 'keyboard.add_hotkey':
+                    if node.args and isinstance(node.args[0], ast.Constant):
+                        hk = str(node.args[0].value)
+                        cb = None
+                        if len(node.args) > 1 and isinstance(node.args[1], ast.Name):
+                            cb = node.args[1].id
+                        for kw in node.keywords:
+                            if kw.arg == 'callback' and isinstance(kw.value, ast.Name):
+                                cb = kw.value.id
+                        if hk and cb:
+                            self.hotkeys_found.append((hk, cb))
+                # Tkinter .bind("<Key>", callback)
+                if funcname.endswith('.bind'):
+                    if node.args and isinstance(node.args[0], ast.Constant):
+                        event = str(node.args[0].value)
+                        cb = None
+                        if len(node.args) > 1 and isinstance(node.args[1], ast.Name):
+                            cb = node.args[1].id
+                        if event and cb:
+                            self.hotkeys_tkbind.append((event, cb))
+                # widget.config(command=callback)
+                if funcname.endswith('.config'):
+                    for kw in node.keywords:
+                        if kw.arg == 'command' and isinstance(kw.value, ast.Name):
+                            self.hotkeys_command_bind.append(('widget.command', kw.value.id))
 
-    def find_hotkeys_and_ui_binds(self) -> None:
-        if not self.source_code:
-            return
-        for m in self._BIND_RE.finditer(self.source_code):
-            combo = m.group("combo")
-            fn = m.group("fn")
-            self.hotkeys.append((fn, combo))
+    def find_file_io(self):
+        """Find file I/O operations."""
+        for node in ast.walk(self.tree):
+            if isinstance(node, ast.Call):
+                if isinstance(node.func, ast.Name) and node.func.id == 'open':
+                    path, mode = self._extract_open_args(node)
+                    if path:
+                        (self.io_writes if any(m in mode for m in ('w', 'a', 'x', '+')) else self.io_reads).add(path)
+                if isinstance(node.func, ast.Attribute):
+                    fullname = self._call_to_name(node.func)
+                    if fullname.endswith('json.load'):
+                        self.io_reads.add('json.load(...)')
+                    elif fullname.endswith('json.dump'):
+                        self.io_writes.add('json.dump(...)')
 
-    # Pretty list for headers
-    def extract_hotkey_bindings(self) -> List[str]:
-        return [f"{fn} -> {combo}" for fn, combo in sorted(self.hotkeys)]
-
-    # -------------------------------------------------------------------------
-    # File IO
-    # -------------------------------------------------------------------------
-    def _extract_open_args(self, call: ast.Call) -> Tuple[Optional[str], Optional[str]]:
+    def _extract_open_args(self, call_node: ast.Call) -> Tuple[Optional[str], str]:
+        """Extract file path and mode from open() call."""
         path = None
-        mode = None
-        if call.args:
-            if isinstance(call.args[0], ast.Constant) and isinstance(call.args[0].value, str):
-                path = call.args[0].value
-        for kw in call.keywords or []:
-            if kw.arg == "mode":
-                if isinstance(kw.value, ast.Constant) and isinstance(kw.value.value, str):
-                    mode = kw.value.value
+        mode = "r"
+        if call_node.args:
+            if isinstance(call_node.args[0], ast.Constant):
+                path = str(call_node.args[0].value)
+            if len(call_node.args) > 1 and isinstance(call_node.args[1], ast.Constant):
+                mode = str(call_node.args[1].value)
+        for kw in call_node.keywords:
+            if kw.arg == "file" and isinstance(kw.value, ast.Constant):
+                path = str(kw.value.value)
+            if kw.arg == "mode" and isinstance(kw.value, ast.Constant):
+                mode = str(kw.value.value)
         return path, mode
 
-    def find_file_io(self) -> None:
-        if not self.tree:
-            return
-        for node in ast.walk(self.tree):
-            if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "open":
-                p, m = self._extract_open_args(node)
-                if p is None:
-                    continue
-                if m and any(ch in m for ch in ("w", "a", "+")):
-                    self.file_writes.append((p, m or "w"))
+    def build_call_graph(self):
+        """Build a call graph of function calls."""
+        for func_name, func_info in self.functions.items():
+            for callee in func_info['calls']:
+                self.called_by[callee].add(func_name)
+        self.call_roots = [f for f in self.functions if f not in self.called_by]
+
+    def detect_state_machines(self):
+        """Detect state machine patterns using StateMachineDetector."""
+        try:
+            detector = StateMachineDetector(self)
+            results = detector.detect()
+            
+            # Store results in analyzer
+            self.state_machine_results = results
+            self.state_machine_detector = detector
+            
+            # Update existing state_vars with enhanced detection
+            for var_name, var_data in results['state_variables'].items():
+                if var_name not in self.state_vars:
+                    self.state_vars[var_name] = {
+                        "values": var_data.values,
+                        "writers": var_data.writers,
+                        "readers": var_data.readers
+                    }
                 else:
-                    self.file_reads.append((p, m or "r"))
+                    # Merge with existing detection
+                    self.state_vars[var_name]["values"].update(var_data.values)
+                    self.state_vars[var_name]["writers"].update(var_data.writers)
+                    self.state_vars[var_name]["readers"].update(var_data.readers)
+            
+            # Also update state_comparisons
+            for var_name, var_data in results['state_variables'].items():
+                if var_data.comparisons:
+                    if var_name not in self.state_comparisons:
+                        self.state_comparisons[var_name] = set()
+                    self.state_comparisons[var_name].update(var_data.comparisons)
+        except Exception as e:
+            # Graceful fallback - don't break if state machine detection fails
+            import warnings
+            warnings.warn(f"State machine detection failed: {e}")
+            self.state_machine_results = None
+            self.state_machine_detector = None
 
-    # -------------------------------------------------------------------------
-    # Call graph
-    # -------------------------------------------------------------------------
-    def _format_call_name(self, call: ast.Call) -> str:
-        # foo(), mod.func(), obj.method()
-        f = call.func
-        if isinstance(f, ast.Name):
-            return f.id
-        if isinstance(f, ast.Attribute):
-            # return "obj.method" or "mod.func"
-            base = []
-            cur = f
-            while isinstance(cur, ast.Attribute):
-                base.append(cur.attr)
-                cur = cur.value
-            if isinstance(cur, ast.Name):
-                base.append(cur.id)
-            return ".".join(reversed(base))
-        return "<call>"
+    def detect_ui_after_usage(self):
+        """Detect usage of UI after callbacks."""
+        for node in ast.walk(self.tree):
+            if isinstance(node, ast.Call):
+                funcname = self._call_to_name(node.func)
+                if funcname.endswith('.after'):
+                    enclosing = self._enclosing_function_name(node)
+                    if enclosing:
+                        self.ui_after_users.add(enclosing)
 
-    def build_call_graph(self) -> None:
-        if not self.tree:
-            return
-        enclosing = {}
+    def summarize_initialization_sequence(self):
+        """Summarize module initialization sequence."""
+        for node in self.tree.body:
+            if isinstance(node, ast.Expr) and isinstance(node.value, ast.Call):
+                self.init_sequence.append(self._call_to_name(node.value.func))
 
-        class Enclose(ast.NodeVisitor):
-            def __init__(self, outer):
-                self.stack = []
-                self.outer = outer
-            def visit_FunctionDef(self, n: ast.FunctionDef):
-                self.stack.append(n.name)
-                self.generic_visit(n)
-                self.stack.pop()
-            def visit_Call(self, n: ast.Call):
-                if self.stack:
-                    caller = self.stack[-1]
-                    callee = self.outer._format_call_name(n)
-                    if caller and callee:
-                        self.outer.call_graph[caller].add(callee)
-                self.generic_visit(n)
+    def _call_to_name(self, func_node) -> str:
+        """Convert a call function node to a string name."""
+        if isinstance(func_node, ast.Name):
+            return func_node.id
+        elif isinstance(func_node, ast.Attribute):
+            parts = []
+            node = func_node
+            while isinstance(node, ast.Attribute):
+                parts.append(node.attr)
+                node = node.value
+            if isinstance(node, ast.Name):
+                parts.append(node.id)
+            return '.'.join(reversed(parts))
+        return ""
 
-        Enclose(self).visit(self.tree)
+    def _format_call_name(self, call_node: ast.Call) -> str:
+        """Format a call node as a string."""
+        return self._call_to_name(call_node.func)
 
-    # -------------------------------------------------------------------------
-    # State transitions (heuristic / placeholder)
-    # -------------------------------------------------------------------------
+    def _enclosing_function_name(self, node: ast.AST) -> Optional[str]:
+        """Find the name of the function enclosing this node."""
+        for func in ast.walk(self.tree):
+            if isinstance(func, ast.FunctionDef):
+                if any(n is node for n in ast.walk(func)):
+                    return func.name
+        return None
+
+    def extract_call_graph(self, tree: ast.AST) -> Dict[str, Set[str]]:
+        """Extract call graph from AST."""
+        return {k: v.copy() for k, v in self.call_graph.items()}
+
     def extract_state_transitions(self, tree: ast.AST) -> Dict[str, Set[str]]:
-        trans: Dict[str, Set[str]] = defaultdict(set)
-        # very light heuristic: look for "state = 'X'"
+        """Extract state transitions from AST."""
+        transitions = defaultdict(set)
         for node in ast.walk(tree):
             if isinstance(node, ast.Assign):
-                for t in node.targets:
-                    if isinstance(t, ast.Name) and isinstance(node.value, ast.Constant) and isinstance(node.value.value, str):
-                        if t.id.endswith("_state") or t.id.endswith("State"):
-                            trans[t.id].add(node.value.value)
-        return trans
+                for target in node.targets:
+                    if isinstance(target, ast.Name) and isinstance(node.value, ast.Constant):
+                        if target.id.endswith('_state') or target.id.endswith('State'):
+                            transitions[target.id].add(str(node.value.value))
+        return transitions
 
-    def detect_state_machines(self) -> None:
-        # placeholder hook — downstream tools just consume state_transitions/state_vars
-        pass
+    def extract_hotkey_bindings(self) -> List[str]:
+        """Extract hotkey bindings in a pretty format."""
+        pretty = []
+        for hk, cb in self.hotkeys_found:
+            pretty.append(f"keyboard: {hk} → {cb}()")
+        for ev, cb in self.hotkeys_tkbind:
+            pretty.append(f"tk.bind: {ev} → {cb}()")
+        for kind, cb in self.hotkeys_command_bind:
+            pretty.append(f"{kind}: → {cb}()")
+        return pretty
 
-    # -------------------------------------------------------------------------
-    # Initialization summary (placeholder)
-    # -------------------------------------------------------------------------
-    def summarize_initialization_sequence(self) -> None:
-        # kept minimal; renderer just expects the method to exist
-        pass
+    def infer_function_behavior(self, func_name: str) -> Dict[str, object]:
+        """Infer behavioral intent of a function."""
+        if func_name not in self.functions:
+            return {}
+        return {}
 
-    # -------------------------------------------------------------------------
-    # Extra graph extraction (used by analyze() to augment call_graph)
-    # -------------------------------------------------------------------------
-    def extract_call_graph(self, tree: ast.AST) -> Dict[str, Set[str]]:
-        # We already built call_graph, but return a shallow copy to match expectations
-        return {k: set(v) for k, v in self.call_graph.items()}
-
-    # -------------------------------------------------------------------------
-    # NEW: SAFE, GUARDED SIGNATURE EXTRACTION
-    # -------------------------------------------------------------------------
+    # =========================================================================
+    # NEW: FUNCTION SIGNATURE EXTRACTION
+    # =========================================================================
+    
     def _safe_unparse(self, node: Optional[ast.AST]) -> str:
-        """Safely stringify annotations/defaults/returns without heavy cost or recursion traps."""
+        """Safely convert AST node to string, avoiding heavy operations."""
         if node is None:
             return "None"
-
-        # Short-circuit known heavy or deeply nested nodes
+        
+        # Simplify complex expressions
         if isinstance(node, (ast.Lambda, ast.ListComp, ast.SetComp, ast.DictComp, ast.GeneratorExp)):
             return "<complex>"
-        if isinstance(node, (ast.List, ast.Set, ast.Dict, ast.Tuple)):
-            return {
-                ast.List:  "<list>",
-                ast.Set:   "<set>",
-                ast.Dict:  "<dict>",
-                ast.Tuple: "<tuple>",
-            }[type(node)]
-
+        if isinstance(node, ast.List):
+            return "<list>"
+        if isinstance(node, ast.Dict):
+            return "<dict>"
+        if isinstance(node, ast.Set):
+            return "<set>"
+        if isinstance(node, ast.Tuple):
+            return "<tuple>"
+        
         try:
-            s = ast.unparse(node)  # Python 3.9+
-            return s if len(s) <= 100 else "<long>"
-        except Exception:
+            result = ast.unparse(node)
+            # Truncate if too long
+            if len(result) > 80:
+                return result[:77] + "..."
+            return result
+        except:
             return "<?>"
-
+    
     def _render_arg(self, arg: ast.arg, default: Optional[ast.AST]) -> str:
-        part = arg.arg
+        """Render a function argument with its annotation and default."""
+        result = arg.arg
         if arg.annotation:
-            part += f": {self._safe_unparse(arg.annotation)}"
+            result += f": {self._safe_unparse(arg.annotation)}"
         if default is not None:
-            part += f" = {self._safe_unparse(default)}"
-        return part
-
-    def extract_function_signatures(self) -> None:
+            result += f" = {self._safe_unparse(default)}"
+        return result
+    
+    def extract_function_signatures(self):
         """
-        Collect flat one-liner signatures for:
-          - top-level functions
-          - class methods
-        Guarded to avoid stalls from ast.unparse on huge/complex nodes.
+        Extract function signatures with type hints and defaults.
+        Stores them in self.function_signatures.
         """
-        self.function_signatures.clear()
         if not isinstance(self.tree, ast.Module):
             return
-
-        def sig_from_def(fn: ast.FunctionDef) -> None:
-            a = fn.args
-            parts: List[str] = []
-
-            # pos-only (Py3.8+)
-            posonly = getattr(a, "posonlyargs", [])
+        
+        def process_function(fn: ast.FunctionDef, class_name: Optional[str] = None):
+            """Process a single function definition."""
+            args = fn.args
+            parts = []
+            
+            # Position-only arguments (Python 3.8+)
+            posonly = getattr(args, "posonlyargs", [])
             if posonly:
-                parts.extend(self._render_arg(arg, None) for arg in posonly)
-                parts.append("/")  # separator
-
-            # normal args with defaults
-            regular = list(a.args)
-            defaults = [None] * (len(regular) - len(a.defaults)) + list(a.defaults)
-            parts.extend(self._render_arg(arg, d) for arg, d in zip(regular, defaults))
-
-            # *vararg or bare * for kw-only
-            if a.vararg:
-                va = f"*{a.vararg.arg}"
-                if a.vararg.annotation:
-                    va += f": {self._safe_unparse(a.vararg.annotation)}"
-                parts.append(va)
-            elif a.kwonlyargs:
+                for arg in posonly:
+                    parts.append(self._render_arg(arg, None))
+                parts.append("/")
+            
+            # Regular arguments with defaults
+            regular_args = list(args.args)
+            defaults_list = [None] * (len(regular_args) - len(args.defaults)) + list(args.defaults)
+            for arg, default in zip(regular_args, defaults_list):
+                parts.append(self._render_arg(arg, default))
+            
+            # *args
+            if args.vararg:
+                vararg_str = f"*{args.vararg.arg}"
+                if args.vararg.annotation:
+                    vararg_str += f": {self._safe_unparse(args.vararg.annotation)}"
+                parts.append(vararg_str)
+            elif args.kwonlyargs:
                 parts.append("*")
-
-            # kw-only
-            for kw_arg, d in zip(a.kwonlyargs, a.kw_defaults):
-                parts.append(self._render_arg(kw_arg, d))
-
+            
+            # Keyword-only arguments
+            for kw_arg, default in zip(args.kwonlyargs, args.kw_defaults):
+                parts.append(self._render_arg(kw_arg, default))
+            
             # **kwargs
-            if a.kwarg:
-                kaa = f"**{a.kwarg.arg}"
-                if a.kwarg.annotation:
-                    kaa += f": {self._safe_unparse(a.kwarg.annotation)}"
-                parts.append(kaa)
-
-            returns = self._safe_unparse(fn.returns)
-            self.function_signatures[fn.name] = {
+            if args.kwarg:
+                kwarg_str = f"**{args.kwarg.arg}"
+                if args.kwarg.annotation:
+                    kwarg_str += f": {self._safe_unparse(args.kwarg.annotation)}"
+                parts.append(kwarg_str)
+            
+            # Return type
+            return_type = self._safe_unparse(fn.returns) if fn.returns else "None"
+            
+            # Store the signature
+            func_key = f"{class_name}.{fn.name}" if class_name else fn.name
+            self.function_signatures[func_key] = {
                 "args": parts,
-                "returns": returns,
+                "returns": return_type,
+                "docstring": ast.get_docstring(fn) or ""
             }
-
-        # Top-level
+        
+        # Process top-level functions
         for node in self.tree.body:
             if isinstance(node, ast.FunctionDef):
-                sig_from_def(node)
+                process_function(node)
             elif isinstance(node, ast.ClassDef):
+                # Process methods
                 for sub in node.body:
                     if isinstance(sub, ast.FunctionDef):
-                        sig_from_def(sub)
-
-    # -------------------------------------------------------------------------
-    # Convenience pretty-printer (used by renderer if desired)
-    # -------------------------------------------------------------------------
-    def format_function_signatures(self) -> List[str]:
-        out: List[str] = []
-        for name, sig in self.function_signatures.items():
-            out.append(f"{name}({', '.join(sig['args'])}) -> {sig['returns']}")
-        return out
+                        process_function(sub, node.name)

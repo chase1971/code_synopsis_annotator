@@ -1,216 +1,3 @@
-#===============================================================================
-# CODE SYNOPSIS: synopsis_renderer.py
-# SYNOPSIS_HASH: eff47c2244884a798f2f2b2c3052ac01cf1bdb0deb14fe16112895ba3a966447
-# Generated: 2025-10-24 17:51:16
-#===============================================================================
-#
-# OVERVIEW:
-#   Total Lines: 373
-#   Functions: 15
-#   Classes: 1
-#   Global Variables: 19
-#
-# Key Dependencies:
-#   - datetime
-#   - typing
-#
-#===============================================================================
-# ════════════════════
-# BEGIN MACHINE-READABLE DATA (for automated processing)
-# ════════════════════
-# SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 17:51:16
-# FILE: synopsis_renderer.py
-# IMPORTS_EXTERNAL: datetime, typing
-# IMPORTS_LOCAL: 
-# GLOBALS: critical, critical_vars, high_priority, io_lines, joined, lines, parts, r, readers, reads, rr, rv, rw, state_cats, summary, thr, w, writers, writes
-# FUNCTIONS: __init__, _render_classes, _render_critical_globals, _render_data_flow_summary, _render_function_dependencies, _render_high_priority_functions, _render_hotkeys, _render_integration_intent, _render_io_summary, _render_modularization_recommendations, _render_patch_additions, _render_shared_state, _render_thread_interactions, _render_threading_analysis, generate_synopsis_header
-# RETURNS: _render_classes, _render_critical_globals, _render_data_flow_summary, _render_function_dependencies, _render_high_priority_functions, _render_hotkeys, _render_integration_intent, _render_io_summary, _render_modularization_recommendations, _render_patch_additions, _render_shared_state, _render_thread_interactions, _render_threading_analysis, generate_synopsis_header
-# THREAD_TARGETS: 
-# HOTKEYS: 
-# TK_BINDS: 
-# COMMAND_BINDS: 
-# CLASSES: SynopsisRenderer
-# IO_READS: 
-# IO_WRITES: 
-# CALLGRAPH_ROOTS: __init__,generate_synopsis_header
-# STATE_VARS: 
-# INIT_SEQUENCE: 
-# END MACHINE-READABLE DATA
-# ════════════════════
-#===============================================================================
-#
-# 🧱 CLASSES FOUND:
-#
-#   SynopsisRenderer (line 12):
-#     - SynopsisRenderer.__init__()
-#     - SynopsisRenderer.generate_synopsis_header()
-#     - SynopsisRenderer._render_threading_analysis()
-#     - SynopsisRenderer._render_thread_interactions()
-#     - SynopsisRenderer._render_classes()
-#     - SynopsisRenderer._render_critical_globals()
-#     - SynopsisRenderer._render_shared_state()
-#     - SynopsisRenderer._render_hotkeys()
-#     - SynopsisRenderer._render_high_priority_functions()
-#     - SynopsisRenderer._render_function_dependencies()
-#     - SynopsisRenderer._render_io_summary()
-#     - SynopsisRenderer._render_data_flow_summary()
-#     - SynopsisRenderer._render_modularization_recommendations()
-#     - SynopsisRenderer._render_patch_additions()
-#     - SynopsisRenderer._render_integration_intent()
-#===============================================================================
-#
-# CRITICAL GLOBAL VARIABLES:
-#
-# lines:
-#   Modified by: generate_synopsis_header, _render_threading_analysis, _render_thread_interactions, _render_classes, _render_critical_globals, _render_shared_state +7 more
-#   Read by: generate_synopsis_header, _render_threading_analysis, _render_thread_interactions, _render_classes, _render_critical_globals, _render_shared_state +7 more
-#
-# reads:
-#   Modified by: _render_threading_analysis, _render_high_priority_functions
-#   Read by: _render_threading_analysis, _render_high_priority_functions
-#
-# rv:
-#   Modified by: _render_high_priority_functions, _render_data_flow_summary
-#   Read by: _render_high_priority_functions, _render_data_flow_summary
-#
-# writes:
-#   Modified by: _render_threading_analysis, _render_high_priority_functions
-#   Read by: _render_threading_analysis, _render_high_priority_functions
-#
-#===============================================================================
-#
-# SHARED STATE CATEGORIES:
-#
-#   Control State:
-#     - state_cats
-#   Position State:
-#     - high_priority
-#     - summary
-#===============================================================================
-#
-# ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
-#
-# _render_threading_analysis() - line 104  (Returns: Yes)
-#   Modifies: lines, reads, writes
-#   Reads: lines, reads, writes
-#
-# _render_critical_globals() - line 152  (Returns: Yes)
-#   Modifies: critical_vars, lines, r, readers, thr, w, writers
-#   Reads: critical_vars, lines, r, readers, thr, w, writers
-#
-# _render_high_priority_functions() - line 212  (Returns: Yes)
-#   Modifies: high_priority, lines, reads, rv, writes
-#   Reads: high_priority, lines, reads, rv, writes
-#
-# _render_data_flow_summary() - line 264  (Returns: Yes)
-#   Modifies: lines, parts, rr, rv, rw, summary
-#   Reads: lines, parts, rr, rv, rw, summary
-#
-#===============================================================================
-#
-# 🔗 FUNCTION DEPENDENCIES (high fan-out):
-#
-# generate_synopsis_header() calls:
-#   - _render_classes()
-#   - _render_critical_globals()
-#   - _render_data_flow_summary()
-#   - _render_function_dependencies()
-#   - _render_high_priority_functions()
-#   - _render_hotkeys()
-#   - _render_integration_intent()
-#   - _render_io_summary()
-#   ... and 5 more
-#
-#===============================================================================
-#
-# FUNCTION CALL HIERARCHY (depth-limited):
-#
-# - __init__()
-#
-# - generate_synopsis_header()
-#   ... +more
-#   - append()
-#   - strftime()
-#   - extend()
-#   - set()
-#   - now()
-#   - len()
-#   - join()
-#   - splitlines()
-#
-#===============================================================================
-#
-# 📊 DATA FLOW SUMMARY:
-#
-#   __init__() — pure/local computation; no return value
-#   generate_synopsis_header() — reads lines; writes lines; calls datetime.now, join, len, lines.append, lines.extend, self._render_classes; returns value
-#   _render_threading_analysis() — reads lines, reads, writes; writes lines, reads, writes; calls join, lines.append, lines.extend, sorted; returns value
-#   _render_thread_interactions() — reads lines; writes lines; calls join, lines.append, self.analyzer.thread_interactions.items, sorted; returns value
-#   _render_classes() — reads lines; writes lines; calls lines.append, self.analyzer.classes.items, sorted; returns value
-#   _render_critical_globals() — reads critical_vars, lines, r, readers, thr, w; writes critical_vars, lines, r, readers, thr, w; calls critical_vars.append, critical_vars.sort, join, len, lines.append, self.analyzer.functions.items; returns value
-#   _render_shared_state() — reads lines, state_cats; writes lines, state_cats; calls len, lines.append, self.behavioral_analyzer.categorize_shared_state; returns value
-#   _render_hotkeys() — reads lines; writes lines; calls lines.append; returns value
-#   _render_high_priority_functions() — reads high_priority, lines, reads, rv, writes; writes high_priority, lines, reads, rv, writes; calls func_data.get, join, lines.append, self.behavioral_analyzer.analyze_high_priority_functions, sorted; returns value
-#   _render_function_dependencies() — reads critical, lines; writes critical, lines; calls len, lines.append, self.behavioral_analyzer.analyze_function_dependencies, sorted; returns value
-#   _render_io_summary() — reads io_lines, lines; writes io_lines, lines; calls io_lines.append, join, lines.append, sorted; returns value
-#   _render_data_flow_summary() — reads lines, parts, rr, rv, rw, summary; writes lines, parts, rr, rv, rw, summary; calls fdata.get, join, lines.append, list, parts.append, self.analyzer.functions.items; returns value
-#   _render_modularization_recommendations() — reads lines; writes lines; calls len, lines.append, lines.extend; returns value
-#   _render_patch_additions() — reads joined, lines; writes joined, lines; calls getattr, items, join, lines.append, lines.extend, self.analyzer.call_graph.items; returns value
-#   _render_integration_intent() — pure/local computation; returns value
-#===============================================================================
-#
-# 🔧 MODULARIZATION RECOMMENDATIONS:
-#
-# ⚠️ GLOBAL STATE: Significant global variables found.
-#    1. Create a State class to hold all globals
-#    2. Pass state object instead of using globals
-#    3. Use getter/setter methods for thread-safe access
-#
-# When modularizing, consider splitting by:
-#   - Separate state management from business logic
-#   - Group related functions into modules
-#   - Separate UI code from core logic
-#===============================================================================
-#===============================================================================
-# 📞 FUNCTION CALL HIERARCHY:
-#   generate_synopsis_header() → _render_classes, _render_critical_globals, _render_data_flow_summary, _render_function_dependencies, _render_high_priority_functions, _render_hotkeys, _render_integration_intent, _render_io_summary, _render_modularization_recommendations, _render_patch_additions, _render_shared_state, _render_thread_interactions, _render_threading_analysis, append, build_machine_block, extend, generate_behavioral_summary, join, len, now, set, sorted, splitlines, strftime
-#   _render_threading_analysis() → append, extend, join, sorted
-#   _render_thread_interactions() → append, items, join, sorted
-#   _render_classes() → append, items, sorted
-#   _render_critical_globals() → append, items, join, len, sort
-#   _render_shared_state() → append, categorize_shared_state, len
-#   _render_hotkeys() → append
-#   _render_high_priority_functions() → analyze_high_priority_functions, append, get, join, sorted
-#   _render_function_dependencies() → analyze_function_dependencies, append, len, sorted
-#   _render_io_summary() → append, join, sorted
-#   _render_data_flow_summary() → append, get, items, join, list, sorted
-#   _render_modularization_recommendations() → append, extend, len
-#   _render_patch_additions() → append, extend, getattr, items, join, sorted
-#===============================================================================
-# 🔄 STATE MACHINE TRANSITIONS:
-#   (No *_state transitions detected.)
-#===============================================================================
-# ⌨️ HOTKEY BINDINGS:
-#   (No keyboard hotkeys detected.)
-#===============================================================================
-#
-# 🧩 MODULE INTEGRATION INTENT:
-#   Role: Single-file code analyzer that injects a synopsis header
-#   Used by: (future) system_synopsis_builder.py for folder-wide Markdown
-#   Inputs: Python source file path
-#   Outputs: Annotated source file (prepends this synopsis)
-#===============================================================================
-#
-# 📝 INSTRUCTIONS FOR AI:
-#   1. Preserve ALL global variable dependencies shown above
-#   2. Maintain thread safety for variables accessed by multiple threads
-#   3. Do NOT rename variables unless explicitly asked
-#   4. Ensure all function dependencies are preserved
-#   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
-#   6. Ensure hotkeys and binds still invoke the same callbacks
-#===============================================================================
-# === END SYNOPSIS HEADER ===
 """
 Synopsis Renderer - Generate formatted synopsis headers.
 
@@ -270,6 +57,9 @@ class SynopsisRenderer:
             lines.extend(self.behavioral_analyzer.build_machine_block())
             lines.append("#" + "=" * 79)
 
+        # NEW: Add function signatures
+        lines.extend(self._render_function_signatures())
+
         # Add threading analysis
         lines.extend(self._render_threading_analysis())
         
@@ -300,6 +90,9 @@ class SynopsisRenderer:
         # Add behavioral analysis
         lines.extend(self.behavioral_analyzer.generate_behavioral_summary())
         
+        # Add state machine diagrams if available
+        lines.extend(self._render_state_machine_diagrams())
+        
         # Add external I/O summary
         lines.extend(self._render_io_summary())
         
@@ -316,6 +109,56 @@ class SynopsisRenderer:
         lines.extend(self._render_integration_intent())
         
         return "\n".join(lines)
+
+    # =========================================================================
+    # NEW: STATE MACHINE DIAGRAM RENDERING
+    # =========================================================================
+    
+    def _render_state_machine_diagrams(self) -> List[str]:
+        """Render Mermaid state machine diagrams if available."""
+        if not hasattr(self.analyzer, 'state_machine_detector') or not self.analyzer.state_machine_detector:
+            return []
+        
+        try:
+            diagram = self.analyzer.state_machine_detector.generate_mermaid_diagram()
+            if diagram:
+                lines = ["#", "# 🔄 STATE MACHINE DIAGRAMS:", "#"]
+                lines.append(diagram)
+                lines.append("#")
+                return lines
+        except Exception:
+            pass
+        
+        return []
+    
+    # =========================================================================
+    # NEW: FUNCTION SIGNATURE RENDERING
+    # =========================================================================
+    
+    def _render_function_signatures(self) -> List[str]:
+        """Render function signatures with type hints and docstrings."""
+        if not self.analyzer.function_signatures:
+            return []
+        
+        lines = ["#", "# 📝 FUNCTION SIGNATURES:", "#"]
+        
+        for func_name, sig_data in sorted(self.analyzer.function_signatures.items()):
+            args_str = ", ".join(sig_data.get("args", []))
+            returns_str = sig_data.get("returns", "None")
+            docstring = sig_data.get("docstring", "")
+            
+            # Render signature
+            lines.append(f"# {func_name}({args_str}) -> {returns_str}")
+            
+            # Add first line of docstring if available
+            if docstring:
+                first_line = docstring.split('\n')[0].strip()
+                if first_line:
+                    lines.append(f"#   {first_line}")
+            lines.append("#")
+        
+        lines.append("#" + "=" * 79)
+        return lines
 
     def _render_threading_analysis(self) -> List[str]:
         """Render threading analysis section."""

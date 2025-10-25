@@ -1,11 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: main.py
-# SYNOPSIS_HASH: ec67de976d8877e80aaa2b24dabcc9a241f7c6ba6a6eea125a6f42a7e9645c64
-# Generated: 2025-10-24 17:51:16
+# SYNOPSIS_HASH: 64365b272377fc1a525c8b9bd5b32d4fc0f2b9b18f9a7924689af7c3368e6dd5
+# Generated: 2025-10-24 22:17:09
+# INTENT: Main application entry point and orchestration.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 115
+#   Total Lines: 116
 #   Functions: 3
 #   Classes: 0
 #   Global Variables: 9
@@ -24,7 +25,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 17:51:16
+# LAST_ANALYZED: 2025-10-24 22:17:09
 # FILE: main.py
 # IMPORTS_EXTERNAL: code_synopsis_annotator.behavioral_analysis, code_synopsis_annotator.core_analyzer, code_synopsis_annotator.file_io, code_synopsis_annotator.synopsis_renderer, os, sys, typing
 # IMPORTS_LOCAL: 
@@ -40,9 +41,26 @@
 # IO_WRITES: 
 # CALLGRAPH_ROOTS: main,batch_analyze
 # STATE_VARS: 
-# INIT_SEQUENCE: main()
+# STATE_MACHINES_COUNT: 0
+# STATE_TRANSITIONS_COUNT: 0
+# INIT_SEQUENCE: sys.path.insert
+# INTENT: Main application entry point and orchestration.
+# FUNCTION_INTENTS: analyze_file=Examines and summarizes file., batch_analyze=Examines and summarizes the target entities., main=Handles the target entities.
 # END MACHINE-READABLE DATA
 # ════════════════════
+#===============================================================================
+#
+# 📝 FUNCTION SIGNATURES:
+#
+# analyze_file(filepath: str, include_machine_block: bool = True) -> Optional[dict]
+#   Analyze a single file and return results.
+#
+# batch_analyze(files: list, include_machine_block: bool = True) -> dict
+#   Analyze multiple files in batch.
+#
+# main() -> None
+#   Main entry point for the code synopsis annotator.
+#
 #===============================================================================
 #
 # CRITICAL GLOBAL VARIABLES:
@@ -71,55 +89,42 @@
 #
 # ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
 #
-# main() - line 22  (Returns: No)
+# main() - line 23  (Returns: No)
 #   Modifies: filepath, handler, success
 #   Reads: filepath, handler, success
 #
-# analyze_file() - line 60  (Returns: Yes)
+# analyze_file() - line 61  (Returns: Yes)
 #   Modifies: analyzer, behavioral_analyzer, handler, renderer, summary
 #   Reads: analyzer, behavioral_analyzer, filepath, handler, renderer, summary
 #
-# batch_analyze() - line 93  (Returns: Yes)
+# batch_analyze() - line 94  (Returns: Yes)
 #   Modifies: filepath, result, results
 #   Reads: filepath, result, results
+#
+#===============================================================================
+#
+# 🧠 FUNCTION BEHAVIORAL SUMMARIES:
+#
 #
 #===============================================================================
 #
 # FUNCTION CALL HIERARCHY (depth-limited):
 #
 # - main()
-#   - print()
-#   - len()
-#   - exit()
-#   - select_file_and_analyze()
-#   - exists()
-#   - FileIOHandler()
-#   - endswith()
-#   - analyze_file()
-#     - print()
-#     - CodeAnalyzer()
-#     - BehavioralAnalyzer()
-#     - get_analysis_summary()
-#     - SynopsisRenderer()
-#     - FileIOHandler()
-#     - analyze()
 #
 # - batch_analyze()
-#   - print()
-#   - analyze_file()
-#     - print()
-#     - CodeAnalyzer()
-#     - BehavioralAnalyzer()
-#     - get_analysis_summary()
-#     - SynopsisRenderer()
-#     - FileIOHandler()
-#     - analyze()
+#
+#===============================================================================
+#
+# 🔄 STATE MACHINES:
+#
+#   (No state machines detected.)
 #
 #===============================================================================
 #
 # 🚀 INITIALIZATION SEQUENCE:
 #
-#   1. main()
+#   1. sys.path.insert
 #===============================================================================
 #
 # 📊 DATA FLOW SUMMARY:
@@ -143,9 +148,7 @@
 #===============================================================================
 #===============================================================================
 # 📞 FUNCTION CALL HIERARCHY:
-#   main() → FileIOHandler, analyze_file, endswith, exists, exit, len, print, select_file_and_analyze
-#   analyze_file() → BehavioralAnalyzer, CodeAnalyzer, FileIOHandler, SynopsisRenderer, analyze, get_analysis_summary, print
-#   batch_analyze() → analyze_file, print
+#   (No intra-module function calls detected.)
 #===============================================================================
 # 🔄 STATE MACHINE TRANSITIONS:
 #   (No *_state transitions detected.)
@@ -169,6 +172,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 #!/usr/bin/env python3
 """
@@ -241,11 +245,15 @@ def analyze_file(filepath: str, include_machine_block: bool = True) -> Optional[
         Dictionary with analysis results, or None if analysis failed
     """
     try:
-        analyzer = CodeAnalyzer(filepath, include_machine_block=include_machine_block)
+        # Create shared state for this analysis
+        from .analyzer_state import new_state
+        state = new_state()
+        
+        analyzer = CodeAnalyzer(filepath, state, include_machine_block=include_machine_block)
         analyzer.analyze()
         
-        behavioral_analyzer = BehavioralAnalyzer(analyzer)
-        renderer = SynopsisRenderer(analyzer, behavioral_analyzer)
+        behavioral_analyzer = BehavioralAnalyzer(analyzer, state)
+        renderer = SynopsisRenderer(analyzer, behavioral_analyzer, state)
         
         # Get analysis summary
         handler = FileIOHandler()

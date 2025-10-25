@@ -1,14 +1,15 @@
 #===============================================================================
 # CODE SYNOPSIS: behavioral_analysis.py
-# SYNOPSIS_HASH: 1f9b87f9fbfe23973b5584bd0c57481648373074f3231a79340e9fc4d991850d
-# Generated: 2025-10-24 17:51:16
+# SYNOPSIS_HASH: 9774d4248dd0951db2eba95eda2b777113ffd0da7956a19b84f31a43ceeef83c
+# Generated: 2025-10-24 22:17:09
+# INTENT: Renders, Analyzes functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 208
+#   Total Lines: 230
 #   Functions: 11
 #   Classes: 1
-#   Global Variables: 24
+#   Global Variables: 27
 #
 # Key Dependencies:
 #   - ast
@@ -21,11 +22,11 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 17:51:16
+# LAST_ANALYZED: 2025-10-24 22:17:09
 # FILE: behavioral_analysis.py
 # IMPORTS_EXTERNAL: ast, collections, datetime, typing
 # IMPORTS_LOCAL: 
-# GLOBALS: assigned, buckets, call_roots, cats, children, critical, fanout, fnames, globs, gr, gw, high_priority, indent, init_seq, lines, lname, readers, sm, state_keys, trans, ts, ui_after, vals, writers
+# GLOBALS: assigned, buckets, call_roots, cats, children, critical, fanout, fnames, globs, gr, gw, high_priority, indent, init_seq, lines, lname, num_machines, num_transitions, readers, results, sm, state_keys, trans, ts, ui_after, vals, writers
 # FUNCTIONS: __init__, analyze_function_dependencies, analyze_high_priority_functions, build_machine_block, categorize_shared_state, dfs, generate_behavioral_summary, group_modules_generic, render_call_hierarchy, render_state_machines, render_ui_after_usage
 # RETURNS: analyze_function_dependencies, analyze_high_priority_functions, build_machine_block, categorize_shared_state, generate_behavioral_summary, group_modules_generic, render_call_hierarchy, render_state_machines, render_ui_after_usage
 # THREAD_TARGETS: 
@@ -35,16 +36,54 @@
 # CLASSES: BehavioralAnalyzer
 # IO_READS: 
 # IO_WRITES: 
-# CALLGRAPH_ROOTS: __init__,build_machine_block,categorize_shared_state,group_modules_generic,analyze_high_priority_functions,analyze_function_dependencies,generate_behavioral_summary
+# CALLGRAPH_ROOTS: __init__,render_call_hierarchy,render_state_machines,render_ui_after_usage,build_machine_block,categorize_shared_state,group_modules_generic,analyze_high_priority_functions,analyze_function_dependencies,generate_behavioral_summary
 # STATE_VARS: 
+# STATE_MACHINES_COUNT: 0
+# STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
+# INTENT: Renders, Analyzes functionality for this module.
+# FUNCTION_INTENTS: __init__=Handles the target entities., analyze_function_dependencies=Examines and summarizes function dependencies., analyze_high_priority_functions=Examines and summarizes high priority functions., build_machine_block=Constructs or generates machine block., categorize_shared_state=Handles shared state., dfs=Handles the target entities., generate_behavioral_summary=Handles behavioral summary., group_modules_generic=Organizes modules generic., render_call_hierarchy=Produces or displays call hierarchy., render_state_machines=Produces or displays state machines., render_ui_after_usage=Produces or displays ui after usage.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
 #
+# 📝 FUNCTION SIGNATURES:
+#
+# BehavioralAnalyzer.__init__(self, analyzer) -> None
+#   Initialize with reference to main analyzer.
+#
+# BehavioralAnalyzer.analyze_function_dependencies(self) -> List[Tuple[str, List[str]]]
+#   Analyze functions with high fan-out (calling many other functions).
+#
+# BehavioralAnalyzer.analyze_high_priority_functions(self) -> List[Tuple[str, Dict, Set[str], Set[str]]]
+#   Identify functions that modify multiple globals or are thread targets.
+#
+# BehavioralAnalyzer.build_machine_block(self) -> List[str]
+#   Build the machine-readable data block.
+#
+# BehavioralAnalyzer.categorize_shared_state(self) -> List[Tuple[str, List[str]]]
+#   Categorize global variables by their likely purpose.
+#
+# BehavioralAnalyzer.generate_behavioral_summary(self) -> List[str]
+#   Generate a comprehensive behavioral analysis summary.
+#
+# BehavioralAnalyzer.group_modules_generic(self) -> Dict[str, List[str]]
+#   Group functions into logical modules for refactoring suggestions.
+#
+# BehavioralAnalyzer.render_call_hierarchy(self, max_depth: int = 3, max_children: int = 8) -> List[str]
+#   Render a depth-limited call hierarchy.
+#
+# BehavioralAnalyzer.render_state_machines(self) -> List[str]
+#   Render detected state machines with enhanced detection.
+#
+# BehavioralAnalyzer.render_ui_after_usage(self) -> List[str]
+#   Render UI threading dependencies.
+#
+#===============================================================================
+#
 # 🧱 CLASSES FOUND:
 #
-#   BehavioralAnalyzer (line 14):
+#   BehavioralAnalyzer (line 15):
 #     - BehavioralAnalyzer.__init__()
 #     - BehavioralAnalyzer.render_call_hierarchy()
 #     - BehavioralAnalyzer.render_state_machines()
@@ -87,29 +126,34 @@
 #
 # ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
 #
-# render_call_hierarchy() - line 26  (Returns: Yes)
+# render_call_hierarchy() - line 27  (Returns: Yes)
 #   Modifies: children, indent, lines
 #   Reads: children, indent, lines
 #
-# render_state_machines() - line 51  (Returns: Yes)
+# render_state_machines() - line 52  (Returns: Yes)
 #   Modifies: lines, readers, trans, vals, writers
 #   Reads: lines, readers, trans, vals, writers
 #
-# build_machine_block() - line 80  (Returns: Yes)
-#   Modifies: call_roots, init_seq, lines, state_keys, ts
-#   Reads: call_roots, init_seq, lines, state_keys, ts
+# build_machine_block() - line 91  (Returns: Yes)
+#   Modifies: call_roots, init_seq, lines, num_machines, num_transitions, results, state_keys, ts
+#   Reads: call_roots, init_seq, lines, num_machines, num_transitions, results, state_keys, ts
 #
-# group_modules_generic() - line 128  (Returns: Yes)
+# group_modules_generic() - line 150  (Returns: Yes)
 #   Modifies: assigned, buckets, fnames, lname
 #   Reads: assigned, buckets, fnames, lname
 #
-# analyze_high_priority_functions() - line 162  (Returns: Yes)
+# analyze_high_priority_functions() - line 184  (Returns: Yes)
 #   Modifies: gr, gw, high_priority
 #   Reads: gr, gw, high_priority
 #
-# generate_behavioral_summary() - line 179  (Returns: Yes)
+# generate_behavioral_summary() - line 201  (Returns: Yes)
 #   Modifies: lines, sm, ui_after
 #   Reads: lines, sm, ui_after
+#
+#===============================================================================
+#
+# 🧠 FUNCTION BEHAVIORAL SUMMARIES:
+#
 #
 #===============================================================================
 #
@@ -117,68 +161,29 @@
 #
 # - __init__()
 #
+# - render_call_hierarchy()
+#
+# - render_state_machines()
+#
+# - render_ui_after_usage()
+#
 # - build_machine_block()
-#   - items()
-#   - now()
-#   - sorted()
-#   - get()
-#   - strftime()
-#   - keys()
-#   - join()
 #
 # - categorize_shared_state()
-#   - lower()
-#   - items()
-#   - sorted()
-#   - any()
 #
 # - group_modules_generic()
-#   - items()
-#   - list()
-#   - append()
-#   - any()
-#   - keys()
-#   - lower()
 #
 # - analyze_high_priority_functions()
-#   - items()
-#   - append()
-#   - sorted()
-#   - len()
 #
 # - analyze_function_dependencies()
-#   - items()
-#   - sorted()
-#   - len()
 #
 # - generate_behavioral_summary()
-#   - enumerate()
-#   - append()
-#   - len()
-#   - extend()
-#   - render_call_hierarchy()
-#     - append()
-#     - sorted()
-#     - get()
-#     - len()
-#     - dfs()
-#       - append()
-#       - sorted()
-#       - get()
-#       - len()
-#       - dfs()  (cycle)
-#   - render_state_machines()
-#     - items()
-#     - list()
-#     - set()
-#     - append()
-#     - sorted()
-#     - get()
-#     - len()
-#     - join()
-#   - render_ui_after_usage()
-#     - append()
-#     - sorted()
+#
+#===============================================================================
+#
+# 🔄 STATE MACHINES:
+#
+#   (No state machines detected.)
 #
 #===============================================================================
 #
@@ -187,9 +192,9 @@
 #   __init__() — pure/local computation; no return value
 #   render_call_hierarchy() — reads children, indent, lines; writes children, indent, lines; calls dfs, len, lines.append, self.analyzer.call_graph.get, self.analyzer.functions.get, sorted; returns value
 #   dfs() — reads children, indent, lines; writes children, indent; calls dfs, len, lines.append, self.analyzer.call_graph.get, self.analyzer.functions.get, sorted; no return value
-#   render_state_machines() — reads lines, readers, trans, vals, writers; writes lines, readers, trans, vals, writers; calls join, len, lines.append, list, self.analyzer.state_comparisons.get, self.analyzer.state_vars.items; returns value
+#   render_state_machines() — reads lines, readers, trans, vals, writers; writes lines, readers, trans, vals, writers; calls hasattr, join, len, lines.append, list, self.analyzer.state_comparisons.get; returns value
 #   render_ui_after_usage() — reads lines; writes lines; calls lines.append, sorted; returns value
-#   build_machine_block() — reads call_roots, init_seq, lines, state_keys, ts; writes call_roots, init_seq, lines, state_keys, ts; calls d.get, datetime.now, join, self.analyzer.classes.keys, self.analyzer.functions.items, self.analyzer.functions.keys; returns value
+#   build_machine_block() — reads call_roots, init_seq, lines, num_machines, num_transitions, results; writes call_roots, init_seq, lines, num_machines, num_transitions, results; calls d.get, datetime.now, hasattr, join, len, lines.append; returns value
 #   categorize_shared_state() — reads cats, globs; writes cats, globs; calls any, cats.items, g.lower, sorted; returns value
 #   group_modules_generic() — reads assigned, buckets, fnames, lname; writes assigned, buckets, fnames, lname; calls any, append, buckets.items, f.lower, list, self.analyzer.functions.keys; returns value
 #   analyze_high_priority_functions() — reads gr, gw, high_priority; writes gr, gw, high_priority; calls high_priority.append, len, self.analyzer.functions.items, sorted; returns value
@@ -211,16 +216,7 @@
 #===============================================================================
 #===============================================================================
 # 📞 FUNCTION CALL HIERARCHY:
-#   render_call_hierarchy() → append, dfs, get, len, sorted
-#   render_state_machines() → append, get, items, join, len, list, set, sorted
-#   render_ui_after_usage() → append, sorted
-#   build_machine_block() → get, items, join, keys, now, sorted, strftime
-#   categorize_shared_state() → any, items, lower, sorted
-#   group_modules_generic() → any, append, items, keys, list, lower
-#   analyze_high_priority_functions() → append, items, len, sorted
-#   analyze_function_dependencies() → items, len, sorted
-#   generate_behavioral_summary() → append, enumerate, extend, len, render_call_hierarchy, render_state_machines, render_ui_after_usage
-#   dfs() → append, dfs, get, len, sorted
+#   (No intra-module function calls detected.)
 #===============================================================================
 # 🔄 STATE MACHINE TRANSITIONS:
 #   (No *_state transitions detected.)
@@ -245,6 +241,7 @@
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
 # === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 """
 Behavioral Analysis Module - Advanced code behavior detection.
 
@@ -266,9 +263,14 @@ class BehavioralAnalyzer:
     call hierarchies, threading patterns, and UI dependencies.
     """
     
-    def __init__(self, analyzer):
-        """Initialize with reference to main analyzer."""
+    def __init__(self, analyzer, state=None):
+        """Initialize with reference to main analyzer and optional shared state."""
         self.analyzer = analyzer
+        # Use shared state if provided, otherwise use analyzer's state
+        if state is not None:
+            self.state = state
+        else:
+            self.state = getattr(analyzer, 'state', None)
     
     def render_call_hierarchy(self, max_depth: int = 3, max_children: int = 8) -> List[str]:
         """Render a depth-limited call hierarchy."""
@@ -296,9 +298,19 @@ class BehavioralAnalyzer:
         return lines
 
     def render_state_machines(self) -> List[str]:
-        """Render detected state machines."""
+        """Render detected state machines with enhanced detection."""
+        # Use the enhanced detector if available
+        if hasattr(self.analyzer, 'state_machine_detector') and self.analyzer.state_machine_detector:
+            try:
+                return self.analyzer.state_machine_detector.render_summary()
+            except Exception:
+                # Fallback to old implementation if enhanced rendering fails
+                pass
+        
+        # Fallback to old implementation
         if not self.analyzer.state_vars:
             return []
+        
         lines = ["#", "# STATE MACHINES (heuristic):", "#"]
         for var, meta in sorted(self.analyzer.state_vars.items()):
             vals = sorted(list(meta['values'] | self.analyzer.state_comparisons.get(var, set())))
@@ -352,10 +364,21 @@ class BehavioralAnalyzer:
             f"# IO_WRITES: {', '.join(sorted(self.analyzer.io_writes))}",
             f"# CALLGRAPH_ROOTS: {call_roots}",
             f"# STATE_VARS: {state_keys}",
+        ]
+        
+        # Optional enhancement - add state machine data
+        if hasattr(self.analyzer, 'state_machine_results') and self.analyzer.state_machine_results:
+            results = self.analyzer.state_machine_results
+            num_machines = len(results.get('state_machines', []))
+            num_transitions = len(results.get('transitions', []))
+            lines.append(f"# STATE_MACHINES_COUNT: {num_machines}")
+            lines.append(f"# STATE_TRANSITIONS_COUNT: {num_transitions}")
+        
+        lines.extend([
             f"# INIT_SEQUENCE: {init_seq}",
             "# END MACHINE-READABLE DATA",
             "# " + "\u2550" * 20,
-        ]
+        ])
         return lines
 
     def categorize_shared_state(self) -> List[Tuple[str, List[str]]]:

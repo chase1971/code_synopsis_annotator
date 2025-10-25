@@ -1,7 +1,7 @@
 #===============================================================================
 # CODE SYNOPSIS: file_io.py
 # SYNOPSIS_HASH: 6269fc82e0231197f7dedcdfc43941d93384b2d6cfb3968d76c140b0e43c5f24
-# Generated: 2025-10-24 17:47:07
+# Generated: 2025-10-24 17:51:16
 #===============================================================================
 #
 # OVERVIEW:
@@ -27,7 +27,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 17:47:07
+# LAST_ANALYZED: 2025-10-24 17:51:16
 # FILE: file_io.py
 # IMPORTS_EXTERNAL: os, sys, time, tkinter, traceback, typing
 # IMPORTS_LOCAL: behavioral_analysis, core_analyzer, synopsis_renderer
@@ -109,45 +109,45 @@
 #   - print()
 #   - analyze_file()
 #     - print()
-#     - analyze()
 #     - CodeAnalyzer()
+#     - analyze()
 #     - create_annotated_file()
-#       - write()
-#       - BehavioralAnalyzer()
-#       - generate_synopsis_header()
-#       - open()
-#       - SynopsisRenderer()
 #       - Exception()
+#       - write()
+#       - open()
+#       - BehavioralAnalyzer()
+#       - SynopsisRenderer()
+#       - generate_synopsis_header()
 #
 # - get_analysis_summary()
 #   - len()
 #
 # - main()
-#   - len()
-#   - FileIOHandler()
 #   - print()
+#   - len()
 #   - exit()
+#   - FileIOHandler()
 #   - select_file_and_analyze()
 #     ... +more
+#     - basename()
 #     - focus_force()
-#     - lift()
-#     - input()
-#     - withdraw()
-#     - str()
-#     - update()
 #     - CodeAnalyzer()
-#     - showinfo()
+#     - askopenfilename()
+#     - str()
+#     - lift()
+#     - system()
+#     - input()
 #   - analyze_file()
 #     - print()
-#     - analyze()
 #     - CodeAnalyzer()
+#     - analyze()
 #     - create_annotated_file()
-#       - write()
-#       - BehavioralAnalyzer()
-#       - generate_synopsis_header()
-#       - open()
-#       - SynopsisRenderer()
 #       - Exception()
+#       - write()
+#       - open()
+#       - BehavioralAnalyzer()
+#       - SynopsisRenderer()
+#       - generate_synopsis_header()
 #
 #===============================================================================
 #
@@ -210,6 +210,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 """
 File I/O Handler - File operations and UI interactions.
 

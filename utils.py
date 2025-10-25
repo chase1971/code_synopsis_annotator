@@ -1,14 +1,15 @@
 #===============================================================================
 # CODE SYNOPSIS: utils.py
-# SYNOPSIS_HASH: 5d24488658cff82f8662222c2414f0bb05c486065697bc586a9d747b607fb5e1
-# Generated: 2025-10-24 17:51:16
+# SYNOPSIS_HASH: 424ff697cdf5e6f33ab15eb1185b6a42c3ce0dfe5b6e06c28200c750bcd455c2
+# Generated: 2025-10-24 22:17:09
+# INTENT: Utility functions and helper methods.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 266
+#   Total Lines: 267
 #   Functions: 11
 #   Classes: 1
-#   Global Variables: 21
+#   Global Variables: 20
 #
 # Key Dependencies:
 #   - ast
@@ -21,11 +22,11 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 17:51:16
+# LAST_ANALYZED: 2025-10-24 22:17:09
 # FILE: utils.py
 # IMPORTS_EXTERNAL: ast, os, re, typing
 # IMPORTS_LOCAL: 
-# GLOBALS: assigned, base, buckets, candidate_pkg, candidate_py, cats, chain, cleaned, fnames, func, globs, hotkey, invalid_chars, lname, matches, mode, path, pattern, safe_name, size_bytes, stat
+# GLOBALS: assigned, base, buckets, candidate_pkg, candidate_py, cats, chain, cleaned, fnames, func, globs, hotkey, invalid_chars, lname, matches, mode, path, pattern, safe_name, stat
 # FUNCTIONS: call_to_name, categorize_shared_state, enclosing_function_name, extract_hotkey_bindings, extract_open_args, format_call_name, format_file_size, get_file_info, group_functions_by_purpose, is_local_module, safe_filename
 # RETURNS: call_to_name, categorize_shared_state, enclosing_function_name, extract_hotkey_bindings, extract_open_args, format_call_name, format_file_size, get_file_info, group_functions_by_purpose, is_local_module, safe_filename
 # THREAD_TARGETS: 
@@ -35,16 +36,57 @@
 # CLASSES: CodeUtils
 # IO_READS: 
 # IO_WRITES: 
-# CALLGRAPH_ROOTS: is_local_module,format_call_name,enclosing_function_name,extract_open_args,categorize_shared_state,group_functions_by_purpose,extract_hotkey_bindings,safe_filename,get_file_info
-# STATE_VARS: 
+# CALLGRAPH_ROOTS: is_local_module,call_to_name,format_call_name,enclosing_function_name,extract_open_args,categorize_shared_state,group_functions_by_purpose,extract_hotkey_bindings,safe_filename,format_file_size,get_file_info
+# STATE_VARS: mode
+# STATE_MACHINES_COUNT: 1
+# STATE_TRANSITIONS_COUNT: 2
 # INIT_SEQUENCE: 
+# INTENT: Utility functions and helper methods.
+# FUNCTION_INTENTS: call_to_name=Handles to name., categorize_shared_state=Handles shared state., enclosing_function_name=Handles function name., extract_hotkey_bindings=Retrieves hotkey bindings., extract_open_args=Retrieves open args., format_call_name=Handles call name., format_file_size=Handles file size., get_file_info=Handles file info., group_functions_by_purpose=Organizes functions by purpose., is_local_module=Handles local module., safe_filename=Handles filename.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
 #
+# 📝 FUNCTION SIGNATURES:
+#
+# CodeUtils.call_to_name(func_node: ast.AST) -> str
+#   Convert an AST function node to a string name.
+#
+# CodeUtils.categorize_shared_state(globals_found: Set[str]) -> List[Tuple[str, List[str]]]
+#   Categorize global variables by their likely purpose.
+#
+# CodeUtils.enclosing_function_name(node: ast.AST, tree: ast.AST) -> Optional[str]
+#   Find the function that contains the given node.
+#
+# CodeUtils.extract_hotkey_bindings(code: str) -> List[str]
+#   Extract hotkey bindings from source text using regex.
+#
+# CodeUtils.extract_open_args(call: ast.Call) -> Tuple[Optional[str], str]
+#   Extract file path and mode from open() calls.
+#
+# CodeUtils.format_call_name(call: ast.Call) -> str
+#   Format a function call for display.
+#
+# CodeUtils.format_file_size(size_bytes: int) -> str
+#   Format file size in human-readable format.
+#
+# CodeUtils.get_file_info(filepath: str) -> Dict[str, Any]
+#   Get basic information about a file.
+#
+# CodeUtils.group_functions_by_purpose(functions: Dict[str, Any]) -> Dict[str, List[str]]
+#   Group functions into logical modules for refactoring suggestions.
+#
+# CodeUtils.is_local_module(module_name: str, dirpath: str) -> bool
+#   Check if a module is local to the project.
+#
+# CodeUtils.safe_filename(filename: str) -> str
+#   Create a safe filename by removing or replacing invalid characters.
+#
+#===============================================================================
+#
 # 🧱 CLASSES FOUND:
 #
-#   CodeUtils (line 13):
+#   CodeUtils (line 14):
 #     - CodeUtils.is_local_module()
 #     - CodeUtils.call_to_name()
 #     - CodeUtils.format_call_name()
@@ -73,72 +115,71 @@
 #   Position State:
 #     - candidate_py
 #     - hotkey
-#     - size_bytes
 #   Config State:
 #     - path
 #===============================================================================
 #
 # ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
 #
-# group_functions_by_purpose() - line 139  (Returns: Yes)
+# group_functions_by_purpose() - line 140  (Returns: Yes)
 #   Modifies: assigned, buckets, fnames, lname
 #   Reads: assigned, buckets, fnames, lname
 #
-# extract_hotkey_bindings() - line 185  (Returns: Yes)
+# extract_hotkey_bindings() - line 186  (Returns: Yes)
 #   Modifies: cleaned, func, hotkey, matches, pattern
 #   Reads: cleaned, func, hotkey, matches, pattern
+#
+#===============================================================================
+#
+# 🧠 FUNCTION BEHAVIORAL SUMMARIES:
+#
 #
 #===============================================================================
 #
 # FUNCTION CALL HIERARCHY (depth-limited):
 #
 # - is_local_module()
-#   - exists()
-#   - replace()
-#   - join()
+#
+# - call_to_name()
 #
 # - format_call_name()
-#   - isinstance()
-#   - call_to_name()
-#     - isinstance()
-#     - call_to_name()  (cycle)
 #
 # - enclosing_function_name()
-#   - walk()
-#   - isinstance()
-#   - any()
 #
 # - extract_open_args()
-#   - len()
-#   - isinstance()
 #
 # - categorize_shared_state()
-#   - lower()
-#   - items()
-#   - sorted()
-#   - any()
 #
 # - group_functions_by_purpose()
-#   - items()
-#   - list()
-#   - append()
-#   - any()
-#   - keys()
-#   - lower()
 #
 # - extract_hotkey_bindings()
-#   - findall()
-#   - append()
-#   - strip()
 #
 # - safe_filename()
-#   - replace()
+#
+# - format_file_size()
 #
 # - get_file_info()
-#   - stat()
-#   - format_file_size()
 #
 #===============================================================================
+#
+# 🔄 STATE MACHINES DETECTED:
+#
+#   📍 mode (Mode Variable):
+#      States: (values unknown)
+#      Modified by: extract_open_args
+#
+#   🔀 Key Transitions:
+#      extract_open_args(): *→value, *→kw.value.value
+#
+#===============================================================================
+#
+# 🔄 STATE MACHINE DIAGRAMS:
+#
+# ```mermaid
+# stateDiagram-v2
+#     [*] --> Unknown
+# ```
+#
 #
 # 📊 DATA FLOW SUMMARY:
 #
@@ -151,7 +192,7 @@
 #   group_functions_by_purpose() — reads assigned, buckets, fnames, lname; writes assigned, buckets, fnames, lname; calls any, append, buckets.items, f.lower, functions.keys, list; returns value
 #   extract_hotkey_bindings() — reads cleaned, func, hotkey, matches, pattern; writes cleaned, func, hotkey, matches, pattern; calls cleaned.append, func.strip, hotkey.strip, re.findall, strip; returns value
 #   safe_filename() — reads invalid_chars, safe_name; writes invalid_chars, safe_name; calls safe_name.replace; returns value
-#   format_file_size() — reads size_bytes; writes size_bytes; returns value
+#   format_file_size() — pure/local computation; returns value
 #   get_file_info() — reads stat; writes stat; calls CodeUtils.format_file_size, os.stat; returns value
 #===============================================================================
 #
@@ -169,16 +210,7 @@
 #===============================================================================
 #===============================================================================
 # 📞 FUNCTION CALL HIERARCHY:
-#   is_local_module() → exists, join, replace
-#   call_to_name() → call_to_name, isinstance
-#   format_call_name() → call_to_name, isinstance
-#   enclosing_function_name() → any, isinstance, walk
-#   extract_open_args() → isinstance, len
-#   categorize_shared_state() → any, items, lower, sorted
-#   group_functions_by_purpose() → any, append, items, keys, list, lower
-#   extract_hotkey_bindings() → append, findall, strip
-#   safe_filename() → replace
-#   get_file_info() → format_file_size, stat
+#   (No intra-module function calls detected.)
 #===============================================================================
 # 🔄 STATE MACHINE TRANSITIONS:
 #   (No *_state transitions detected.)
@@ -202,6 +234,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 """
 Utilities - Helper functions and common utilities.

@@ -1,7 +1,7 @@
 #===============================================================================
 # CODE SYNOPSIS: behavioral_analysis.py
 # SYNOPSIS_HASH: 1f9b87f9fbfe23973b5584bd0c57481648373074f3231a79340e9fc4d991850d
-# Generated: 2025-10-24 17:47:07
+# Generated: 2025-10-24 17:51:16
 #===============================================================================
 #
 # OVERVIEW:
@@ -21,7 +21,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 17:47:07
+# LAST_ANALYZED: 2025-10-24 17:51:16
 # FILE: behavioral_analysis.py
 # IMPORTS_EXTERNAL: ast, collections, datetime, typing
 # IMPORTS_LOCAL: 
@@ -63,11 +63,11 @@
 #   Modified by: render_call_hierarchy, render_state_machines, render_ui_after_usage, build_machine_block, generate_behavioral_summary
 #   Read by: render_call_hierarchy, render_state_machines, render_ui_after_usage, build_machine_block, generate_behavioral_summary, dfs
 #
-# children:
+# indent:
 #   Modified by: render_call_hierarchy, dfs
 #   Read by: render_call_hierarchy, dfs
 #
-# indent:
+# children:
 #   Modified by: render_call_hierarchy, dfs
 #   Read by: render_call_hierarchy, dfs
 #
@@ -118,67 +118,67 @@
 # - __init__()
 #
 # - build_machine_block()
-#   - join()
+#   - items()
+#   - now()
+#   - sorted()
+#   - get()
 #   - strftime()
 #   - keys()
-#   - get()
-#   - items()
-#   - sorted()
-#   - now()
+#   - join()
 #
 # - categorize_shared_state()
-#   - any()
-#   - sorted()
-#   - items()
 #   - lower()
+#   - items()
+#   - sorted()
+#   - any()
 #
 # - group_modules_generic()
+#   - items()
+#   - list()
+#   - append()
 #   - any()
 #   - keys()
-#   - items()
-#   - append()
 #   - lower()
-#   - list()
 #
 # - analyze_high_priority_functions()
-#   - sorted()
-#   - len()
 #   - items()
 #   - append()
+#   - sorted()
+#   - len()
 #
 # - analyze_function_dependencies()
+#   - items()
 #   - sorted()
 #   - len()
-#   - items()
 #
 # - generate_behavioral_summary()
-#   - len()
-#   - append()
-#   - extend()
 #   - enumerate()
+#   - append()
+#   - len()
+#   - extend()
 #   - render_call_hierarchy()
-#     - get()
-#     - len()
 #     - append()
 #     - sorted()
+#     - get()
+#     - len()
 #     - dfs()
-#       - get()
-#       - len()
 #       - append()
 #       - sorted()
+#       - get()
+#       - len()
 #       - dfs()  (cycle)
 #   - render_state_machines()
-#     - join()
-#     - get()
 #     - items()
-#     - set()
-#     - len()
-#     - append()
-#     - sorted()
 #     - list()
-#   - render_ui_after_usage()
-#     - sorted()
+#     - set()
 #     - append()
+#     - sorted()
+#     - get()
+#     - len()
+#     - join()
+#   - render_ui_after_usage()
+#     - append()
+#     - sorted()
 #
 #===============================================================================
 #
@@ -244,6 +244,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 """
 Behavioral Analysis Module - Advanced code behavior detection.
 
@@ -295,9 +296,19 @@ class BehavioralAnalyzer:
         return lines
 
     def render_state_machines(self) -> List[str]:
-        """Render detected state machines."""
+        """Render detected state machines with enhanced detection."""
+        # Use the enhanced detector if available
+        if hasattr(self.analyzer, 'state_machine_detector') and self.analyzer.state_machine_detector:
+            try:
+                return self.analyzer.state_machine_detector.render_summary()
+            except Exception:
+                # Fallback to old implementation if enhanced rendering fails
+                pass
+        
+        # Fallback to old implementation
         if not self.analyzer.state_vars:
             return []
+        
         lines = ["#", "# STATE MACHINES (heuristic):", "#"]
         for var, meta in sorted(self.analyzer.state_vars.items()):
             vals = sorted(list(meta['values'] | self.analyzer.state_comparisons.get(var, set())))
@@ -351,10 +362,21 @@ class BehavioralAnalyzer:
             f"# IO_WRITES: {', '.join(sorted(self.analyzer.io_writes))}",
             f"# CALLGRAPH_ROOTS: {call_roots}",
             f"# STATE_VARS: {state_keys}",
+        ]
+        
+        # Optional enhancement - add state machine data
+        if hasattr(self.analyzer, 'state_machine_results') and self.analyzer.state_machine_results:
+            results = self.analyzer.state_machine_results
+            num_machines = len(results.get('state_machines', []))
+            num_transitions = len(results.get('transitions', []))
+            lines.append(f"# STATE_MACHINES_COUNT: {num_machines}")
+            lines.append(f"# STATE_TRANSITIONS_COUNT: {num_transitions}")
+        
+        lines.extend([
             f"# INIT_SEQUENCE: {init_seq}",
             "# END MACHINE-READABLE DATA",
             "# " + "\u2550" * 20,
-        ]
+        ])
         return lines
 
     def categorize_shared_state(self) -> List[Tuple[str, List[str]]]:

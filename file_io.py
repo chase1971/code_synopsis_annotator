@@ -1,11 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: file_io.py
-# SYNOPSIS_HASH: 6269fc82e0231197f7dedcdfc43941d93384b2d6cfb3968d76c140b0e43c5f24
-# Generated: 2025-10-24 17:51:16
+# SYNOPSIS_HASH: d746721ba18069c7728cf7934e1b770cba92c943607732d30b7baf3e4ffb0c96
+# Generated: 2025-10-24 22:17:09
+# INTENT: Creates and manages user interface components. Creates various components.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 209
+#   Total Lines: 210
 #   Functions: 7
 #   Classes: 1
 #   Global Variables: 10
@@ -27,7 +28,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-24 17:51:16
+# LAST_ANALYZED: 2025-10-24 22:17:09
 # FILE: file_io.py
 # IMPORTS_EXTERNAL: os, sys, time, tkinter, traceback, typing
 # IMPORTS_LOCAL: behavioral_analysis, core_analyzer, synopsis_renderer
@@ -41,16 +42,45 @@
 # CLASSES: FileIOHandler
 # IO_READS: 
 # IO_WRITES: 
-# CALLGRAPH_ROOTS: __init__,batch_analyze_files,get_analysis_summary,main
+# CALLGRAPH_ROOTS: main,__init__,create_annotated_file,select_file_and_analyze,analyze_file,batch_analyze_files,get_analysis_summary
 # STATE_VARS: 
-# INIT_SEQUENCE: main()
+# STATE_MACHINES_COUNT: 0
+# STATE_TRANSITIONS_COUNT: 0
+# INIT_SEQUENCE: 
+# INTENT: Creates and manages user interface components. Creates various components.
+# FUNCTION_INTENTS: __init__=Handles the target entities., analyze_file=Examines and summarizes file., batch_analyze_files=Examines and summarizes files., create_annotated_file=Handles annotated file., get_analysis_summary=Handles analysis summary., main=Handles the target entities., select_file_and_analyze=Handles file and.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
 #
+# 📝 FUNCTION SIGNATURES:
+#
+# FileIOHandler.__init__(self) -> None
+#   Initialize the file I/O handler.
+#
+# FileIOHandler.analyze_file(self, filepath: str) -> bool
+#   Analyze a specific file and create annotated version.
+#
+# FileIOHandler.batch_analyze_files(self, filepaths: list) -> dict
+#   Analyze multiple files in batch.
+#
+# FileIOHandler.create_annotated_file(self, analyzer: CodeAnalyzer, output_path: str) -> None
+#   Create an annotated file with synopsis header.
+#
+# FileIOHandler.get_analysis_summary(self, analyzer: CodeAnalyzer) -> dict
+#   Get a summary of analysis results.
+#
+# FileIOHandler.select_file_and_analyze(self) -> None
+#   Select a file and run the complete analysis workflow.
+#
+# main() -> None
+#   Main entry point for the application.
+#
+#===============================================================================
+#
 # 🧱 CLASSES FOUND:
 #
-#   FileIOHandler (line 20):
+#   FileIOHandler (line 21):
 #     - FileIOHandler.__init__()
 #     - FileIOHandler.create_annotated_file()
 #     - FileIOHandler.select_file_and_analyze()
@@ -87,73 +117,47 @@
 #
 # ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
 #
-# create_annotated_file() - line 32  (Returns: No)
+# create_annotated_file() - line 33  (Returns: No)
 #   Modifies: annotated_code, behavioral_analyzer, renderer, synopsis_header
 #   Reads: analyzer, annotated_code, behavioral_analyzer, renderer, synopsis_header
 #
-# select_file_and_analyze() - line 46  (Returns: No)
+# select_file_and_analyze() - line 47  (Returns: No)
 #   Modifies: analyzer, filepath, root
 #   Reads: analyzer, filepath, root
 #
-# main() - line 190  (Returns: No)
+# main() - line 191  (Returns: No)
 #   Modifies: filepath, handler, success
 #   Reads: filepath, handler, success
 #
 #===============================================================================
 #
-# FUNCTION CALL HIERARCHY (depth-limited):
+# 🧠 FUNCTION BEHAVIORAL SUMMARIES:
 #
-# - __init__()
-#
-# - batch_analyze_files()
-#   - print()
-#   - analyze_file()
-#     - print()
-#     - CodeAnalyzer()
-#     - analyze()
-#     - create_annotated_file()
-#       - Exception()
-#       - write()
-#       - open()
-#       - BehavioralAnalyzer()
-#       - SynopsisRenderer()
-#       - generate_synopsis_header()
-#
-# - get_analysis_summary()
-#   - len()
-#
-# - main()
-#   - print()
-#   - len()
-#   - exit()
-#   - FileIOHandler()
-#   - select_file_and_analyze()
-#     ... +more
-#     - basename()
-#     - focus_force()
-#     - CodeAnalyzer()
-#     - askopenfilename()
-#     - str()
-#     - lift()
-#     - system()
-#     - input()
-#   - analyze_file()
-#     - print()
-#     - CodeAnalyzer()
-#     - analyze()
-#     - create_annotated_file()
-#       - Exception()
-#       - write()
-#       - open()
-#       - BehavioralAnalyzer()
-#       - SynopsisRenderer()
-#       - generate_synopsis_header()
 #
 #===============================================================================
 #
-# 🚀 INITIALIZATION SEQUENCE:
+# FUNCTION CALL HIERARCHY (depth-limited):
 #
-#   1. main()
+# - main()
+#
+# - __init__()
+#
+# - create_annotated_file()
+#
+# - select_file_and_analyze()
+#
+# - analyze_file()
+#
+# - batch_analyze_files()
+#
+# - get_analysis_summary()
+#
+#===============================================================================
+#
+# 🔄 STATE MACHINES:
+#
+#   (No state machines detected.)
+#
 #===============================================================================
 #
 # 📊 DATA FLOW SUMMARY:
@@ -181,12 +185,7 @@
 #===============================================================================
 #===============================================================================
 # 📞 FUNCTION CALL HIERARCHY:
-#   main() → FileIOHandler, analyze_file, exit, len, print, select_file_and_analyze
-#   create_annotated_file() → BehavioralAnalyzer, Exception, SynopsisRenderer, generate_synopsis_header, open, write
-#   select_file_and_analyze() → CodeAnalyzer, Tk, analyze, askopenfilename, attributes, basename, create_annotated_file, focus_force, input, len, lift, print, print_exc, showerror, showinfo, sleep, str, system, update, withdraw
-#   analyze_file() → CodeAnalyzer, analyze, create_annotated_file, print
-#   batch_analyze_files() → analyze_file, print
-#   get_analysis_summary() → len
+#   (No intra-module function calls detected.)
 #===============================================================================
 # 🔄 STATE MACHINE TRANSITIONS:
 #   (No *_state transitions detected.)
@@ -210,6 +209,7 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 """
 File I/O Handler - File operations and UI interactions.
