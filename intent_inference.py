@@ -1,0 +1,438 @@
+#===============================================================================
+# CODE SYNOPSIS: intent_inference.py
+# SYNOPSIS_HASH: a94070e03b8b2143991d11a18bd609249dc669c72bcf0476d9762c22b93c61b5
+# Generated: 2025-10-24 19:14:51
+# INTENT: Handles core behaviors for this module, derived from its primary routines.
+#===============================================================================
+#
+# OVERVIEW:
+#   Total Lines: 217
+#   Functions: 8
+#   Classes: 0
+#   Global Variables: 28
+#
+# Key Dependencies:
+#   - __future__
+#   - re
+#   - typing
+#
+#===============================================================================
+# ════════════════════
+# BEGIN MACHINE-READABLE DATA (for automated processing)
+# ════════════════════
+# SYNOPSIS_ANNOTATED: YES
+# LAST_ANALYZED: 2025-10-24 19:14:51
+# FILE: intent_inference.py
+# IMPORTS_EXTERNAL: __future__, re, typing
+# IMPORTS_LOCAL: 
+# GLOBALS: ACTION_MAP, DEFAULT_MODULE_INTENT, DEFAULT_VERB, after, base, before, block, block_start, camel, end, end_idx, func_names, head, insert_at, intent, intents, lines, module_intent, obj_phrase, parts, phrase, safe_intent, safe_name, short, start_idx, tokens, updated, verbs
+# FUNCTIONS: _infer_verb, _insert_human_readable_intent, _insert_machine_block_kv, _noun_phrase_from, _split_ident, generate_module_intent, infer_function_intent, inject_intent
+# RETURNS: _infer_verb, _insert_human_readable_intent, _insert_machine_block_kv, _noun_phrase_from, _split_ident, generate_module_intent, infer_function_intent, inject_intent
+# THREAD_TARGETS: 
+# HOTKEYS: 
+# TK_BINDS: 
+# COMMAND_BINDS: 
+# CLASSES: 
+# IO_READS: 
+# IO_WRITES: 
+# CALLGRAPH_ROOTS: inject_intent
+# STATE_VARS: ACTION_MAP,DEFAULT_MODULE_INTENT,DEFAULT_VERB
+# INIT_SEQUENCE: 
+# INTENT: Handles core behaviors for this module, derived from its primary routines.
+# FUNCTION_INTENTS: _infer_verb=Handles verb., _insert_human_readable_intent=Handles human readable intent., _insert_machine_block_kv=Handles machine block kv., _noun_phrase_from=Handles phrase from., _split_ident=Handles ident., generate_module_intent=Handles module intent., infer_function_intent=Handles function intent., inject_intent=Handles intent.
+# END MACHINE-READABLE DATA
+# ════════════════════
+#===============================================================================
+#
+# CRITICAL GLOBAL VARIABLES:
+#
+# tokens:
+#   Modified by: _noun_phrase_from, infer_function_intent, generate_module_intent
+#   Read by: _infer_verb, _noun_phrase_from, infer_function_intent, generate_module_intent
+#
+# obj_phrase:
+#   Modified by: infer_function_intent, generate_module_intent
+#   Read by: infer_function_intent, generate_module_intent
+#
+# head:
+#   Modified by: _infer_verb, generate_module_intent
+#   Read by: _infer_verb, generate_module_intent
+#
+#===============================================================================
+#
+# SHARED STATE CATEGORIES:
+#
+#   Timing State:
+#     - block_start
+#     - end
+#     - end_idx
+#     - start_idx
+#   Position State:
+#     - end_idx
+#     - start_idx
+#   Config State:
+#     - DEFAULT_MODULE_INTENT
+#     - DEFAULT_VERB
+#===============================================================================
+#
+# ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
+#
+# generate_module_intent() - line 97  (Returns: Yes)
+#   Modifies: base, func_names, head, intents, obj_phrase, short, tokens, verbs
+#   Reads: DEFAULT_MODULE_INTENT, base, func_names, head, intents, obj_phrase, short, tokens
+#
+# _insert_machine_block_kv() - line 155  (Returns: Yes)
+#   Modifies: after, before, block, block_start, end, end_idx, start_idx
+#   Reads: after, before, block, block_start, end, end_idx, start_idx
+#
+# inject_intent() - line 186  (Returns: Yes)
+#   Modifies: intent, module_intent, safe_intent, safe_name, updated
+#   Reads: intent, module_intent, safe_intent, safe_name, updated
+#
+#===============================================================================
+#
+# 🔗 FUNCTION DEPENDENCIES (high fan-out):
+#
+# generate_module_intent() calls:
+#   - _infer_verb()
+#   - _noun_phrase_from()
+#   - _split_ident()
+#   - infer_function_intent()
+#
+# inject_intent() calls:
+#   - _insert_human_readable_intent()
+#   - _insert_machine_block_kv()
+#   - generate_module_intent()
+#   - infer_function_intent()
+#
+#===============================================================================
+#
+# FUNCTION CALL HIERARCHY (depth-limited):
+#
+# - inject_intent()
+#   ... +more
+#   - sorted()
+#   - append()
+#   - keys()
+#   - join()
+#   - replace()
+#   - infer_function_intent()
+#     - _split_ident()
+#       - split()
+#       - append()
+#       - lower()
+#       - extend()
+#       - findall()
+#     - _infer_verb()
+#       - get()
+#     - _noun_phrase_from()
+#       - join()
+#       - len()
+#   - generate_module_intent()
+#     ... +more
+#     - split()
+#     - sorted()
+#     - append()
+#     - fromkeys()
+#     - getattr()
+#     - keys()
+#     - list()
+#     - capitalize()
+#   - _insert_human_readable_intent()
+#     - len()
+#     - startswith()
+#     - splitlines()
+#     - insert()
+#     - join()
+#     - min()
+#     - enumerate()
+#     - strip()
+#
+#===============================================================================
+#
+# STATE MACHINES (heuristic):
+#
+#   ACTION_MAP: (values unknown)
+#     Checked by: _infer_verb, _noun_phrase_from
+#   DEFAULT_MODULE_INTENT: Provides functionality related to code structure analysis and summary generation.
+#     Checked by: generate_module_intent
+#   DEFAULT_VERB: Handles
+#     Checked by: _infer_verb
+#
+#===============================================================================
+#
+# 📊 DATA FLOW SUMMARY:
+#
+#   _split_ident() — reads camel, parts; writes camel, parts; calls c.lower, flat.append, flat.extend, p.lower, re.findall, re.split; returns value
+#   _infer_verb() — reads ACTION_MAP, DEFAULT_VERB, head, phrase, tokens; writes head, phrase; calls ACTION_MAP.get; returns value
+#   _noun_phrase_from() — reads ACTION_MAP, tokens; writes tokens; calls join, len; returns value
+#   infer_function_intent() — reads obj_phrase, tokens; writes obj_phrase, tokens; calls _infer_verb, _noun_phrase_from, _split_ident; returns value
+#   generate_module_intent() — reads DEFAULT_MODULE_INTENT, base, func_names, head, intents, obj_phrase; writes base, func_names, head, intents, obj_phrase, short; calls _infer_verb, _noun_phrase_from, _split_ident, dict.fromkeys, getattr, head.capitalize; returns value
+#   _insert_human_readable_intent() — reads insert_at, lines; writes insert_at, lines; calls enumerate, header_text.splitlines, join, len, lines.insert, ln.strip; returns value
+#   _insert_machine_block_kv() — reads after, before, block, block_start, end, end_idx; writes after, before, block, block_start, end, end_idx; calls block.replace, block_start.start, end.end, re.escape, re.search, re.sub; returns value
+#   inject_intent() — reads intent, module_intent, safe_intent, safe_name, updated; writes intent, module_intent, safe_intent, safe_name, updated; calls _insert_human_readable_intent, _insert_machine_block_kv, fn_intents.append, fname.replace, generate_module_intent, infer_function_intent; returns value
+#===============================================================================
+#
+# 🔧 MODULARIZATION RECOMMENDATIONS:
+#
+# ⚠️ GLOBAL STATE: Significant global variables found.
+#    1. Create a State class to hold all globals
+#    2. Pass state object instead of using globals
+#    3. Use getter/setter methods for thread-safe access
+#
+# When modularizing, consider splitting by:
+#   - Separate state management from business logic
+#   - Group related functions into modules
+#   - Separate UI code from core logic
+#===============================================================================
+#===============================================================================
+# 📞 FUNCTION CALL HIERARCHY:
+#   _split_ident() → append, extend, findall, lower, split
+#   _infer_verb() → get
+#   _noun_phrase_from() → join, len
+#   infer_function_intent() → _infer_verb, _noun_phrase_from, _split_ident
+#   generate_module_intent() → _infer_verb, _noun_phrase_from, _split_ident, append, capitalize, endswith, fromkeys, getattr, infer_function_intent, join, keys, list, lower, replace, sorted, split
+#   _insert_human_readable_intent() → enumerate, insert, join, len, min, splitlines, startswith, strip
+#   _insert_machine_block_kv() → end, escape, replace, search, start, sub
+#   inject_intent() → _insert_human_readable_intent, _insert_machine_block_kv, append, generate_module_intent, infer_function_intent, join, keys, replace, sorted
+#===============================================================================
+# 🔄 STATE MACHINE TRANSITIONS:
+#   (No *_state transitions detected.)
+#===============================================================================
+# ⌨️ HOTKEY BINDINGS:
+#   (No keyboard hotkeys detected.)
+#===============================================================================
+#
+# 🧩 MODULE INTEGRATION INTENT:
+#   Role: Single-file code analyzer that injects a synopsis header
+#   Used by: (future) system_synopsis_builder.py for folder-wide Markdown
+#   Inputs: Python source file path
+#   Outputs: Annotated source file (prepends this synopsis)
+#===============================================================================
+#
+# 📝 INSTRUCTIONS FOR AI:
+#   1. Preserve ALL global variable dependencies shown above
+#   2. Maintain thread safety for variables accessed by multiple threads
+#   3. Do NOT rename variables unless explicitly asked
+#   4. Ensure all function dependencies are preserved
+#   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
+#   6. Ensure hotkeys and binds still invoke the same callbacks
+#===============================================================================
+# === END SYNOPSIS HEADER ===
+#!/usr/bin/env python3
+# =============================================================================
+# INTENT INFERENCE (deterministic, no-LLM)
+# =============================================================================
+"""
+Generates concise natural-language 'intent' strings for modules and functions
+based on static signals already produced by your analyzers.
+
+Integration:
+- Called from batch_annotate_modular.process_single_file() AFTER the synopsis
+  header is generated by SynopsisRenderer.
+- Injects:
+    1) A human-readable "# INTENT: ..." line near the top of the header, and
+    2) "INTENT: ..." and "FUNCTION_INTENTS: ..." inside the
+       BEGIN MACHINE-READABLE DATA block, so project_architect can extract it.
+"""
+
+from __future__ import annotations
+from typing import Dict, List, Tuple
+import re
+
+ACTION_MAP = {
+    "analyze": "Examines and summarizes",
+    "build": "Constructs or generates",
+    "detect": "Identifies",
+    "extract": "Retrieves",
+    "find": "Locates or gathers",
+    "render": "Produces or displays",
+    "group": "Organizes",
+    "summarize": "Condenses results of",
+    "process": "Handles or executes",
+    "load": "Retrieves and prepares",
+    "save": "Stores or outputs",
+    "parse": "Parses",
+    "read": "Reads",
+    "write": "Writes",
+}
+
+# Fallbacks if we can't infer a verb from a function/method name.
+DEFAULT_VERB = "Handles"
+DEFAULT_MODULE_INTENT = (
+    "Provides functionality related to code structure analysis and summary generation."
+)
+
+
+def _split_ident(name: str) -> List[str]:
+    # snake_case or mixedCase → tokens
+    parts = re.split(r"[_\W]+", name)
+    flat: List[str] = []
+    for p in parts:
+        if not p:
+            continue
+        # split camelCase tokens
+        camel = re.findall(r"[A-Z]?[a-z]+|[A-Z]+(?=[A-Z]|$)|\d+", p)
+        if camel:
+            flat.extend([c.lower() for c in camel])
+        else:
+            flat.append(p.lower())
+    return [t for t in flat if t]
+
+
+def _infer_verb(tokens: List[str]) -> Tuple[str, str]:
+    if not tokens:
+        return DEFAULT_VERB, ""
+    head = tokens[0]
+    phrase = ACTION_MAP.get(head)
+    if phrase:
+        return phrase, head
+    # look ahead a couple tokens
+    for t in tokens[:3]:
+        phrase = ACTION_MAP.get(t)
+        if phrase:
+            return phrase, t
+    return DEFAULT_VERB, ""
+
+
+def _noun_phrase_from(tokens: List[str], skip_first: bool = True) -> str:
+    if skip_first and tokens:
+        tokens = tokens[1:]
+    tokens = [t for t in tokens if t not in ACTION_MAP]
+    if not tokens:
+        return "the target entities"
+    # keep it short
+    if len(tokens) > 5:
+        tokens = tokens[:5]
+    return " ".join(tokens)
+
+
+def infer_function_intent(func_name: str) -> str:
+    tokens = _split_ident(func_name)
+    verb_phrase, _ = _infer_verb(tokens)
+    obj_phrase = _noun_phrase_from(tokens, skip_first=True)
+    # shape final sentence
+    return f"{verb_phrase} {obj_phrase}."
+
+
+def generate_module_intent(analyzer) -> str:
+    """
+    Use function names and imports to synthesize a short module purpose line.
+    """
+    func_names = sorted((analyzer.functions or {}).keys())
+    if not func_names:
+        # fall back to file name
+        base = (getattr(analyzer, "filename", None) or "").replace(".py", "")
+        tokens = _split_ident(base) if base else []
+        if tokens:
+            verb_phrase, _ = _infer_verb(tokens)
+            obj_phrase = _noun_phrase_from(tokens, skip_first=True)
+            return f"{verb_phrase} {obj_phrase}."
+        return DEFAULT_MODULE_INTENT
+
+    # Build a small bag-of-words from function names
+    intents = [infer_function_intent(n) for n in func_names[:10]]
+    # Try to compress a coherent line based on the top verbs
+    verbs = []
+    for n in func_names[:6]:
+        v, _ = _infer_verb(_split_ident(n))
+        verbs.append(v.split()[0].lower())
+    verbs = [v for v in verbs if v]
+    if verbs:
+        verbs = list(dict.fromkeys(verbs))  # preserve order, dedupe
+        head = ", ".join(verbs[:3])
+        return f"{head.capitalize()} core behaviors for this module, derived from its primary routines."
+
+    # Fallback: join a couple of intents
+    if intents:
+        # Strip trailing periods and join
+        short = "; ".join([s[:-1] if s.endswith(".") else s for s in intents[:2]])
+        return short + "."
+    return DEFAULT_MODULE_INTENT
+
+
+def _insert_human_readable_intent(header_text: str, human_intent: str) -> str:
+    """
+    Insert a '# INTENT: ...' line near the top (after SYNOPSIS_HASH if present).
+    """
+    lines = header_text.splitlines()
+    # Find an anchor (SYNOPSIS_HASH or Generated line)
+    insert_at = None
+    for i, ln in enumerate(lines[:40]):
+        if ln.strip().startswith("# SYNOPSIS_HASH:"):
+            insert_at = i + 1
+            break
+    if insert_at is None:
+        for i, ln in enumerate(lines[:40]):
+            if ln.strip().startswith("# Generated:"):
+                insert_at = i + 1
+                break
+    if insert_at is None:
+        insert_at = min(3, len(lines))
+    lines.insert(insert_at, f"# INTENT: {human_intent}")
+    return "\n".join(lines)
+
+
+def _insert_machine_block_kv(header_text: str, key: str, value: str) -> str:
+    """
+    Insert or update a key: value inside the MACHINE-READABLE DATA block.
+    If block not found, no-op (return original).
+    """
+    block_start = re.search(r"BEGIN MACHINE-READABLE DATA.*", header_text)
+    if not block_start:
+        return header_text
+
+    # Find the 'END MACHINE-READABLE DATA' boundary
+    end = re.search(r"END MACHINE-READABLE DATA", header_text)
+    if not end:
+        return header_text
+
+    start_idx = block_start.start()
+    end_idx = end.end()
+
+    before = header_text[:start_idx]
+    block = header_text[start_idx:end_idx]
+    after = header_text[end_idx:]
+
+    # If key exists, replace; else, append at the end of block (before END)
+    if re.search(rf"^{re.escape(key)}:", block, flags=re.MULTILINE):
+        block = re.sub(rf"^{re.escape(key)}:.*$",
+                       f"{key}: {value}", block, flags=re.MULTILINE)
+    else:
+        block = block.replace("END MACHINE-READABLE DATA", f"{key}: {value}\n# END MACHINE-READABLE DATA")
+
+    return before + block + after
+
+
+def inject_intent(header_text: str, analyzer, behavioral_analyzer) -> str:
+    """
+    Public entry point. Returns a NEW header string with:
+      - '# INTENT: ...' (human-readable)
+      - 'INTENT: ...' (inside MACHINE-READABLE block)
+      - 'FUNCTION_INTENTS: name1=..., name2=...' (inside MACHINE-READABLE block)
+    """
+    # 1) Module-level human-readable
+    module_intent = generate_module_intent(analyzer)
+
+    updated = _insert_human_readable_intent(header_text, module_intent)
+
+    # 2) Machine-readable INTENT (single line)
+    updated = _insert_machine_block_kv(updated, "INTENT", module_intent)
+
+    # 3) Machine-readable FUNCTION_INTENTS (compact kv-list)
+    fn_intents: List[str] = []
+    for fname in sorted((analyzer.functions or {}).keys()):
+        try:
+            intent = infer_function_intent(fname)
+            # sanitize separators
+            safe_name = fname.replace(",", "_").replace("=", "_")
+            safe_intent = intent.replace(",", ";")
+            fn_intents.append(f"{safe_name}={safe_intent}")
+        except Exception:
+            # avoid blocking due to any odd names
+            continue
+
+    if fn_intents:
+        updated = _insert_machine_block_kv(updated, "FUNCTION_INTENTS", ", ".join(fn_intents))
+
+    return updated

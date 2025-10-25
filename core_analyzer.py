@@ -1,0 +1,469 @@
+"""
+Core Code Analyzer - Main analysis engine for Python code.
+
+This module contains the primary CodeAnalyzer class that orchestrates
+the analysis of Python source code and coordinates with other modules.
+"""
+
+import ast
+import os
+from typing import Dict, List, Set, Tuple, Optional
+from collections import defaultdict
+
+
+class CodeAnalyzer:
+    """
+    Main code analyzer that coordinates analysis of Python source files.
+    
+    This class serves as the central orchestrator, managing the analysis
+    process and coordinating with specialized analysis modules.
+    """
+    
+    def __init__(self, filepath: str, *, include_machine_block: bool = True):
+        """Initialize the analyzer with a file path."""
+        self.filepath = filepath
+        self.filename = os.path.basename(filepath)
+        self.dirpath = os.path.dirname(os.path.abspath(filepath))
+        self.include_machine_block = include_machine_block
+
+        # Core analysis stores
+        self.globals_found: Set[str] = set()
+        self.functions: Dict[str, Dict[str, object]] = {}
+        self.classes: Dict[str, Dict[str, object]] = {}
+
+        # Imports
+        self.imports: List[str] = []
+        self.imports_external: Set[str] = set()
+        self.imports_local: Set[str] = set()
+
+        # Concurrency / hotkeys
+        self.threads_found: List[str] = []
+        self.thread_interactions: Dict[str, Dict[str, List[str]]] = {}
+        self.hotkeys_found: List[Tuple[str, str]] = []  # (binding, callback)
+        self.hotkeys_tkbind: List[Tuple[str, str]] = []  # (event, callback)
+        self.hotkeys_command_bind: List[Tuple[str, str]] = []  # (widget?, callback)
+
+        # File I/O
+        self.io_reads: Set[str] = set()
+        self.io_writes: Set[str] = set()
+
+        # Behavioral layers
+        self.call_graph: Dict[str, Set[str]] = defaultdict(set)  # caller -> {callees}
+        self.called_by: Dict[str, Set[str]] = defaultdict(set)   # callee -> {callers}
+        self.call_roots: List[str] = []                          # functions not called by others
+        self.state_vars: Dict[str, Dict[str, Set[str]]] = defaultdict(lambda: {"values": set(), "writers": set(), "readers": set()})
+        self.state_comparisons: Dict[str, Set[str]] = defaultdict(set)  # var -> {value}
+        self.init_sequence: List[str] = []
+        self.ui_after_users: Set[str] = set()  # functions that call tk.after
+        self.hotkeys_pretty: List[str] = []
+
+        # NEW: Function signatures
+        self.function_signatures: Dict[str, Dict[str, any]] = {}
+
+        # Parse the code
+        self.original_code = self.read_file()
+        self.code = self.strip_existing_synopsis(self.original_code)
+        self.tree: ast.AST = None
+        self.parse_code()
+
+    def read_file(self) -> str:
+        """Read the source file."""
+        try:
+            with open(self.filepath, 'r', encoding='utf-8') as f:
+                return f.read()
+        except Exception as e:
+            raise Exception(f"Could not read file: {e}")
+
+    def strip_existing_synopsis(self, code: str) -> str:
+        """Remove existing synopsis headers from code."""
+        lines = code.split('\n')
+        if lines and lines[0].startswith('#' + '=' * 79):
+            synopsis_end = 0
+            found_end_marker = False
+            for i, line in enumerate(lines):
+                if line.startswith('#' + '=' * 79):
+                    found_end_marker = True
+                    synopsis_end = i + 1
+                elif found_end_marker and line and not line.startswith('#'):
+                    while synopsis_end < len(lines) and not lines[synopsis_end].strip():
+                        synopsis_end += 1
+                    break
+            if synopsis_end > 0:
+                return '\n'.join(lines[synopsis_end:])
+        return code
+
+    def parse_code(self):
+        """Parse the Python code into an AST."""
+        try:
+            self.tree = ast.parse(self.code, filename=self.filename)
+        except SyntaxError as e:
+            raise Exception(f"Syntax error in code: {e}")
+
+    def analyze(self):
+        """Run the complete analysis pipeline."""
+        # Basic analysis
+        self.find_globals()
+        self.analyze_classes()
+        self.analyze_functions()
+        self.find_imports()
+        self.find_threading()
+        self.find_hotkeys_and_ui_binds()
+        self.find_file_io()
+        self.build_call_graph()
+        
+        # Behavioral analysis
+        self.detect_state_machines()
+        self.detect_ui_after_usage()
+        self.summarize_initialization_sequence()
+
+        # Additional behavioral analysis
+        extra_calls = self.extract_call_graph(self.tree)
+        for caller, callees in extra_calls.items():
+            self.call_graph[caller].update(callees)
+
+        extra_transitions = self.extract_state_transitions(self.tree)
+        for var, vals in extra_transitions.items():
+            self.state_vars[var]["values"].update(vals)
+
+        self.hotkeys_pretty = self.extract_hotkey_bindings()
+
+        # NEW: Extract function signatures (added feature)
+        self.extract_function_signatures()
+
+    def find_globals(self):
+        """Find all global variable assignments."""
+        for node in ast.walk(self.tree):
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name):
+                        self.globals_found.add(target.id)
+
+    def analyze_classes(self):
+        """Analyze class definitions and their methods."""
+        for node in self.tree.body:
+            if isinstance(node, ast.ClassDef):
+                methods = [n.name for n in node.body if isinstance(n, ast.FunctionDef)]
+                self.classes[node.name] = {
+                    'line': node.lineno,
+                    'methods': methods
+                }
+
+    def analyze_functions(self):
+        """Analyze function definitions and their behavior."""
+        for node in ast.walk(self.tree):
+            if isinstance(node, ast.FunctionDef):
+                info = {
+                    'line': node.lineno,
+                    'reads': set(),
+                    'writes': set(),
+                    'calls': set(),
+                    'returns_value': False
+                }
+                for sub in ast.walk(node):
+                    if isinstance(sub, ast.Name):
+                        if isinstance(sub.ctx, ast.Store):
+                            info['writes'].add(sub.id)
+                        elif isinstance(sub.ctx, ast.Load):
+                            info['reads'].add(sub.id)
+                    elif isinstance(sub, ast.Call):
+                        callee = self._call_to_name(sub.func)
+                        if callee:
+                            info['calls'].add(callee)
+                    elif isinstance(sub, ast.Return) and sub.value is not None:
+                        info['returns_value'] = True
+                self.functions[node.name] = info
+
+    def _is_local_module(self, module_name: str) -> bool:
+        """Check if a module is local to the project."""
+        if not module_name:
+            return False
+        candidate_py = os.path.join(self.dirpath, module_name.replace('.', os.sep) + '.py')
+        candidate_pkg = os.path.join(self.dirpath, module_name.replace('.', os.sep), '__init__.py')
+        return os.path.exists(candidate_py) or os.path.exists(candidate_pkg)
+
+    def find_imports(self):
+        """Find and categorize imports."""
+        for node in ast.walk(self.tree):
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    self.imports.append(alias.name)
+                    (self.imports_local if self._is_local_module(alias.name) else self.imports_external).add(alias.name)
+            elif isinstance(node, ast.ImportFrom):
+                module = node.module or ""
+                if getattr(node, 'level', 0) and node.level > 0:
+                    self.imports_local.add(module or ".")
+                else:
+                    (self.imports_local if self._is_local_module(module) else self.imports_external).add(module or "*")
+                for alias in node.names:
+                    self.imports.append(f"{module}.{alias.name}" if module else alias.name)
+
+    def find_threading(self):
+        """Find threading usage and interactions."""
+        for node in ast.walk(self.tree):
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+                if isinstance(node.func.value, ast.Name) and node.func.value.id == 'threading' and node.func.attr == 'Thread':
+                    for kw in node.keywords:
+                        if kw.arg == 'target' and isinstance(kw.value, ast.Name):
+                            func = kw.value.id
+                            self.threads_found.append(func)
+                            if func in self.functions:
+                                reads = self.functions[func]['reads'] & self.globals_found
+                                writes = self.functions[func]['writes'] & self.globals_found
+                                self.thread_interactions[func] = {
+                                    'reads': sorted(reads), 'writes': sorted(writes)
+                                }
+
+    def find_hotkeys_and_ui_binds(self):
+        """Find hotkey and UI binding patterns."""
+        for node in ast.walk(self.tree):
+            if isinstance(node, ast.Call):
+                funcname = self._call_to_name(node.func)
+                # Keyboard library
+                if funcname == 'keyboard.add_hotkey':
+                    if node.args and isinstance(node.args[0], ast.Constant):
+                        hk = str(node.args[0].value)
+                        cb = None
+                        if len(node.args) > 1 and isinstance(node.args[1], ast.Name):
+                            cb = node.args[1].id
+                        for kw in node.keywords:
+                            if kw.arg == 'callback' and isinstance(kw.value, ast.Name):
+                                cb = kw.value.id
+                        if hk and cb:
+                            self.hotkeys_found.append((hk, cb))
+                # Tkinter .bind("<Key>", callback)
+                if funcname.endswith('.bind'):
+                    if node.args and isinstance(node.args[0], ast.Constant):
+                        event = str(node.args[0].value)
+                        cb = None
+                        if len(node.args) > 1 and isinstance(node.args[1], ast.Name):
+                            cb = node.args[1].id
+                        if event and cb:
+                            self.hotkeys_tkbind.append((event, cb))
+                # widget.config(command=callback)
+                if funcname.endswith('.config'):
+                    for kw in node.keywords:
+                        if kw.arg == 'command' and isinstance(kw.value, ast.Name):
+                            self.hotkeys_command_bind.append(('widget.command', kw.value.id))
+
+    def find_file_io(self):
+        """Find file I/O operations."""
+        for node in ast.walk(self.tree):
+            if isinstance(node, ast.Call):
+                if isinstance(node.func, ast.Name) and node.func.id == 'open':
+                    path, mode = self._extract_open_args(node)
+                    if path:
+                        (self.io_writes if any(m in mode for m in ('w', 'a', 'x', '+')) else self.io_reads).add(path)
+                if isinstance(node.func, ast.Attribute):
+                    fullname = self._call_to_name(node.func)
+                    if fullname.endswith('json.load'):
+                        self.io_reads.add('json.load(...)')
+                    elif fullname.endswith('json.dump'):
+                        self.io_writes.add('json.dump(...)')
+
+    def _extract_open_args(self, call_node: ast.Call) -> Tuple[Optional[str], str]:
+        """Extract file path and mode from open() call."""
+        path = None
+        mode = "r"
+        if call_node.args:
+            if isinstance(call_node.args[0], ast.Constant):
+                path = str(call_node.args[0].value)
+            if len(call_node.args) > 1 and isinstance(call_node.args[1], ast.Constant):
+                mode = str(call_node.args[1].value)
+        for kw in call_node.keywords:
+            if kw.arg == "file" and isinstance(kw.value, ast.Constant):
+                path = str(kw.value.value)
+            if kw.arg == "mode" and isinstance(kw.value, ast.Constant):
+                mode = str(kw.value.value)
+        return path, mode
+
+    def build_call_graph(self):
+        """Build a call graph of function calls."""
+        for func_name, func_info in self.functions.items():
+            for callee in func_info['calls']:
+                self.called_by[callee].add(func_name)
+        self.call_roots = [f for f in self.functions if f not in self.called_by]
+
+    def detect_state_machines(self):
+        """Detect state machine patterns."""
+        pass
+
+    def detect_ui_after_usage(self):
+        """Detect usage of UI after callbacks."""
+        for node in ast.walk(self.tree):
+            if isinstance(node, ast.Call):
+                funcname = self._call_to_name(node.func)
+                if funcname.endswith('.after'):
+                    enclosing = self._enclosing_function_name(node)
+                    if enclosing:
+                        self.ui_after_users.add(enclosing)
+
+    def summarize_initialization_sequence(self):
+        """Summarize module initialization sequence."""
+        for node in self.tree.body:
+            if isinstance(node, ast.Expr) and isinstance(node.value, ast.Call):
+                self.init_sequence.append(self._call_to_name(node.value.func))
+
+    def _call_to_name(self, func_node) -> str:
+        """Convert a call function node to a string name."""
+        if isinstance(func_node, ast.Name):
+            return func_node.id
+        elif isinstance(func_node, ast.Attribute):
+            parts = []
+            node = func_node
+            while isinstance(node, ast.Attribute):
+                parts.append(node.attr)
+                node = node.value
+            if isinstance(node, ast.Name):
+                parts.append(node.id)
+            return '.'.join(reversed(parts))
+        return ""
+
+    def _format_call_name(self, call_node: ast.Call) -> str:
+        """Format a call node as a string."""
+        return self._call_to_name(call_node.func)
+
+    def _enclosing_function_name(self, node: ast.AST) -> Optional[str]:
+        """Find the name of the function enclosing this node."""
+        for func in ast.walk(self.tree):
+            if isinstance(func, ast.FunctionDef):
+                if any(n is node for n in ast.walk(func)):
+                    return func.name
+        return None
+
+    def extract_call_graph(self, tree: ast.AST) -> Dict[str, Set[str]]:
+        """Extract call graph from AST."""
+        return {k: v.copy() for k, v in self.call_graph.items()}
+
+    def extract_state_transitions(self, tree: ast.AST) -> Dict[str, Set[str]]:
+        """Extract state transitions from AST."""
+        transitions = defaultdict(set)
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name) and isinstance(node.value, ast.Constant):
+                        if target.id.endswith('_state') or target.id.endswith('State'):
+                            transitions[target.id].add(str(node.value.value))
+        return transitions
+
+    def extract_hotkey_bindings(self) -> List[str]:
+        """Extract hotkey bindings in a pretty format."""
+        pretty = []
+        for hk, cb in self.hotkeys_found:
+            pretty.append(f"keyboard: {hk} → {cb}()")
+        for ev, cb in self.hotkeys_tkbind:
+            pretty.append(f"tk.bind: {ev} → {cb}()")
+        for kind, cb in self.hotkeys_command_bind:
+            pretty.append(f"{kind}: → {cb}()")
+        return pretty
+
+    def infer_function_behavior(self, func_name: str) -> Dict[str, object]:
+        """Infer behavioral intent of a function."""
+        if func_name not in self.functions:
+            return {}
+        return {}
+
+    # =========================================================================
+    # NEW: FUNCTION SIGNATURE EXTRACTION
+    # =========================================================================
+    
+    def _safe_unparse(self, node: Optional[ast.AST]) -> str:
+        """Safely convert AST node to string, avoiding heavy operations."""
+        if node is None:
+            return "None"
+        
+        # Simplify complex expressions
+        if isinstance(node, (ast.Lambda, ast.ListComp, ast.SetComp, ast.DictComp, ast.GeneratorExp)):
+            return "<complex>"
+        if isinstance(node, ast.List):
+            return "<list>"
+        if isinstance(node, ast.Dict):
+            return "<dict>"
+        if isinstance(node, ast.Set):
+            return "<set>"
+        if isinstance(node, ast.Tuple):
+            return "<tuple>"
+        
+        try:
+            result = ast.unparse(node)
+            # Truncate if too long
+            if len(result) > 80:
+                return result[:77] + "..."
+            return result
+        except:
+            return "<?>"
+    
+    def _render_arg(self, arg: ast.arg, default: Optional[ast.AST]) -> str:
+        """Render a function argument with its annotation and default."""
+        result = arg.arg
+        if arg.annotation:
+            result += f": {self._safe_unparse(arg.annotation)}"
+        if default is not None:
+            result += f" = {self._safe_unparse(default)}"
+        return result
+    
+    def extract_function_signatures(self):
+        """
+        Extract function signatures with type hints and defaults.
+        Stores them in self.function_signatures.
+        """
+        if not isinstance(self.tree, ast.Module):
+            return
+        
+        def process_function(fn: ast.FunctionDef, class_name: Optional[str] = None):
+            """Process a single function definition."""
+            args = fn.args
+            parts = []
+            
+            # Position-only arguments (Python 3.8+)
+            posonly = getattr(args, "posonlyargs", [])
+            if posonly:
+                for arg in posonly:
+                    parts.append(self._render_arg(arg, None))
+                parts.append("/")
+            
+            # Regular arguments with defaults
+            regular_args = list(args.args)
+            defaults_list = [None] * (len(regular_args) - len(args.defaults)) + list(args.defaults)
+            for arg, default in zip(regular_args, defaults_list):
+                parts.append(self._render_arg(arg, default))
+            
+            # *args
+            if args.vararg:
+                vararg_str = f"*{args.vararg.arg}"
+                if args.vararg.annotation:
+                    vararg_str += f": {self._safe_unparse(args.vararg.annotation)}"
+                parts.append(vararg_str)
+            elif args.kwonlyargs:
+                parts.append("*")
+            
+            # Keyword-only arguments
+            for kw_arg, default in zip(args.kwonlyargs, args.kw_defaults):
+                parts.append(self._render_arg(kw_arg, default))
+            
+            # **kwargs
+            if args.kwarg:
+                kwarg_str = f"**{args.kwarg.arg}"
+                if args.kwarg.annotation:
+                    kwarg_str += f": {self._safe_unparse(args.kwarg.annotation)}"
+                parts.append(kwarg_str)
+            
+            # Return type
+            return_type = self._safe_unparse(fn.returns) if fn.returns else "None"
+            
+            # Store the signature
+            func_key = f"{class_name}.{fn.name}" if class_name else fn.name
+            self.function_signatures[func_key] = {
+                "args": parts,
+                "returns": return_type,
+                "docstring": ast.get_docstring(fn) or ""
+            }
+        
+        # Process top-level functions
+        for node in self.tree.body:
+            if isinstance(node, ast.FunctionDef):
+                process_function(node)
+            elif isinstance(node, ast.ClassDef):
+                # Process methods
+                for sub in node.body:
+                    if isinstance(sub, ast.FunctionDef):
+                        process_function(sub, node.name)

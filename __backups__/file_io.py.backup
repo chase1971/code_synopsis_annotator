@@ -1,0 +1,421 @@
+#===============================================================================
+# CODE SYNOPSIS: file_io.py
+# SYNOPSIS_HASH: 6269fc82e0231197f7dedcdfc43941d93384b2d6cfb3968d76c140b0e43c5f24
+# Generated: 2025-10-24 17:47:07
+#===============================================================================
+#
+# OVERVIEW:
+#   Total Lines: 209
+#   Functions: 7
+#   Classes: 1
+#   Global Variables: 10
+#
+# Key Dependencies:
+#   - os
+#   - sys
+#   - time
+#   - tkinter
+#   - traceback
+#   - typing
+#   (Local modules):
+#     * behavioral_analysis
+#     * core_analyzer
+#     * synopsis_renderer
+#
+#===============================================================================
+# ════════════════════
+# BEGIN MACHINE-READABLE DATA (for automated processing)
+# ════════════════════
+# SYNOPSIS_ANNOTATED: YES
+# LAST_ANALYZED: 2025-10-24 17:47:07
+# FILE: file_io.py
+# IMPORTS_EXTERNAL: os, sys, time, tkinter, traceback, typing
+# IMPORTS_LOCAL: behavioral_analysis, core_analyzer, synopsis_renderer
+# GLOBALS: analyzer, annotated_code, behavioral_analyzer, filepath, handler, renderer, results, root, success, synopsis_header
+# FUNCTIONS: __init__, analyze_file, batch_analyze_files, create_annotated_file, get_analysis_summary, main, select_file_and_analyze
+# RETURNS: analyze_file, batch_analyze_files, get_analysis_summary
+# THREAD_TARGETS: 
+# HOTKEYS: 
+# TK_BINDS: 
+# COMMAND_BINDS: 
+# CLASSES: FileIOHandler
+# IO_READS: 
+# IO_WRITES: 
+# CALLGRAPH_ROOTS: __init__,batch_analyze_files,get_analysis_summary,main
+# STATE_VARS: 
+# INIT_SEQUENCE: main()
+# END MACHINE-READABLE DATA
+# ════════════════════
+#===============================================================================
+#
+# 🧱 CLASSES FOUND:
+#
+#   FileIOHandler (line 20):
+#     - FileIOHandler.__init__()
+#     - FileIOHandler.create_annotated_file()
+#     - FileIOHandler.select_file_and_analyze()
+#     - FileIOHandler.analyze_file()
+#     - FileIOHandler.batch_analyze_files()
+#     - FileIOHandler.get_analysis_summary()
+#===============================================================================
+#
+# CRITICAL GLOBAL VARIABLES:
+#
+# filepath:
+#   Modified by: main, select_file_and_analyze, batch_analyze_files
+#   Read by: main, select_file_and_analyze, analyze_file, batch_analyze_files
+#
+# analyzer:
+#   Modified by: select_file_and_analyze, analyze_file
+#   Read by: create_annotated_file, select_file_and_analyze, analyze_file, get_analysis_summary
+#
+#===============================================================================
+#
+# SHARED STATE CATEGORIES:
+#
+#   UI State:
+#     - root
+#   Timing State:
+#     - renderer
+#   Position State:
+#     - analyzer
+#     - behavioral_analyzer
+#     - synopsis_header
+#   Config State:
+#     - filepath
+#===============================================================================
+#
+# ⚠️ HIGH PRIORITY FUNCTIONS (Modify Multiple Globals):
+#
+# create_annotated_file() - line 32  (Returns: No)
+#   Modifies: annotated_code, behavioral_analyzer, renderer, synopsis_header
+#   Reads: analyzer, annotated_code, behavioral_analyzer, renderer, synopsis_header
+#
+# select_file_and_analyze() - line 46  (Returns: No)
+#   Modifies: analyzer, filepath, root
+#   Reads: analyzer, filepath, root
+#
+# main() - line 190  (Returns: No)
+#   Modifies: filepath, handler, success
+#   Reads: filepath, handler, success
+#
+#===============================================================================
+#
+# FUNCTION CALL HIERARCHY (depth-limited):
+#
+# - __init__()
+#
+# - batch_analyze_files()
+#   - print()
+#   - analyze_file()
+#     - print()
+#     - analyze()
+#     - CodeAnalyzer()
+#     - create_annotated_file()
+#       - write()
+#       - BehavioralAnalyzer()
+#       - generate_synopsis_header()
+#       - open()
+#       - SynopsisRenderer()
+#       - Exception()
+#
+# - get_analysis_summary()
+#   - len()
+#
+# - main()
+#   - len()
+#   - FileIOHandler()
+#   - print()
+#   - exit()
+#   - select_file_and_analyze()
+#     ... +more
+#     - focus_force()
+#     - lift()
+#     - input()
+#     - withdraw()
+#     - str()
+#     - update()
+#     - CodeAnalyzer()
+#     - showinfo()
+#   - analyze_file()
+#     - print()
+#     - analyze()
+#     - CodeAnalyzer()
+#     - create_annotated_file()
+#       - write()
+#       - BehavioralAnalyzer()
+#       - generate_synopsis_header()
+#       - open()
+#       - SynopsisRenderer()
+#       - Exception()
+#
+#===============================================================================
+#
+# 🚀 INITIALIZATION SEQUENCE:
+#
+#   1. main()
+#===============================================================================
+#
+# 📊 DATA FLOW SUMMARY:
+#
+#   __init__() — pure/local computation; no return value
+#   create_annotated_file() — reads analyzer, annotated_code, behavioral_analyzer, renderer, synopsis_header; writes annotated_code, behavioral_analyzer, renderer, synopsis_header; calls BehavioralAnalyzer, Exception, SynopsisRenderer, f.write, open, renderer.generate_synopsis_header; no return value
+#   select_file_and_analyze() — reads analyzer, filepath, root; writes analyzer, filepath, root; calls CodeAnalyzer, analyzer.analyze, filedialog.askopenfilename, input, len, messagebox.showerror; no return value
+#   analyze_file() — reads analyzer, filepath; writes analyzer; calls CodeAnalyzer, analyzer.analyze, print, self.create_annotated_file; returns value
+#   batch_analyze_files() — reads filepath, results; writes filepath, results; calls print, self.analyze_file; returns value
+#   get_analysis_summary() — reads analyzer; calls len; returns value
+#   main() — reads filepath, handler, success; writes filepath, handler, success; calls FileIOHandler, handler.analyze_file, handler.select_file_and_analyze, len, print, sys.exit; no return value
+#===============================================================================
+#
+# 🔧 MODULARIZATION RECOMMENDATIONS:
+#
+# ⚠️ GLOBAL STATE: Significant global variables found.
+#    1. Create a State class to hold all globals
+#    2. Pass state object instead of using globals
+#    3. Use getter/setter methods for thread-safe access
+#
+# When modularizing, consider splitting by:
+#   - Separate state management from business logic
+#   - Group related functions into modules
+#   - Separate UI code from core logic
+#===============================================================================
+#===============================================================================
+# 📞 FUNCTION CALL HIERARCHY:
+#   main() → FileIOHandler, analyze_file, exit, len, print, select_file_and_analyze
+#   create_annotated_file() → BehavioralAnalyzer, Exception, SynopsisRenderer, generate_synopsis_header, open, write
+#   select_file_and_analyze() → CodeAnalyzer, Tk, analyze, askopenfilename, attributes, basename, create_annotated_file, focus_force, input, len, lift, print, print_exc, showerror, showinfo, sleep, str, system, update, withdraw
+#   analyze_file() → CodeAnalyzer, analyze, create_annotated_file, print
+#   batch_analyze_files() → analyze_file, print
+#   get_analysis_summary() → len
+#===============================================================================
+# 🔄 STATE MACHINE TRANSITIONS:
+#   (No *_state transitions detected.)
+#===============================================================================
+# ⌨️ HOTKEY BINDINGS:
+#   (No keyboard hotkeys detected.)
+#===============================================================================
+#
+# 🧩 MODULE INTEGRATION INTENT:
+#   Role: Single-file code analyzer that injects a synopsis header
+#   Used by: (future) system_synopsis_builder.py for folder-wide Markdown
+#   Inputs: Python source file path
+#   Outputs: Annotated source file (prepends this synopsis)
+#===============================================================================
+#
+# 📝 INSTRUCTIONS FOR AI:
+#   1. Preserve ALL global variable dependencies shown above
+#   2. Maintain thread safety for variables accessed by multiple threads
+#   3. Do NOT rename variables unless explicitly asked
+#   4. Ensure all function dependencies are preserved
+#   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
+#   6. Ensure hotkeys and binds still invoke the same callbacks
+#===============================================================================
+"""
+File I/O Handler - File operations and UI interactions.
+
+This module handles file operations, UI interactions, and the main
+entry point for the code synopsis annotator application.
+"""
+
+import os
+import sys
+import time
+import tkinter as tk
+from tkinter import filedialog, messagebox
+from typing import Optional
+
+from .core_analyzer import CodeAnalyzer
+from .behavioral_analysis import BehavioralAnalyzer
+from .synopsis_renderer import SynopsisRenderer
+
+
+class FileIOHandler:
+    """
+    Handles file I/O operations and UI interactions.
+    
+    This class manages file operations, user interface interactions,
+    and coordinates the analysis workflow.
+    """
+    
+    def __init__(self):
+        """Initialize the file I/O handler."""
+        pass
+    
+    def create_annotated_file(self, analyzer: CodeAnalyzer, output_path: str):
+        """Create an annotated file with synopsis header."""
+        behavioral_analyzer = BehavioralAnalyzer(analyzer)
+        renderer = SynopsisRenderer(analyzer, behavioral_analyzer)
+        
+        synopsis_header = renderer.generate_synopsis_header()
+        annotated_code = synopsis_header + analyzer.code
+        
+        try:
+            with open(output_path, 'w', encoding='utf-8') as f:
+                f.write(annotated_code)
+        except PermissionError as e:
+            raise Exception(f"Permission error writing file: {e}")
+
+    def select_file_and_analyze(self):
+        """Select a file and run the complete analysis workflow."""
+        try:
+            root = tk.Tk()
+            root.withdraw()
+            root.lift()
+            root.attributes('-topmost', True)
+            root.focus_force()
+            root.update()
+            
+            filepath = filedialog.askopenfilename(
+                title="Select Python file to analyze",
+                filetypes=[("Python files", "*.py *.pyw"), ("All files", "*.*")]
+            )
+            print(f"File selected: {filepath}")
+            
+            if filepath:
+                time.sleep(0.3)
+            else:
+                print("No file selected - dialog was cancelled")
+        except Exception as e:
+            print(f"Error in file selection: {e}")
+            import traceback
+            traceback.print_exc()
+            return
+
+        if not filepath:
+            messagebox.showinfo("Cancelled", "No file selected. Exiting.")
+            return
+
+        try:
+            # Run analysis
+            analyzer = CodeAnalyzer(filepath, include_machine_block=True)
+            analyzer.analyze()
+            
+            # Create annotated file
+            self.create_annotated_file(analyzer, filepath)
+            
+            # Show success message
+            messagebox.showinfo(
+                "Success!",
+                (
+                    f"Synopsis added to {os.path.basename(filepath)}!\n\n"
+                    f"Functions: {len(analyzer.functions)}\n"
+                    f"Classes: {len(analyzer.classes)}\n"
+                    f"Globals: {len(analyzer.globals_found)}\n"
+                    f"Threads: {len(analyzer.threads_found)}\n"
+                )
+            )
+            
+            # Open file in default editor
+            try:
+                if os.name == 'nt':
+                    os.system(f'notepad "{filepath}"')
+                elif os.name == 'posix':
+                    os.system(f'open "{filepath}"' if sys.platform == 'darwin' else f'xdg-open "{filepath}"')
+            except Exception:
+                pass
+            
+            print("\n" + "="*50)
+            print("ANALYSIS COMPLETE!")
+            print("="*50)
+            print(f"File processed: {os.path.basename(filepath)}")
+            print("The synopsis has been added to your file.")
+            
+            try:
+                input("Press Enter to exit...")
+            except Exception:
+                pass
+                
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred:\n\n{str(e)}")
+
+    def analyze_file(self, filepath: str) -> bool:
+        """
+        Analyze a specific file and create annotated version.
+        
+        Args:
+            filepath: Path to the Python file to analyze
+            
+        Returns:
+            True if analysis was successful, False otherwise
+        """
+        try:
+            print(f"Analyzing file: {filepath}")
+            
+            # Run analysis
+            analyzer = CodeAnalyzer(filepath, include_machine_block=True)
+            analyzer.analyze()
+            
+            # Create annotated file
+            self.create_annotated_file(analyzer, filepath)
+            
+            print("Analysis complete!")
+            return True
+            
+        except Exception as e:
+            print(f"Error analyzing file {filepath}: {e}")
+            return False
+
+    def batch_analyze_files(self, filepaths: list) -> dict:
+        """
+        Analyze multiple files in batch.
+        
+        Args:
+            filepaths: List of file paths to analyze
+            
+        Returns:
+            Dictionary with results for each file
+        """
+        results = {}
+        
+        for filepath in filepaths:
+            print(f"Processing: {filepath}")
+            results[filepath] = self.analyze_file(filepath)
+        
+        return results
+
+    def get_analysis_summary(self, analyzer: CodeAnalyzer) -> dict:
+        """
+        Get a summary of analysis results.
+        
+        Args:
+            analyzer: The CodeAnalyzer instance
+            
+        Returns:
+            Dictionary with analysis summary
+        """
+        return {
+            'filename': analyzer.filename,
+            'functions': len(analyzer.functions),
+            'classes': len(analyzer.classes),
+            'globals': len(analyzer.globals_found),
+            'threads': len(analyzer.threads_found),
+            'imports_external': len(analyzer.imports_external),
+            'imports_local': len(analyzer.imports_local),
+            'io_reads': len(analyzer.io_reads),
+            'io_writes': len(analyzer.io_writes),
+            'call_roots': len(analyzer.call_roots),
+            'state_vars': len(analyzer.state_vars),
+            'ui_after_users': len(analyzer.ui_after_users)
+        }
+
+
+def main():
+    """Main entry point for the application."""
+    if len(sys.argv) > 1:
+        # Command line mode
+        filepath = sys.argv[1]
+        print(f"Using file from command line: {filepath}")
+        
+        handler = FileIOHandler()
+        success = handler.analyze_file(filepath)
+        
+        if not success:
+            sys.exit(1)
+    else:
+        # Interactive mode
+        handler = FileIOHandler()
+        handler.select_file_and_analyze()
+
+
+if __name__ == "__main__":
+    main()
