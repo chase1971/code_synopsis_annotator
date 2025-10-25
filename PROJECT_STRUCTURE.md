@@ -1,14 +1,15 @@
 # 🧩 PROJECT STRUCTURE SUMMARY
-**Generated:** 2025-10-25 13:28:24
+**Generated:** 2025-10-25 15:40:05
 
 ## 🚀 APPLICATION OVERVIEW
 
 ### Purpose
-This application is a **Code Synopsis Annotator** that automatically analyzes Python codebases and generates comprehensive documentation headers. It provides:
-- **Automated Code Analysis**: Extracts function signatures, dependencies, and behavioral patterns
-- **Intelligent Documentation**: Generates detailed synopsis headers with function intents and signatures
-- **Project Architecture Mapping**: Creates high-level project structure documentation
-- **LLM-Optimized Output**: Formats information for optimal AI/LLM comprehension
+This application is designed to: Handles init functionality.
+
+**Key Capabilities:**
+- Loads and manages configuration settings.
+- Creates and manages user interface components. Processes various components.
+- Renders, Analyzes functionality for this module.
 
 ### Key Components
 - **Entry Points**: `main.py`
@@ -17,73 +18,41 @@ This application is a **Code Synopsis Annotator** that automatically analyzes Py
 - **Utilities**: `utils.py`
 
 ### Architecture Summary
-- **Total Modules**: 14
-- **Total Functions**: 183
+- **Total Modules**: 15
+- **Total Functions**: 190
 - **Total Classes**: 13
 
 ### Key Features
-- Behavioral Analysis
+- CSV Data Processing
 - Code Analysis
 - Content Generation
 - Data Extraction
-- Dependency Mapping
 - Documentation Generation
-- Function Signature Extraction
 - Pattern Detection
-- State Machine Detection
-- Threading Analysis
+- User Interface
 
-### 📄 What This Tool Produces
-This tool transforms Python files by adding comprehensive documentation headers while preserving your original code.
-**Input** (Python file before annotation):
+### 📄 Project Structure & Examples
+**Example Module: `example.py`**
+*Purpose: Loads and manages configuration settings.*
+
+**Key Functions:**
+- `clear`
+- `merge`
+- `new_state`
+
+**Function Signatures:**
 ```python
-def calculate_total(price, tax_rate=0.08):
-    """Calculate total with tax."""
-    return price * (1 + tax_rate)
-
-total = calculate_total(100.00)
+AnalyzerState.clear(self) -> None
+AnalyzerState.merge(self, other: AnalyzerState) -> None
+AnalyzerState.summary(self) -> str
+AnalyzerState.to_dict(self) -> Dict[str, Any]
+AnalyzerState.to_json(self, path: str) -> None
 ```
-**Output** (Same file after annotation):
-```python
-#===============================================================================
-# CODE SYNOPSIS: example.py
-# SYNOPSIS_HASH: 7a8b9c1d2e3f...
-# Generated: 2025-10-25 11:30:45
-# INTENT: Handles tax calculation functionality.
-#===============================================================================
-#
-# 📝 FUNCTION SIGNATURES:
-#
-# calculate_total(price, tax_rate = 0.08) -> None
-#   Calculate total with tax.
-#
-#===============================================================================
-#
-# CRITICAL GLOBAL VARIABLES:
-#
-# total:
-#   Modified by: <module>
-#   Read by: (none)
-#
-#===============================================================================
-# === END SYNOPSIS HEADER ===
 
-def calculate_total(price, tax_rate=0.08):
-    """Calculate total with tax."""
-    return price * (1 + tax_rate)
-
-total = calculate_total(100.00)
-```
-**Key Features of Generated Headers:**
-- ✅ Function signatures with parameters and return types
-- ✅ Module-level intent description
-- ✅ Per-function intent statements
-- ✅ State variable tracking (who modifies/reads)
-- ✅ Threading and UI binding analysis
-- ✅ Machine-readable metadata blocks
-- ✅ Original code preserved unchanged
-
-*View any `.py` file in this project to see real annotated examples.*
+**Project Statistics:**
+- **Total Modules**: 15
+- **Total Functions**: 190
+- **Total Classes**: 13
 
 ---
 
@@ -100,28 +69,19 @@ total = calculate_total(100.00)
 ### Utility Scripts
 - **`file_io.py`**: Creates and manages user interface components. Creates various components.
 - **`intent_enhancer_v2.py`**: Detects or identifies patterns in, Generates functionality for this module.
+- **`intent_enhancer_v2_backup.py`**: Detects or identifies patterns in, Generates functionality for this module.
 - **`project_architect.py`**: Generates, Extracts functionality for this module.
 
 ### Execution Flow
-1. **Start**: Run `python main.py` or `python main.py <filepath>`
-2. **Analysis**: Core analyzer processes the Python file
-3. **Behavioral Analysis**: Extracts patterns and intents
-4. **Rendering**: Generates synopsis headers
-5. **Output**: Creates annotated file with documentation
+1. **Start**: Run the main application
+2. **Initialization**: Load configuration and dependencies
+3. **Processing**: Execute core functionality
+4. **Output**: Generate results or complete tasks
 
 ### Command Line Usage
 ```bash
-# Interactive mode (file dialog)
+# Run main application
 python main.py
-
-# Direct file analysis
-python main.py path/to/file.py
-
-# Batch processing
-python batch_annotate_modular.py
-
-# Generate project structure
-python project_architect.py
 ```
 
 ---
@@ -162,6 +122,7 @@ graph TD
     file_io.py --> core_analyzer
     file_io.py --> synopsis_renderer
     intent_enhancer_v2.py --> intent_inference
+    intent_enhancer_v2_backup.py --> intent_inference
     intent_inference.py --> intent_enhancer_v2
     main.py --> analyzer_state
     project_architect.py --> state_tracker
@@ -177,6 +138,7 @@ graph TD
 | core_analyzer.py | Functions: __init__, _analyze_function_accesses, _call_to_name, _collect_params, _enclosing_function_name, _enter_func, _exit_func, _extract_open_args, _format_call_name, _is_local_module, _is_true_global, _name... |
 | file_io.py | Functions: __init__, analyze_file, batch_analyze_files, create_annotated_file, get_analysis_summary, main, select_file_and_analyze |
 | intent_enhancer_v2.py | Functions: __init__, detect_domains, detect_function_patterns, extract_noun_from_functions, find_common_themes, generate_enhanced_module_intent, generate_smart_intent |
+| intent_enhancer_v2_backup.py | Functions: __init__, detect_domains, detect_function_patterns, extract_noun_from_functions, find_common_themes, generate_enhanced_module_intent, generate_smart_intent |
 | intent_inference.py | Functions: _analyze_function_body, _enhance_with_type_hints, _infer_verb, _insert_human_readable_intent, _insert_machine_block_kv, _noun_phrase_from, _split_ident, generate_module_intent, infer_function_intent, ... |
 | main.py | Functions: analyze_file, batch_analyze, main |
 | project_architect.py | Functions: build_project_summary, detect_exceptions, extract, extract_function_signatures_from_content, extract_list, generate_application_overview, generate_detailed_shared_state_table, generate_entry_points_se... |
@@ -922,6 +884,77 @@ _No exception handlers detected._
 
 ---
 
+### `intent_enhancer_v2_backup.py`
+
+**Intent:** Detects or identifies patterns in, Generates functionality for this module.
+
+**Classes:** _None_
+
+**Functions:** __init__, detect_domains, detect_function_patterns, extract_noun_from_functions, find_common_themes, generate_enhanced_module_intent, generate_smart_intent
+
+**Globals:** DOMAIN_INDICATORS, DOMAIN_PURPOSES, FUNCTION_PATTERNS, MODULE_NAME_HINTS, analyzer1, analyzer2, analyzer3, analyzer4, analyzer5, analyzer6, analyzer7, analyzer8
+
+
+**Local Imports:** intent_inference
+
+**External Imports:** re, typing
+
+
+#### 📝 Function Signatures
+
+- `detect_domains(imports_external: List[str]) -> Set[str]`
+
+- `detect_function_patterns(function_names: List[str]) -> Dict[str, int]`
+
+- `extract_noun_from_functions(function_names: List[str]) -> List[str]`
+
+- `find_common_themes(nouns: List[str]) -> List[str]`
+
+- `generate_enhanced_module_intent(analyzer, filename: Optional[str] = None, imports_external: Optional[List[str]] = None) -> str`
+
+- `generate_smart_intent(analyzer) -> str`
+
+- `Drop-in replacement for generate_module_intent() from intent_inference.py`
+
+
+#### 🎯 Function Intents
+
+- **__init__()**: Updates internal state.
+
+- **detect_domains()**: Detect what domains this module operates in based on imports.
+
+- **detect_function_patterns()**: Count how many functions match each pattern.
+
+- **extract_noun_from_functions()**: Extract common noun phrases from function names.
+
+- **find_common_themes()**: Find recurring themes in noun phrases.
+
+- **generate_enhanced_module_intent()**: Enhanced intent generation using pattern matching and heuristics.
+
+- **generate_smart_intent()**: Drop-in replacement for generate_module_intent() from intent_inference.
+
+
+#### File I/O Summary
+
+- Reads: _None_
+
+- Writes: _None_
+
+
+#### Threading & UI Bindings
+
+- Threads: _None_
+
+- UI Binds: _None_
+
+
+#### Exception Paths
+
+_No exception handlers detected._
+
+
+---
+
 ### `intent_inference.py`
 
 **Intent:** Generates functionality for this module.
@@ -1520,7 +1553,7 @@ _No exception handlers detected._
 
 #### File I/O Summary
 
-- Reads: _None_
+- Reads: unknown
 
 - Writes: _None_
 
@@ -1534,7 +1567,7 @@ _No exception handlers detected._
 
 #### Exception Paths
 
-_No exception handlers detected._
+line 258: ['OSError']
 
 
 ---

@@ -543,7 +543,17 @@ def infer_function_intent(func_name: str, func_node: ast.FunctionDef = None) -> 
         except:
             pass
     
-    # PRIORITY 4: Fall back to name-based generation (current behavior)
+    # PRIORITY 4: Try enhanced patterns from intent_enhancer_v2
+    try:
+        from intent_enhancer_v2 import FUNCTION_PATTERNS
+        import re
+        for pattern, description in FUNCTION_PATTERNS.items():
+            if re.match(pattern, func_name):
+                return description + "."
+    except ImportError:
+        pass
+    
+    # PRIORITY 5: Fall back to name-based generation (current behavior)
     tokens = _split_ident(func_name)
     verb_phrase, _ = _infer_verb(tokens)
     obj_phrase = _noun_phrase_from(tokens, skip_first=True)
