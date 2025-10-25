@@ -1,5 +1,5 @@
 # 🧩 PROJECT STRUCTURE SUMMARY
-**Generated:** 2025-10-25 11:27:46
+**Generated:** 2025-10-25 13:01:03
 
 ## 🚀 APPLICATION OVERVIEW
 
@@ -18,17 +18,72 @@ This application is a **Code Synopsis Annotator** that automatically analyzes Py
 
 ### Architecture Summary
 - **Total Modules**: 14
-- **Total Functions**: 181
+- **Total Functions**: 183
 - **Total Classes**: 13
 
 ### Key Features
 - Behavioral Analysis
+- Code Analysis
 - Content Generation
+- Data Extraction
 - Dependency Mapping
 - Documentation Generation
 - Function Signature Extraction
+- Pattern Detection
 - State Machine Detection
 - Threading Analysis
+
+### 📄 What This Tool Produces
+This tool transforms Python files by adding comprehensive documentation headers while preserving your original code.
+**Input** (Python file before annotation):
+```python
+def calculate_total(price, tax_rate=0.08):
+    """Calculate total with tax."""
+    return price * (1 + tax_rate)
+
+total = calculate_total(100.00)
+```
+**Output** (Same file after annotation):
+```python
+#===============================================================================
+# CODE SYNOPSIS: example.py
+# SYNOPSIS_HASH: 7a8b9c1d2e3f...
+# Generated: 2025-10-25 11:30:45
+# INTENT: Handles tax calculation functionality.
+#===============================================================================
+#
+# 📝 FUNCTION SIGNATURES:
+#
+# calculate_total(price, tax_rate = 0.08) -> None
+#   Calculate total with tax.
+#
+#===============================================================================
+#
+# CRITICAL GLOBAL VARIABLES:
+#
+# total:
+#   Modified by: <module>
+#   Read by: (none)
+#
+#===============================================================================
+# === END SYNOPSIS HEADER ===
+
+def calculate_total(price, tax_rate=0.08):
+    """Calculate total with tax."""
+    return price * (1 + tax_rate)
+
+total = calculate_total(100.00)
+```
+**Key Features of Generated Headers:**
+- ✅ Function signatures with parameters and return types
+- ✅ Module-level intent description
+- ✅ Per-function intent statements
+- ✅ State variable tracking (who modifies/reads)
+- ✅ Threading and UI binding analysis
+- ✅ Machine-readable metadata blocks
+- ✅ Original code preserved unchanged
+
+*View any `.py` file in this project to see real annotated examples.*
 
 ---
 
@@ -39,7 +94,7 @@ This application is a **Code Synopsis Annotator** that automatically analyzes Py
   - Entry functions: `main()`
 
 ### Batch Processing Entry Points
-- **`batch_annotate_modular.py`**: Manages concurrent execution. Processes various components.
+- **`batch_annotate_modular.py`**: Creates and manages user interface components. Processes various components.
   - Batch functions: `_process_folder, _process_single, process_batch, process_single_file, run_batch()`
 
 ### Utility Scripts
@@ -122,7 +177,7 @@ graph TD
 | core_analyzer.py | Functions: __init__, _analyze_function_accesses, _call_to_name, _collect_params, _enclosing_function_name, _enter_func, _exit_func, _extract_open_args, _format_call_name, _is_local_module, _is_true_global, _name... |
 | file_io.py | Functions: __init__, analyze_file, batch_analyze_files, create_annotated_file, get_analysis_summary, main, select_file_and_analyze |
 | intent_enhancer_v2.py | Functions: __init__, detect_domains, detect_function_patterns, extract_noun_from_functions, find_common_themes, generate_enhanced_module_intent, generate_smart_intent |
-| intent_inference.py | Functions: _infer_verb, _insert_human_readable_intent, _insert_machine_block_kv, _noun_phrase_from, _split_ident, generate_module_intent, infer_function_intent, inject_intent |
+| intent_inference.py | Functions: _analyze_function_body, _enhance_with_type_hints, _infer_verb, _insert_human_readable_intent, _insert_machine_block_kv, _noun_phrase_from, _split_ident, generate_module_intent, infer_function_intent, ... |
 | main.py | Functions: analyze_file, batch_analyze, main |
 | project_architect.py | Functions: build_project_summary, detect_exceptions, extract, extract_function_signatures_from_content, extract_list, generate_application_overview, generate_detailed_shared_state_table, generate_entry_points_se... |
 | state_machine_detector.py | Functions: __init__, _analyze_transitions, _build_function_map, _classify_state_variable, _detect_guards, _detect_state_variables, _extract_name, _extract_value, _get_enclosing_function, _group_into_state_machin... |
@@ -214,19 +269,19 @@ _No exception handlers detected._
 
 #### 🎯 Function Intents
 
-- **clear()**: Handles the target entities.
+- **clear()**: Reset all mutable fields.
 
-- **merge()**: Handles the target entities.
+- **merge()**: Merge another AnalyzerState into this one.
 
-- **new_state()**: Handles state.
+- **new_state()**: Factory to create a fresh state with an optional project path.
 
-- **summary()**: Handles the target entities.
+- **summary()**: A brief string summary for debugging or logging.
 
-- **to_dict()**: Handles dict.
+- **to_dict()**: A plain dictionary suitable for JSON serialization.
 
-- **to_json()**: Handles json.
+- **to_json()**: Serialize the state to a JSON file.
 
-- **update()**: Handles the target entities.
+- **update()**: Thread-safe generic update helper.
 
 
 #### File I/O Summary
@@ -252,7 +307,7 @@ _No exception handlers detected._
 
 ### `batch_annotate_modular.py`
 
-**Intent:** Manages concurrent execution. Processes various components.
+**Intent:** Creates and manages user interface components. Processes various components.
 
 **Classes:** AnnotatorGUI
 
@@ -319,53 +374,53 @@ _No exception handlers detected._
 
 #### 🎯 Function Intents
 
-- **__init__()**: Handles the target entities.
+- **__init__()**: Orchestrates multiple operations.
 
-- **_build_ui()**: Constructs or generates ui.
+- **_build_ui()**: Iterates and processes items.
 
-- **_process_folder()**: Handles or executes folder.
+- **_process_folder()**: Iterates and processes items.
 
-- **_process_single()**: Handles or executes single.
+- **_process_single()**: Orchestrates multiple operations.
 
-- **_run()**: Handles the target entities.
+- **_run()**: Updates internal state.
 
-- **compute_code_hash()**: Handles code hash.
+- **compute_code_hash()**: Updates internal state.
 
-- **extract_existing_hash()**: Retrieves existing hash.
+- **extract_existing_hash()**: Reads data from file.
 
-- **find_python_files()**: Locates or gathers python files.
+- **find_python_files()**: Iterates and processes items.
 
-- **format_duration()**: Handles duration.
+- **format_duration()**: Updates internal state.
 
-- **generate_markdown()**: Handles markdown.
+- **generate_markdown()**: Orchestrates multiple operations.
 
-- **get_code_body()**: Handles code body.
+- **get_code_body()**: Reads data from file.
 
 - **is_up_to_date()**: Handles up to date.
 
-- **log()**: Handles the target entities.
+- **log()**: Orchestrates multiple operations.
 
-- **make_backup()**: Handles backup.
+- **make_backup()**: Orchestrates multiple operations.
 
-- **open_folder()**: Handles folder.
+- **open_folder()**: Updates internal state.
 
-- **open_folder_in_explorer()**: Handles folder in explorer.
+- **open_folder_in_explorer()**: Open folder in file explorer (cross-platform).
 
-- **process_batch()**: Handles or executes batch.
+- **process_batch()**: Iterates and processes items.
 
-- **process_single_file()**: Handles or executes single file.
+- **process_single_file()**: Writes data to file.
 
-- **run_batch()**: Handles batch.
+- **run_batch()**: Orchestrates multiple operations.
 
 - **run_in_thread()**: Handles in thread.
 
-- **run_single()**: Handles single.
+- **run_single()**: Orchestrates multiple operations.
 
-- **select_file()**: Handles file.
+- **select_file()**: Updates internal state.
 
-- **select_folder()**: Handles folder.
+- **select_folder()**: Updates internal state.
 
-- **strip_all_annotations()**: Handles all annotations.
+- **strip_all_annotations()**: Completely remove all existing synopsis annotations from a file.
 
 
 #### File I/O Summary
@@ -432,27 +487,27 @@ _No exception handlers detected._
 
 #### 🎯 Function Intents
 
-- **__init__()**: Handles the target entities.
+- **__init__()**: Initialize with reference to main analyzer and optional shared state.
 
-- **analyze_function_dependencies()**: Examines and summarizes function dependencies.
+- **analyze_function_dependencies()**: Analyze functions with high fan-out (calling many other functions).
 
-- **analyze_high_priority_functions()**: Examines and summarizes high priority functions.
+- **analyze_high_priority_functions()**: Identify functions that modify multiple globals or are thread targets.
 
-- **build_machine_block()**: Constructs or generates machine block.
+- **build_machine_block()**: Build the machine-readable data block.
 
-- **categorize_shared_state()**: Handles shared state.
+- **categorize_shared_state()**: Categorize global variables by their likely purpose.
 
-- **dfs()**: Handles the target entities.
+- **dfs()**: Iterates and processes items.
 
-- **generate_behavioral_summary()**: Handles behavioral summary.
+- **generate_behavioral_summary()**: Generate a comprehensive behavioral analysis summary.
 
-- **group_modules_generic()**: Organizes modules generic.
+- **group_modules_generic()**: Group functions into logical modules for refactoring suggestions.
 
-- **render_call_hierarchy()**: Produces or displays call hierarchy.
+- **render_call_hierarchy()**: Render a depth-limited call hierarchy.
 
-- **render_state_machines()**: Produces or displays state machines.
+- **render_state_machines()**: Render detected state machines with enhanced detection.
 
-- **render_ui_after_usage()**: Produces or displays ui after usage.
+- **render_ui_after_usage()**: Render UI threading dependencies.
 
 
 #### File I/O Summary
@@ -603,83 +658,83 @@ _No exception handlers detected._
 
 #### 🎯 Function Intents
 
-- **__init__()**: Handles the target entities.
+- **__init__()**: Initialize the analyzer with a file path and optional shared state.
 
-- **_analyze_function_accesses()**: Examines and summarizes function accesses.
+- **_analyze_function_accesses()**: Populate reads/writes for a function using scope indexes.
 
-- **_call_to_name()**: Handles to name.
+- **_call_to_name()**: Convert a call function node to a string name.
 
-- **_collect_params()**: Handles params.
+- **_collect_params()**: Iterates and processes items.
 
-- **_enclosing_function_name()**: Handles function name.
+- **_enclosing_function_name()**: Find the name of the function enclosing this node.
 
 - **_enter_func()**: Handles func.
 
 - **_exit_func()**: Handles func.
 
-- **_extract_open_args()**: Retrieves open args.
+- **_extract_open_args()**: Extract file path and mode from open() call.
 
-- **_format_call_name()**: Handles call name.
+- **_format_call_name()**: Format a call node as a string.
 
-- **_is_local_module()**: Handles local module.
+- **_is_local_module()**: Check if a module is local to the project.
 
-- **_is_true_global()**: Handles true global.
+- **_is_true_global()**: Returns validation result.
 
-- **_names_in_target()**: Handles in target.
+- **_names_in_target()**: Extract all simple names bound by an assignment/target expression.
 
-- **_render_arg()**: Produces or displays arg.
+- **_render_arg()**: Render a function argument with its annotation and default.
 
-- **_safe_unparse()**: Handles unparse.
+- **_safe_unparse()**: Safely convert AST node to string; avoiding heavy operations.
 
-- **analyze()**: Examines and summarizes the target entities.
+- **analyze()**: Run the complete analysis pipeline.
 
-- **analyze_classes()**: Examines and summarizes classes.
+- **analyze_classes()**: Analyze class definitions and their methods.
 
-- **analyze_functions()**: Examines and summarizes functions.
+- **analyze_functions()**: Analyze function definitions and their behavior.
 
-- **build_call_graph()**: Constructs or generates call graph.
+- **build_call_graph()**: Build a call graph of function calls.
 
-- **build_symbol_indexes()**: Constructs or generates symbol indexes.
+- **build_symbol_indexes()**: Build scope indexes for this file's AST.
 
-- **detect_state_machines()**: Identifies state machines.
+- **detect_state_machines()**: Detect state machine patterns using StateMachineDetector.
 
-- **detect_ui_after_usage()**: Identifies ui after usage.
+- **detect_ui_after_usage()**: Detect usage of UI after callbacks.
 
-- **extract_call_graph()**: Retrieves call graph.
+- **extract_call_graph()**: Extract call graph from AST.
 
-- **extract_function_signatures()**: Retrieves function signatures.
+- **extract_function_signatures()**: Extract function signatures with type hints and defaults.
 
-- **extract_hotkey_bindings()**: Retrieves hotkey bindings.
+- **extract_hotkey_bindings()**: Extract hotkey bindings in a pretty format.
 
-- **extract_state_transitions()**: Retrieves state transitions.
+- **extract_state_transitions()**: Extract state transitions from AST.
 
-- **find_file_io()**: Locates or gathers file io.
+- **find_file_io()**: Find file I/O operations.
 
-- **find_globals()**: Locates or gathers globals.
+- **find_globals()**: Find all global variable assignments and references using proper scope analysis.
 
-- **find_hotkeys_and_ui_binds()**: Locates or gathers hotkeys and ui binds.
+- **find_hotkeys_and_ui_binds()**: Find hotkey and UI binding patterns.
 
-- **find_imports()**: Locates or gathers imports.
+- **find_imports()**: Find and categorize imports.
 
-- **find_threading()**: Locates or gathers threading.
+- **find_threading()**: Find threading usage and interactions.
 
-- **infer_function_behavior()**: Handles function behavior.
+- **infer_function_behavior()**: Infer behavioral intent of a function.
 
-- **map_global_accesses()**: Handles global accesses.
+- **map_global_accesses()**: Map which functions read and write each global variable.
 
-- **parse_code()**: Parses code.
+- **parse_code()**: Parse the Python code into an AST.
 
-- **process_function()**: Handles or executes function.
+- **process_function()**: Process a single function definition.
 
-- **read_file()**: Reads file.
+- **read_file()**: Read the source file.
 
-- **strip_existing_synopsis()**: Handles existing synopsis.
+- **strip_existing_synopsis()**: Remove existing synopsis headers from code.
 
-- **summarize_initialization_sequence()**: Condenses results of initialization sequence.
+- **summarize_initialization_sequence()**: Summarize module initialization sequence.
 
 - **visit_AnnAssign()**: Handles ann assign.
 
-- **visit_Assign()**: Handles assign.
+- **visit_Assign()**: Iterates and processes items.
 
 - **visit_AsyncFunctionDef()**: Handles async function def.
 
@@ -687,21 +742,21 @@ _No exception handlers detected._
 
 - **visit_ExceptHandler()**: Handles except handler.
 
-- **visit_For()**: Handles for.
+- **visit_For()**: Iterates and processes items.
 
 - **visit_FunctionDef()**: Handles function def.
 
 - **visit_Global()**: Handles global.
 
-- **visit_Import()**: Handles import.
+- **visit_Import()**: Iterates and processes items.
 
-- **visit_ImportFrom()**: Handles import from.
+- **visit_ImportFrom()**: Iterates and processes items.
 
-- **visit_Name()**: Handles name.
+- **visit_Name()**: Orchestrates multiple operations.
 
 - **visit_Nonlocal()**: Handles nonlocal.
 
-- **visit_With()**: Handles with.
+- **visit_With()**: Iterates and processes items.
 
 
 #### File I/O Summary
@@ -760,19 +815,19 @@ _No exception handlers detected._
 
 #### 🎯 Function Intents
 
-- **__init__()**: Handles the target entities.
+- **__init__()**: Initialize the file I/O handler.
 
-- **analyze_file()**: Examines and summarizes file.
+- **analyze_file()**: Analyze a specific file and create annotated version.
 
-- **batch_analyze_files()**: Examines and summarizes files.
+- **batch_analyze_files()**: Analyze multiple files in batch.
 
-- **create_annotated_file()**: Handles annotated file.
+- **create_annotated_file()**: Create an annotated file with synopsis header.
 
-- **get_analysis_summary()**: Handles analysis summary.
+- **get_analysis_summary()**: Get a summary of analysis results.
 
-- **main()**: Handles the target entities.
+- **main()**: Main entry point for the application.
 
-- **select_file_and_analyze()**: Handles file and.
+- **select_file_and_analyze()**: Select a file and run the complete analysis workflow.
 
 
 #### File I/O Summary
@@ -831,19 +886,19 @@ _No exception handlers detected._
 
 #### 🎯 Function Intents
 
-- **__init__()**: Handles the target entities.
+- **__init__()**: Updates internal state.
 
-- **detect_domains()**: Identifies domains.
+- **detect_domains()**: Detect what domains this module operates in based on imports.
 
-- **detect_function_patterns()**: Identifies function patterns.
+- **detect_function_patterns()**: Count how many functions match each pattern.
 
-- **extract_noun_from_functions()**: Retrieves noun from functions.
+- **extract_noun_from_functions()**: Extract common noun phrases from function names.
 
-- **find_common_themes()**: Locates or gathers common themes.
+- **find_common_themes()**: Find recurring themes in noun phrases.
 
-- **generate_enhanced_module_intent()**: Handles enhanced module intent.
+- **generate_enhanced_module_intent()**: Enhanced intent generation using pattern matching and heuristics.
 
-- **generate_smart_intent()**: Handles smart intent.
+- **generate_smart_intent()**: Drop-in replacement for generate_module_intent() from intent_inference.
 
 
 #### File I/O Summary
@@ -873,17 +928,21 @@ _No exception handlers detected._
 
 **Classes:** _None_
 
-**Functions:** _infer_verb, _insert_human_readable_intent, _insert_machine_block_kv, _noun_phrase_from, _split_ident, generate_module_intent, infer_function_intent, inject_intent
+**Functions:** _analyze_function_body, _enhance_with_type_hints, _infer_verb, _insert_human_readable_intent, _insert_machine_block_kv, _noun_phrase_from, _split_ident, generate_module_intent, infer_function_intent, inject_intent
 
 **Globals:** ACTION_MAP, DEFAULT_MODULE_INTENT, DEFAULT_VERB
 
 
 **Local Imports:** intent_enhancer_v2
 
-**External Imports:** __future__, re, typing
+**External Imports:** __future__, ast, re, typing
 
 
 #### 📝 Function Signatures
+
+- `_analyze_function_body(func_node: ast.FunctionDef) -> str`
+
+- `_enhance_with_type_hints(func_name: str, func_node: ast.FunctionDef) -> str`
 
 - `_infer_verb(tokens: List[str]) -> Tuple[str, str]`
 
@@ -899,28 +958,32 @@ _No exception handlers detected._
 
 - `generate_module_intent(analyzer) -> str`
 
-- `infer_function_intent(func_name: str) -> str`
+- `infer_function_intent(func_name: str, func_node: ast.FunctionDef = None) -> str`
 
 - `inject_intent(header_text: str, analyzer, behavioral_analyzer) -> str`
 
 
 #### 🎯 Function Intents
 
-- **_infer_verb()**: Handles verb.
+- **_analyze_function_body()**: Infer intent from function body patterns.
 
-- **_insert_human_readable_intent()**: Handles human readable intent.
+- **_enhance_with_type_hints()**: Enhance intent using return type hints.
 
-- **_insert_machine_block_kv()**: Handles machine block kv.
+- **_infer_verb()**: Iterates and processes items.
 
-- **_noun_phrase_from()**: Handles phrase from.
+- **_insert_human_readable_intent()**: Insert a '# INTENT:.
 
-- **_split_ident()**: Handles ident.
+- **_insert_machine_block_kv()**: Insert or update a key: value inside the MACHINE-READABLE DATA block.
 
-- **generate_module_intent()**: Handles module intent.
+- **_noun_phrase_from()**: Returns string representation.
 
-- **infer_function_intent()**: Handles function intent.
+- **_split_ident()**: Iterates and processes items.
 
-- **inject_intent()**: Handles intent.
+- **generate_module_intent()**: Use function names and imports to synthesize a short module purpose line.
+
+- **infer_function_intent()**: Generate function intent using priority cascade:.
+
+- **inject_intent()**: Public entry point.
 
 
 #### File I/O Summary
@@ -971,11 +1034,11 @@ _No exception handlers detected._
 
 #### 🎯 Function Intents
 
-- **analyze_file()**: Examines and summarizes file.
+- **analyze_file()**: Analyze a single file and return results.
 
-- **batch_analyze()**: Examines and summarizes the target entities.
+- **batch_analyze()**: Analyze multiple files in batch.
 
-- **main()**: Handles the target entities.
+- **main()**: Main entry point for the code synopsis annotator.
 
 
 #### File I/O Summary
@@ -1038,23 +1101,23 @@ _No exception handlers detected._
 
 #### 🎯 Function Intents
 
-- **build_project_summary()**: Constructs or generates project summary.
+- **build_project_summary()**: Scans annotated Python files; parses the MACHINE-READABLE DATA block; and.
 
-- **detect_exceptions()**: Identifies exceptions.
+- **detect_exceptions()**: Detect simple try/except exception handlers.
 
-- **extract()**: Retrieves the target entities.
+- **extract()**: Extract value for a given key from a MACHINE-READABLE DATA block.
 
-- **extract_function_signatures_from_content()**: Retrieves function signatures from content.
+- **extract_function_signatures_from_content()**: Extract function signatures from the FUNCTION SIGNATURES section.
 
-- **extract_list()**: Retrieves list.
+- **extract_list()**: Extract comma-separated list for a key.
 
-- **generate_application_overview()**: Handles application overview.
+- **generate_application_overview()**: Generate an Application Overview section based on module intents and key components.
 
-- **generate_detailed_shared_state_table()**: Handles detailed shared state table.
+- **generate_detailed_shared_state_table()**: Generate a detailed Shared State Table using state_tracker functions.
 
-- **generate_entry_points_section()**: Handles entry points section.
+- **generate_entry_points_section()**: Generate an Entry Points section showing how the application starts and flows.
 
-- **parse_function_intents()**: Parses function intents.
+- **parse_function_intents()**: Parse function intents from the FUNCTION_INTENTS string.
 
 
 #### File I/O Summary
@@ -1139,41 +1202,41 @@ _No exception handlers detected._
 
 #### 🎯 Function Intents
 
-- **__init__()**: Handles the target entities.
+- **__init__()**: Updates internal state.
 
-- **_analyze_transitions()**: Examines and summarizes transitions.
+- **_analyze_transitions()**: Analyze state transitions (assignments to state variables).
 
-- **_build_function_map()**: Constructs or generates function map.
+- **_build_function_map()**: Build a map of function names to their AST nodes.
 
-- **_classify_state_variable()**: Handles state variable.
+- **_classify_state_variable()**: Classify if a variable name represents state.
 
-- **_detect_guards()**: Identifies guards.
+- **_detect_guards()**: Detect guard conditions (if statements checking state).
 
-- **_detect_state_variables()**: Identifies state variables.
+- **_detect_state_variables()**: Detect variables that represent state.
 
-- **_extract_name()**: Retrieves name.
+- **_extract_name()**: Extract a variable name from an AST node.
 
-- **_extract_value()**: Retrieves value.
+- **_extract_value()**: Extract a constant value from an AST node.
 
-- **_get_enclosing_function()**: Handles enclosing function.
+- **_get_enclosing_function()**: Find the name of the function enclosing this node.
 
-- **_group_into_state_machines()**: Organizes into state machines.
+- **_group_into_state_machines()**: Group related state variables into state machines.
 
-- **_infer_source_states()**: Handles source states.
+- **_infer_source_states()**: Infer possible source states by looking at preceding if conditions.
 
-- **_matches_variable()**: Handles variable.
+- **_matches_variable()**: Check if a state value relates to a variable.
 
-- **detect()**: Identifies the target entities.
+- **detect()**: Run full state machine detection pipeline.
 
-- **detect_state_machines()**: Identifies state machines.
+- **detect_state_machines()**: Detect state machines in the given analyzer's code.
 
-- **generate_mermaid_diagram()**: Handles mermaid diagram.
+- **generate_mermaid_diagram()**: Generate a Mermaid state diagram for detected state machines.
 
-- **generate_state_machine_diagram()**: Handles state machine diagram.
+- **generate_state_machine_diagram()**: Generate a Mermaid state diagram for detected state machines.
 
-- **render_state_machine_summary()**: Produces or displays state machine summary.
+- **render_state_machine_summary()**: Render a text summary of detected state machines for synopsis header.
 
-- **render_summary()**: Produces or displays summary.
+- **render_summary()**: Render a text summary of detected state machines.
 
 
 #### File I/O Summary
@@ -1234,21 +1297,21 @@ _No exception handlers detected._
 
 #### 🎯 Function Intents
 
-- **_strip_comment_prefix()**: Handles comment prefix.
+- **_strip_comment_prefix()**: Remove leading '# ' or '#' and return trimmed content.
 
-- **append_to_project_structure()**: Handles to project structure.
+- **append_to_project_structure()**: Append the shared-state section to PROJECT_STRUCTURE.
 
-- **build_state_table()**: Constructs or generates state table.
+- **build_state_table()**: Walk the folder and build:.
 
-- **extract_blocks()**: Retrieves blocks.
+- **extract_blocks()**: All MACHINE-READABLE DATA blocks from a file's content.
 
-- **extract_critical_globals()**: Retrieves critical globals.
+- **extract_critical_globals()**: Parse the 'CRITICAL GLOBAL VARIABLES' section from a synopsis header.
 
-- **generate_state_markdown()**: Handles state markdown.
+- **generate_state_markdown()**: Create markdown for the Shared State Table.
 
-- **merge_file_state_from_text()**: Handles file state from text.
+- **merge_file_state_from_text()**: Parse both MACHINE-READABLE and CRITICAL GLOBAL VARIABLES sections.
 
-- **parse_block()**: Parses block.
+- **parse_block()**: Parse one MACHINE-READABLE block into:.
 
 
 #### File I/O Summary
@@ -1329,41 +1392,41 @@ _No exception handlers detected._
 
 #### 🎯 Function Intents
 
-- **__init__()**: Handles the target entities.
+- **__init__()**: Initialize with references to analyzers and optional shared state.
 
-- **_render_classes()**: Produces or displays classes.
+- **_render_classes()**: Render classes section.
 
-- **_render_critical_globals()**: Produces or displays critical globals.
+- **_render_critical_globals()**: Render critical global variables section.
 
-- **_render_data_flow_summary()**: Produces or displays data flow summary.
+- **_render_data_flow_summary()**: Render semantic data flow summary.
 
-- **_render_function_behavioral_summaries()**: Produces or displays function behavioral summaries.
+- **_render_function_behavioral_summaries()**: Render function behavioral summaries section.
 
-- **_render_function_dependencies()**: Produces or displays function dependencies.
+- **_render_function_dependencies()**: Render function dependencies section.
 
-- **_render_function_signatures()**: Produces or displays function signatures.
+- **_render_function_signatures()**: Render function signatures with type hints and docstrings.
 
-- **_render_high_priority_functions()**: Produces or displays high priority functions.
+- **_render_high_priority_functions()**: Render high priority functions section.
 
-- **_render_hotkeys()**: Produces or displays hotkeys.
+- **_render_hotkeys()**: Render hotkey bindings section.
 
-- **_render_integration_intent()**: Produces or displays integration intent.
+- **_render_integration_intent()**: Render integration intent and AI instructions.
 
-- **_render_io_summary()**: Produces or displays io summary.
+- **_render_io_summary()**: Render external I/O summary.
 
-- **_render_modularization_recommendations()**: Produces or displays modularization recommendations.
+- **_render_modularization_recommendations()**: Render modularization recommendations.
 
-- **_render_patch_additions()**: Produces or displays patch additions.
+- **_render_patch_additions()**: Render patch additions for refined behavioral analysis.
 
-- **_render_shared_state()**: Produces or displays shared state.
+- **_render_shared_state()**: Render shared state categories.
 
-- **_render_state_machine_diagrams()**: Produces or displays state machine diagrams.
+- **_render_state_machine_diagrams()**: Render Mermaid state machine diagrams if available.
 
-- **_render_thread_interactions()**: Produces or displays thread interactions.
+- **_render_thread_interactions()**: Render thread interaction map.
 
-- **_render_threading_analysis()**: Produces or displays threading analysis.
+- **_render_threading_analysis()**: Render threading analysis section.
 
-- **generate_synopsis_header()**: Handles synopsis header.
+- **generate_synopsis_header()**: Generate the complete synopsis header.
 
 
 #### File I/O Summary
@@ -1432,27 +1495,27 @@ _No exception handlers detected._
 
 #### 🎯 Function Intents
 
-- **call_to_name()**: Handles to name.
+- **call_to_name()**: Convert an AST function node to a string name.
 
-- **categorize_shared_state()**: Handles shared state.
+- **categorize_shared_state()**: Categorize global variables by their likely purpose.
 
-- **enclosing_function_name()**: Handles function name.
+- **enclosing_function_name()**: Find the function that contains the given node.
 
-- **extract_hotkey_bindings()**: Retrieves hotkey bindings.
+- **extract_hotkey_bindings()**: Extract hotkey bindings from source text using regex.
 
-- **extract_open_args()**: Retrieves open args.
+- **extract_open_args()**: Extract file path and mode from open() calls.
 
-- **format_call_name()**: Handles call name.
+- **format_call_name()**: Format a function call for display.
 
-- **format_file_size()**: Handles file size.
+- **format_file_size()**: Format file size in human-readable format.
 
-- **get_file_info()**: Handles file info.
+- **get_file_info()**: Get basic information about a file.
 
-- **group_functions_by_purpose()**: Organizes functions by purpose.
+- **group_functions_by_purpose()**: Group functions into logical modules for refactoring suggestions.
 
-- **is_local_module()**: Handles local module.
+- **is_local_module()**: Check if a module is local to the project.
 
-- **safe_filename()**: Handles filename.
+- **safe_filename()**: Create a safe filename by removing or replacing invalid characters.
 
 
 #### File I/O Summary

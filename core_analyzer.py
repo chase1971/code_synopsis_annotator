@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: core_analyzer.py
-# SYNOPSIS_HASH: 640176163f69efcc5d52e488ee8c31d67ead2524a1f3aa06bf6b3eb50a9ded34
-# Generated: 2025-10-25 11:18:38
+# SYNOPSIS_HASH: 7c819df3414d2638773a80dabc6d5208fc2c9d6b2a4e1e429b8d18f19c631365
+# Generated: 2025-10-25 13:00:59
 # INTENT: Locates or discovers, Extracts functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 765
+#   Total Lines: 769
 #   Functions: 50
 #   Classes: 3
 #   Global Variables: 0
@@ -26,7 +26,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-25 11:18:38
+# LAST_ANALYZED: 2025-10-25 13:00:59
 # FILE: core_analyzer.py
 # IMPORTS_EXTERNAL: ast, collections, os, typing, warnings
 # IMPORTS_LOCAL: analyzer_state, state_machine_detector
@@ -46,7 +46,7 @@
 # STATE_TRANSITIONS_COUNT: 1
 # INIT_SEQUENCE: 
 # INTENT: Locates or discovers, Extracts functionality for this module.
-# FUNCTION_INTENTS: __init__=Handles the target entities., _analyze_function_accesses=Examines and summarizes function accesses., _call_to_name=Handles to name., _collect_params=Handles params., _enclosing_function_name=Handles function name., _enter_func=Handles func., _exit_func=Handles func., _extract_open_args=Retrieves open args., _format_call_name=Handles call name., _is_local_module=Handles local module., _is_true_global=Handles true global., _names_in_target=Handles in target., _render_arg=Produces or displays arg., _safe_unparse=Handles unparse., analyze=Examines and summarizes the target entities., analyze_classes=Examines and summarizes classes., analyze_functions=Examines and summarizes functions., build_call_graph=Constructs or generates call graph., build_symbol_indexes=Constructs or generates symbol indexes., detect_state_machines=Identifies state machines., detect_ui_after_usage=Identifies ui after usage., extract_call_graph=Retrieves call graph., extract_function_signatures=Retrieves function signatures., extract_hotkey_bindings=Retrieves hotkey bindings., extract_state_transitions=Retrieves state transitions., find_file_io=Locates or gathers file io., find_globals=Locates or gathers globals., find_hotkeys_and_ui_binds=Locates or gathers hotkeys and ui binds., find_imports=Locates or gathers imports., find_threading=Locates or gathers threading., infer_function_behavior=Handles function behavior., map_global_accesses=Handles global accesses., parse_code=Parses code., process_function=Handles or executes function., read_file=Reads file., strip_existing_synopsis=Handles existing synopsis., summarize_initialization_sequence=Condenses results of initialization sequence., visit_AnnAssign=Handles ann assign., visit_Assign=Handles assign., visit_AsyncFunctionDef=Handles async function def., visit_AugAssign=Handles aug assign., visit_ExceptHandler=Handles except handler., visit_For=Handles for., visit_FunctionDef=Handles function def., visit_Global=Handles global., visit_Import=Handles import., visit_ImportFrom=Handles import from., visit_Name=Handles name., visit_Nonlocal=Handles nonlocal., visit_With=Handles with.
+# FUNCTION_INTENTS: __init__=Initialize the analyzer with a file path and optional shared state., _analyze_function_accesses=Populate reads/writes for a function using scope indexes., _call_to_name=Convert a call function node to a string name., _collect_params=Iterates and processes items., _enclosing_function_name=Find the name of the function enclosing this node., _enter_func=Handles func., _exit_func=Handles func., _extract_open_args=Extract file path and mode from open() call., _format_call_name=Format a call node as a string., _is_local_module=Check if a module is local to the project., _is_true_global=Returns validation result., _names_in_target=Extract all simple names bound by an assignment/target expression., _render_arg=Render a function argument with its annotation and default., _safe_unparse=Safely convert AST node to string; avoiding heavy operations., analyze=Run the complete analysis pipeline., analyze_classes=Analyze class definitions and their methods., analyze_functions=Analyze function definitions and their behavior., build_call_graph=Build a call graph of function calls., build_symbol_indexes=Build scope indexes for this file's AST., detect_state_machines=Detect state machine patterns using StateMachineDetector., detect_ui_after_usage=Detect usage of UI after callbacks., extract_call_graph=Extract call graph from AST., extract_function_signatures=Extract function signatures with type hints and defaults., extract_hotkey_bindings=Extract hotkey bindings in a pretty format., extract_state_transitions=Extract state transitions from AST., find_file_io=Find file I/O operations., find_globals=Find all global variable assignments and references using proper scope analysis., find_hotkeys_and_ui_binds=Find hotkey and UI binding patterns., find_imports=Find and categorize imports., find_threading=Find threading usage and interactions., infer_function_behavior=Infer behavioral intent of a function., map_global_accesses=Map which functions read and write each global variable., parse_code=Parse the Python code into an AST., process_function=Process a single function definition., read_file=Read the source file., strip_existing_synopsis=Remove existing synopsis headers from code., summarize_initialization_sequence=Summarize module initialization sequence., visit_AnnAssign=Handles ann assign., visit_Assign=Iterates and processes items., visit_AsyncFunctionDef=Handles async function def., visit_AugAssign=Handles aug assign., visit_ExceptHandler=Handles except handler., visit_For=Iterates and processes items., visit_FunctionDef=Handles function def., visit_Global=Handles global., visit_Import=Iterates and processes items., visit_ImportFrom=Iterates and processes items., visit_Name=Orchestrates multiple operations., visit_Nonlocal=Handles nonlocal., visit_With=Iterates and processes items.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
@@ -193,7 +193,7 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   ScopeIndexer (line 25):
+#   ScopeIndexer (line 27):
 #     - ScopeIndexer.__init__()
 #     - ScopeIndexer.visit_Assign()
 #     - ScopeIndexer.visit_AnnAssign()
@@ -211,11 +211,11 @@
 #     - ScopeIndexer.visit_ExceptHandler()
 #     - ScopeIndexer.visit_Global()
 #     - ScopeIndexer.visit_Nonlocal()
-#   GlobalAccessVisitor (line 156):
+#   GlobalAccessVisitor (line 158):
 #     - GlobalAccessVisitor.__init__()
 #     - GlobalAccessVisitor._is_true_global()
 #     - GlobalAccessVisitor.visit_Name()
-#   CodeAnalyzer (line 200):
+#   CodeAnalyzer (line 202):
 #     - CodeAnalyzer.__init__()
 #     - CodeAnalyzer.read_file()
 #     - CodeAnalyzer.strip_existing_synopsis()
@@ -425,6 +425,8 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
@@ -783,6 +785,7 @@ class CodeAnalyzer:
         self.functions.setdefault(func_name, {})
         self.functions[func_name]["reads"] = gav.reads
         self.functions[func_name]["writes"] = gav.writes
+        self.functions[func_name]["ast_node"] = func_node
 
     def find_globals(self):
         """Find all global variable assignments and references using proper scope analysis."""
@@ -842,6 +845,7 @@ class CodeAnalyzer:
                         info['returns_value'] = True
                         
                 self.functions[func_name] = info
+                self.functions[func_name]["ast_node"] = node
 
     def map_global_accesses(self):
         """Map which functions read and write each global variable."""

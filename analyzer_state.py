@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: analyzer_state.py
-# SYNOPSIS_HASH: 418a74841d19b7536e76c5a289c79a69e15dc286954980d4668d1b6300446a8e
-# Generated: 2025-10-25 11:18:38
+# SYNOPSIS_HASH: ae675f62f3e25b63f3ac28c42e0dfa02f1a1389557b223ace9606f06b0444717
+# Generated: 2025-10-25 13:00:58
 # INTENT: Loads and manages configuration settings.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 159
+#   Total Lines: 161
 #   Functions: 7
 #   Classes: 1
 #   Global Variables: 21
@@ -24,7 +24,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-25 11:18:38
+# LAST_ANALYZED: 2025-10-25 13:00:58
 # FILE: analyzer_state.py
 # IMPORTS_EXTERNAL: __future__, dataclasses, datetime, json, threading, typing
 # IMPORTS_LOCAL: 
@@ -44,7 +44,7 @@
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
 # INTENT: Loads and manages configuration settings.
-# FUNCTION_INTENTS: clear=Handles the target entities., merge=Handles the target entities., new_state=Handles state., summary=Handles the target entities., to_dict=Handles dict., to_json=Handles json., update=Handles the target entities.
+# FUNCTION_INTENTS: clear=Reset all mutable fields., merge=Merge another AnalyzerState into this one., new_state=Factory to create a fresh state with an optional project path., summary=A brief string summary for debugging or logging., to_dict=A plain dictionary suitable for JSON serialization., to_json=Serialize the state to a JSON file., update=Thread-safe generic update helper.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
@@ -76,7 +76,7 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   AnalyzerState (line 31):
+#   AnalyzerState (line 33):
 #     - AnalyzerState.update()
 #     - AnalyzerState.merge()
 #     - AnalyzerState.clear()
@@ -200,6 +200,8 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

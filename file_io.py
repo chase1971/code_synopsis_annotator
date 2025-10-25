@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: file_io.py
-# SYNOPSIS_HASH: 36a2bae55bc8218719651ea2460e982075e86dcc4059e53b757b0da2e078de41
-# Generated: 2025-10-25 11:18:38
+# SYNOPSIS_HASH: 9b39106631e2ed65800fec0578f1e5fb43c5c4666a9e7838c22495239182518b
+# Generated: 2025-10-25 13:00:59
 # INTENT: Creates and manages user interface components. Creates various components.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 214
+#   Total Lines: 216
 #   Functions: 7
 #   Classes: 1
 #   Global Variables: 0
@@ -28,7 +28,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-25 11:18:38
+# LAST_ANALYZED: 2025-10-25 13:00:59
 # FILE: file_io.py
 # IMPORTS_EXTERNAL: os, sys, time, tkinter, traceback, typing
 # IMPORTS_LOCAL: behavioral_analysis, core_analyzer, synopsis_renderer
@@ -48,7 +48,7 @@
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
 # INTENT: Creates and manages user interface components. Creates various components.
-# FUNCTION_INTENTS: __init__=Handles the target entities., analyze_file=Examines and summarizes file., batch_analyze_files=Examines and summarizes files., create_annotated_file=Handles annotated file., get_analysis_summary=Handles analysis summary., main=Handles the target entities., select_file_and_analyze=Handles file and.
+# FUNCTION_INTENTS: __init__=Initialize the file I/O handler., analyze_file=Analyze a specific file and create annotated version., batch_analyze_files=Analyze multiple files in batch., create_annotated_file=Create an annotated file with synopsis header., get_analysis_summary=Get a summary of analysis results., main=Main entry point for the application., select_file_and_analyze=Select a file and run the complete analysis workflow.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
@@ -80,7 +80,7 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   FileIOHandler (line 25):
+#   FileIOHandler (line 27):
 #     - FileIOHandler.__init__()
 #     - FileIOHandler.create_annotated_file()
 #     - FileIOHandler.select_file_and_analyze()
@@ -158,6 +158,8 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: intent_enhancer_v2.py
-# SYNOPSIS_HASH: 952eb64c6722d2e727657a5eca5f999009740618e332feb71ef3da4968b7fe0a
-# Generated: 2025-10-25 11:18:38
+# SYNOPSIS_HASH: d6c1610856b2566d5777c9b225568856a32d85a2147da67e78b1c4feac8a62dd
+# Generated: 2025-10-25 13:00:59
 # INTENT: Detects or identifies patterns in, Generates functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 456
+#   Total Lines: 458
 #   Functions: 7
 #   Classes: 0
 #   Global Variables: 12
@@ -22,7 +22,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-25 11:18:38
+# LAST_ANALYZED: 2025-10-25 13:00:59
 # FILE: intent_enhancer_v2.py
 # IMPORTS_EXTERNAL: re, typing
 # IMPORTS_LOCAL: intent_inference
@@ -42,7 +42,7 @@
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
 # INTENT: Detects or identifies patterns in, Generates functionality for this module.
-# FUNCTION_INTENTS: __init__=Handles the target entities., detect_domains=Identifies domains., detect_function_patterns=Identifies function patterns., extract_noun_from_functions=Retrieves noun from functions., find_common_themes=Locates or gathers common themes., generate_enhanced_module_intent=Handles enhanced module intent., generate_smart_intent=Handles smart intent.
+# FUNCTION_INTENTS: __init__=Updates internal state., detect_domains=Detect what domains this module operates in based on imports., detect_function_patterns=Count how many functions match each pattern., extract_noun_from_functions=Extract common noun phrases from function names., find_common_themes=Find recurring themes in noun phrases., generate_enhanced_module_intent=Enhanced intent generation using pattern matching and heuristics., generate_smart_intent=Drop-in replacement for generate_module_intent() from intent_inference.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
@@ -155,6 +155,8 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

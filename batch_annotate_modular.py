@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: batch_annotate_modular.py
-# SYNOPSIS_HASH: 20180ca89539d4c269ec4ec30fe91dfdbf5c657ccae9fbd0eb07c1d8e743ecba
-# Generated: 2025-10-25 11:18:38
-# INTENT: Manages concurrent execution. Processes various components.
+# SYNOPSIS_HASH: 59735cb9cec34443832d445f3648901917e9cfeebd330bab49dab895d0601e8c
+# Generated: 2025-10-25 13:00:58
+# INTENT: Creates and manages user interface components. Processes various components.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 454
+#   Total Lines: 456
 #   Functions: 24
 #   Classes: 1
 #   Global Variables: 10
@@ -36,7 +36,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-25 11:18:38
+# LAST_ANALYZED: 2025-10-25 13:00:58
 # FILE: batch_annotate_modular.py
 # IMPORTS_EXTERNAL: argparse, datetime, glob, hashlib, os, pathlib, shutil, subprocess, sys, threading, tkinter
 # IMPORTS_LOCAL: analyzer_state, behavioral_analysis, core_analyzer, intent_inference, project_architect, synopsis_renderer
@@ -55,8 +55,8 @@
 # STATE_MACHINES_COUNT: 1
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
-# INTENT: Manages concurrent execution. Processes various components.
-# FUNCTION_INTENTS: __init__=Handles the target entities., _build_ui=Constructs or generates ui., _process_folder=Handles or executes folder., _process_single=Handles or executes single., _run=Handles the target entities., compute_code_hash=Handles code hash., extract_existing_hash=Retrieves existing hash., find_python_files=Locates or gathers python files., format_duration=Handles duration., generate_markdown=Handles markdown., get_code_body=Handles code body., is_up_to_date=Handles up to date., log=Handles the target entities., make_backup=Handles backup., open_folder=Handles folder., open_folder_in_explorer=Handles folder in explorer., process_batch=Handles or executes batch., process_single_file=Handles or executes single file., run_batch=Handles batch., run_in_thread=Handles in thread., run_single=Handles single., select_file=Handles file., select_folder=Handles folder., strip_all_annotations=Handles all annotations.
+# INTENT: Creates and manages user interface components. Processes various components.
+# FUNCTION_INTENTS: __init__=Orchestrates multiple operations., _build_ui=Iterates and processes items., _process_folder=Iterates and processes items., _process_single=Orchestrates multiple operations., _run=Updates internal state., compute_code_hash=Updates internal state., extract_existing_hash=Reads data from file., find_python_files=Iterates and processes items., format_duration=Updates internal state., generate_markdown=Orchestrates multiple operations., get_code_body=Reads data from file., is_up_to_date=Handles up to date., log=Orchestrates multiple operations., make_backup=Orchestrates multiple operations., open_folder=Updates internal state., open_folder_in_explorer=Open folder in file explorer (cross-platform)., process_batch=Iterates and processes items., process_single_file=Writes data to file., run_batch=Orchestrates multiple operations., run_in_thread=Handles in thread., run_single=Orchestrates multiple operations., select_file=Updates internal state., select_folder=Updates internal state., strip_all_annotations=Completely remove all existing synopsis annotations from a file.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
@@ -122,7 +122,7 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   AnnotatorGUI (line 271):
+#   AnnotatorGUI (line 273):
 #     - AnnotatorGUI.__init__()
 #     - AnnotatorGUI._build_ui()
 #     - AnnotatorGUI.open_folder()
@@ -282,6 +282,8 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

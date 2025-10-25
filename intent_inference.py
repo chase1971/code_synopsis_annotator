@@ -1,18 +1,19 @@
 #===============================================================================
 # CODE SYNOPSIS: intent_inference.py
-# SYNOPSIS_HASH: da4812ad8d5fb82f8ee87e0815723600294b44dc5c7049a7377fd2dc27158322
-# Generated: 2025-10-25 11:18:38
+# SYNOPSIS_HASH: f4045c35d5b9c59acb5366d27dee71deba345aca4f1bf6c0346de459c08286ff
+# Generated: 2025-10-25 13:00:59
 # INTENT: Generates functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 230
-#   Functions: 8
+#   Total Lines: 382
+#   Functions: 10
 #   Classes: 0
 #   Global Variables: 3
 #
 # Key Dependencies:
 #   - __future__
+#   - ast
 #   - re
 #   - typing
 #   (Local modules):
@@ -23,13 +24,13 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-25 11:18:38
+# LAST_ANALYZED: 2025-10-25 13:00:59
 # FILE: intent_inference.py
-# IMPORTS_EXTERNAL: __future__, re, typing
+# IMPORTS_EXTERNAL: __future__, ast, re, typing
 # IMPORTS_LOCAL: intent_enhancer_v2
 # GLOBALS: ACTION_MAP, DEFAULT_MODULE_INTENT, DEFAULT_VERB
-# FUNCTIONS: _infer_verb, _insert_human_readable_intent, _insert_machine_block_kv, _noun_phrase_from, _split_ident, generate_module_intent, infer_function_intent, inject_intent
-# RETURNS: _infer_verb, _insert_human_readable_intent, _insert_machine_block_kv, _noun_phrase_from, _split_ident, generate_module_intent, infer_function_intent, inject_intent
+# FUNCTIONS: _analyze_function_body, _enhance_with_type_hints, _infer_verb, _insert_human_readable_intent, _insert_machine_block_kv, _noun_phrase_from, _split_ident, generate_module_intent, infer_function_intent, inject_intent
+# RETURNS: _analyze_function_body, _enhance_with_type_hints, _infer_verb, _insert_human_readable_intent, _insert_machine_block_kv, _noun_phrase_from, _split_ident, generate_module_intent, infer_function_intent, inject_intent
 # THREAD_TARGETS: 
 # HOTKEYS: 
 # TK_BINDS: 
@@ -43,12 +44,18 @@
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
 # INTENT: Generates functionality for this module.
-# FUNCTION_INTENTS: _infer_verb=Handles verb., _insert_human_readable_intent=Handles human readable intent., _insert_machine_block_kv=Handles machine block kv., _noun_phrase_from=Handles phrase from., _split_ident=Handles ident., generate_module_intent=Handles module intent., infer_function_intent=Handles function intent., inject_intent=Handles intent.
+# FUNCTION_INTENTS: _analyze_function_body=Infer intent from function body patterns., _enhance_with_type_hints=Enhance intent using return type hints., _infer_verb=Iterates and processes items., _insert_human_readable_intent=Insert a '# INTENT:., _insert_machine_block_kv=Insert or update a key: value inside the MACHINE-READABLE DATA block., _noun_phrase_from=Returns string representation., _split_ident=Iterates and processes items., generate_module_intent=Use function names and imports to synthesize a short module purpose line., infer_function_intent=Generate function intent using priority cascade:., inject_intent=Public entry point.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
 #
 # 📝 FUNCTION SIGNATURES:
+#
+# _analyze_function_body(func_node: ast.FunctionDef) -> str
+#   Infer intent from function body patterns.
+#
+# _enhance_with_type_hints(func_name: str, func_node: ast.FunctionDef) -> str
+#   Enhance intent using return type hints.
 #
 # _infer_verb(tokens: List[str]) -> Tuple[str, str]
 #
@@ -65,7 +72,8 @@
 # generate_module_intent(analyzer) -> str
 #   Use function names and imports to synthesize a short module purpose line.
 #
-# infer_function_intent(func_name: str) -> str
+# infer_function_intent(func_name: str, func_node: ast.FunctionDef = None) -> str
+#   Generate function intent using priority cascade:
 #
 # inject_intent(header_text: str, analyzer, behavioral_analyzer) -> str
 #   Public entry point. Returns a NEW header string with:
@@ -105,11 +113,13 @@
 #   _split_ident() — calls c.lower, flat.append, flat.extend, p.lower, re.findall, re.split; returns value
 #   _infer_verb() — reads ACTION_MAP, DEFAULT_VERB; calls ACTION_MAP.get; returns value
 #   _noun_phrase_from() — reads ACTION_MAP; calls join, len; returns value
-#   infer_function_intent() — calls _infer_verb, _noun_phrase_from, _split_ident; returns value
+#   _analyze_function_body() — calls any, ast.walk, hasattr, isinstance, len, sum; returns value
+#   _enhance_with_type_hints() — calls ast.unparse, func_name.startswith, return_type.startswith; returns value
+#   infer_function_intent() — calls _analyze_function_body, _enhance_with_type_hints, _infer_verb, _noun_phrase_from, _split_ident, ast.get_docstring; returns value
 #   generate_module_intent() — reads DEFAULT_MODULE_INTENT; calls _infer_verb, _noun_phrase_from, _split_ident, dict.fromkeys, generate_smart_intent, getattr; returns value
 #   _insert_human_readable_intent() — calls enumerate, header_text.splitlines, join, len, lines.insert, ln.strip; returns value
 #   _insert_machine_block_kv() — calls block.replace, block_start.start, end.end, re.escape, re.search, re.sub; returns value
-#   inject_intent() — calls _insert_human_readable_intent, _insert_machine_block_kv, fn_intents.append, fname.replace, generate_module_intent, infer_function_intent; returns value
+#   inject_intent() — calls _insert_human_readable_intent, _insert_machine_block_kv, analyzer.functions.get, fn_intents.append, fname.replace, func_data.get; returns value
 #===============================================================================
 #
 # 🔧 MODULARIZATION RECOMMENDATIONS:
@@ -152,6 +162,8 @@
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 #!/usr/bin/env python3
 # =============================================================================
 # INTENT INFERENCE (deterministic, no-LLM)
@@ -172,6 +184,7 @@ Integration:
 from __future__ import annotations
 from typing import Dict, List, Tuple
 import re
+import ast
 
 ACTION_MAP = {
     "analyze": "Examines and summarizes",
@@ -240,11 +253,158 @@ def _noun_phrase_from(tokens: List[str], skip_first: bool = True) -> str:
     return " ".join(tokens)
 
 
-def infer_function_intent(func_name: str) -> str:
+def _analyze_function_body(func_node: ast.FunctionDef) -> str:
+    """Infer intent from function body patterns."""
+    
+    if not func_node or not func_node.body:
+        return None
+    
+    body = func_node.body
+    
+    # Pattern 1: Single return statement (getter/calculator)
+    if len(body) == 1 and isinstance(body[0], ast.Return):
+        return "Returns computed value"
+    
+    # Pattern 2: File operations
+    has_open = False
+    is_writing = False
+    for node in ast.walk(func_node):
+        if isinstance(node, ast.Call):
+            func_name = None
+            if hasattr(node.func, 'id'):
+                func_name = node.func.id
+            
+            if func_name == 'open':
+                has_open = True
+                # Check for 'w' mode
+                for arg in node.args:
+                    if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                        if 'w' in arg.value or 'a' in arg.value:
+                            is_writing = True
+    
+    if has_open:
+        return "Writes data to file" if is_writing else "Reads data from file"
+    
+    # Pattern 3: JSON operations
+    for node in ast.walk(func_node):
+        if isinstance(node, ast.Call) and hasattr(node.func, 'attr'):
+            if hasattr(node.func, 'value') and hasattr(node.func.value, 'id'):
+                if node.func.value.id == 'json':
+                    if node.func.attr == 'dump':
+                        return "Serializes data to JSON format"
+                    elif node.func.attr == 'load':
+                        return "Deserializes data from JSON format"
+    
+    # Pattern 4: Loops (iteration/processing)
+    has_loop = any(isinstance(node, (ast.For, ast.While)) for node in ast.walk(func_node))
+    if has_loop:
+        return "Iterates and processes items"
+    
+    # Pattern 5: Many function calls (orchestration)
+    call_count = sum(1 for node in ast.walk(func_node) if isinstance(node, ast.Call))
+    if call_count > 5:
+        return "Orchestrates multiple operations"
+    
+    # Pattern 6: Assignments (state modification)
+    has_assign = any(isinstance(node, ast.Assign) for node in ast.walk(func_node))
+    if has_assign and len(body) < 5:
+        return "Updates internal state"
+    
+    return None
+
+
+def _enhance_with_type_hints(func_name: str, func_node: ast.FunctionDef) -> str:
+    """Enhance intent using return type hints."""
+    
+    if not func_node or not func_node.returns:
+        return None
+    
+    try:
+        return_type = ast.unparse(func_node.returns)
+    except:
+        return None
+    
+    # Boolean returns
+    if return_type == "bool":
+        if func_name.startswith("is_") or func_name.startswith("has_"):
+            return f"Checks condition"
+        return "Returns validation result"
+    
+    # String returns
+    if return_type in ["str", "String"]:
+        return "Returns string representation"
+    
+    # None returns (void functions that perform actions)
+    if return_type == "None":
+        if "update" in func_name or "set" in func_name or "modify" in func_name:
+            return "Modifies state"
+        if "save" in func_name or "write" in func_name or "store" in func_name:
+            return "Persists data"
+        if "clear" in func_name or "reset" in func_name:
+            return "Resets state"
+        if "add" in func_name or "append" in func_name:
+            return "Adds item"
+        if "remove" in func_name or "delete" in func_name:
+            return "Removes item"
+    
+    # Collection returns
+    if return_type.startswith("Dict") or return_type.startswith("dict"):
+        return "Returns dictionary of data"
+    
+    if return_type.startswith("List") or return_type.startswith("list"):
+        return "Returns list of items"
+    
+    return None
+
+
+def infer_function_intent(func_name: str, func_node: ast.FunctionDef = None) -> str:
+    """
+    Generate function intent using priority cascade:
+    1. Docstring (best quality)
+    2. Function body analysis (good quality)
+    3. Type hints (decent quality)
+    4. Name-based generation (fallback)
+    """
+    
+    if func_node:
+        # PRIORITY 1: Use docstring if present
+        try:
+            docstring = ast.get_docstring(func_node)
+            if docstring:
+                # Use first sentence only
+                first_sentence = docstring.split('.')[0].split('\n')[0].strip()
+                # Clean up common prefixes
+                for prefix in ["This function ", "This method ", "This ", "Returns ", "Return "]:
+                    if first_sentence.startswith(prefix):
+                        first_sentence = first_sentence[len(prefix):]
+                        break
+                # Capitalize first letter
+                if first_sentence:
+                    first_sentence = first_sentence[0].upper() + first_sentence[1:]
+                    return first_sentence + "."
+        except:
+            pass
+        
+        # PRIORITY 2: Analyze function body
+        try:
+            body_intent = _analyze_function_body(func_node)
+            if body_intent:
+                return body_intent + "."
+        except:
+            pass
+        
+        # PRIORITY 3: Use type hints
+        try:
+            type_intent = _enhance_with_type_hints(func_name, func_node)
+            if type_intent:
+                return type_intent + "."
+        except:
+            pass
+    
+    # PRIORITY 4: Fall back to name-based generation (current behavior)
     tokens = _split_ident(func_name)
     verb_phrase, _ = _infer_verb(tokens)
     obj_phrase = _noun_phrase_from(tokens, skip_first=True)
-    # shape final sentence
     return f"{verb_phrase} {obj_phrase}."
 
 
@@ -364,7 +524,9 @@ def inject_intent(header_text: str, analyzer, behavioral_analyzer) -> str:
     fn_intents: List[str] = []
     for fname in sorted((analyzer.functions or {}).keys()):
         try:
-            intent = infer_function_intent(fname)
+            func_data = analyzer.functions.get(fname, {})
+            func_node = func_data.get('ast_node') if isinstance(func_data, dict) else None
+            intent = infer_function_intent(fname, func_node)
             # sanitize separators
             safe_name = fname.replace(",", "_").replace("=", "_")
             safe_intent = intent.replace(",", ";")

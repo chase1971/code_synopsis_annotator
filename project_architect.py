@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: project_architect.py
-# SYNOPSIS_HASH: 990f191e07d54a5e94409e086eddb0e7db08d8696a177a507b2ae9d12f9eb834
-# Generated: 2025-10-25 11:18:38
+# SYNOPSIS_HASH: fc193f686c66e89d67b02d9b6987b3b847dd72475c00c1e251076a17a3ad4bc6
+# Generated: 2025-10-25 13:00:59
 # INTENT: Generates, Extracts functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 528
+#   Total Lines: 588
 #   Functions: 9
 #   Classes: 0
 #   Global Variables: 2
@@ -24,7 +24,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-25 11:18:38
+# LAST_ANALYZED: 2025-10-25 13:00:59
 # FILE: project_architect.py
 # IMPORTS_EXTERNAL: collections, datetime, os, re
 # IMPORTS_LOCAL: state_tracker
@@ -44,7 +44,7 @@
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
 # INTENT: Generates, Extracts functionality for this module.
-# FUNCTION_INTENTS: build_project_summary=Constructs or generates project summary., detect_exceptions=Identifies exceptions., extract=Retrieves the target entities., extract_function_signatures_from_content=Retrieves function signatures from content., extract_list=Retrieves list., generate_application_overview=Handles application overview., generate_detailed_shared_state_table=Handles detailed shared state table., generate_entry_points_section=Handles entry points section., parse_function_intents=Parses function intents.
+# FUNCTION_INTENTS: build_project_summary=Scans annotated Python files; parses the MACHINE-READABLE DATA block; and., detect_exceptions=Detect simple try/except exception handlers., extract=Extract value for a given key from a MACHINE-READABLE DATA block., extract_function_signatures_from_content=Extract function signatures from the FUNCTION SIGNATURES section., extract_list=Extract comma-separated list for a key., generate_application_overview=Generate an Application Overview section based on module intents and key components., generate_detailed_shared_state_table=Generate a detailed Shared State Table using state_tracker functions., generate_entry_points_section=Generate an Entry Points section showing how the application starts and flows., parse_function_intents=Parse function intents from the FUNCTION_INTENTS string.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
@@ -158,6 +158,8 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
@@ -350,6 +352,60 @@ def generate_application_overview(summaries: list[dict]) -> list[str]:
         for feature in sorted(key_features):
             lines.append(f"- {feature}")
         lines.append("")
+    
+    # Add Example Output Section
+    lines.append("### 📄 What This Tool Produces")
+    lines.append("This tool transforms Python files by adding comprehensive documentation headers while preserving your original code.")
+    lines.append("**Input** (Python file before annotation):")
+    lines.append("```python")
+    lines.append("def calculate_total(price, tax_rate=0.08):")
+    lines.append('    """Calculate total with tax."""')
+    lines.append("    return price * (1 + tax_rate)")
+    lines.append("")
+    lines.append("total = calculate_total(100.00)")
+    lines.append("```")
+    lines.append("**Output** (Same file after annotation):")
+    lines.append("```python")
+    lines.append("#" + "="*79)
+    lines.append("# CODE SYNOPSIS: example.py")
+    lines.append("# SYNOPSIS_HASH: 7a8b9c1d2e3f...")
+    lines.append("# Generated: 2025-10-25 11:30:45")
+    lines.append("# INTENT: Handles tax calculation functionality.")
+    lines.append("#" + "="*79)
+    lines.append("#")
+    lines.append("# 📝 FUNCTION SIGNATURES:")
+    lines.append("#")
+    lines.append("# calculate_total(price, tax_rate = 0.08) -> None")
+    lines.append("#   Calculate total with tax.")
+    lines.append("#")
+    lines.append("#" + "="*79)
+    lines.append("#")
+    lines.append("# CRITICAL GLOBAL VARIABLES:")
+    lines.append("#")
+    lines.append("# total:")
+    lines.append("#   Modified by: <module>")
+    lines.append("#   Read by: (none)")
+    lines.append("#")
+    lines.append("#" + "="*79)
+    lines.append("# === END SYNOPSIS HEADER ===")
+    lines.append("")
+    lines.append("def calculate_total(price, tax_rate=0.08):")
+    lines.append('    """Calculate total with tax."""')
+    lines.append("    return price * (1 + tax_rate)")
+    lines.append("")
+    lines.append("total = calculate_total(100.00)")
+    lines.append("```")
+    lines.append("**Key Features of Generated Headers:**")
+    lines.append("- ✅ Function signatures with parameters and return types")
+    lines.append("- ✅ Module-level intent description")
+    lines.append("- ✅ Per-function intent statements")
+    lines.append("- ✅ State variable tracking (who modifies/reads)")
+    lines.append("- ✅ Threading and UI binding analysis")
+    lines.append("- ✅ Machine-readable metadata blocks")
+    lines.append("- ✅ Original code preserved unchanged")
+    lines.append("")
+    lines.append("*View any `.py` file in this project to see real annotated examples.*")
+    lines.append("")
     
     lines.append("---")
     lines.append("")

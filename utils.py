@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: utils.py
-# SYNOPSIS_HASH: e1369d703da97c29a7981c99b5ec689630aeea771317e9adc2383218f791e2e5
-# Generated: 2025-10-25 11:18:38
+# SYNOPSIS_HASH: f257bfcdae2d608b2704567996ff5511162d9a4d52f408ac389cabd00d02d20b
+# Generated: 2025-10-25 13:00:59
 # INTENT: Utility functions and helper methods.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 271
+#   Total Lines: 273
 #   Functions: 11
 #   Classes: 1
 #   Global Variables: 0
@@ -22,7 +22,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-25 11:18:38
+# LAST_ANALYZED: 2025-10-25 13:00:59
 # FILE: utils.py
 # IMPORTS_EXTERNAL: ast, os, re, typing
 # IMPORTS_LOCAL: 
@@ -42,7 +42,7 @@
 # STATE_TRANSITIONS_COUNT: 2
 # INIT_SEQUENCE: 
 # INTENT: Utility functions and helper methods.
-# FUNCTION_INTENTS: call_to_name=Handles to name., categorize_shared_state=Handles shared state., enclosing_function_name=Handles function name., extract_hotkey_bindings=Retrieves hotkey bindings., extract_open_args=Retrieves open args., format_call_name=Handles call name., format_file_size=Handles file size., get_file_info=Handles file info., group_functions_by_purpose=Organizes functions by purpose., is_local_module=Handles local module., safe_filename=Handles filename.
+# FUNCTION_INTENTS: call_to_name=Convert an AST function node to a string name., categorize_shared_state=Categorize global variables by their likely purpose., enclosing_function_name=Find the function that contains the given node., extract_hotkey_bindings=Extract hotkey bindings from source text using regex., extract_open_args=Extract file path and mode from open() calls., format_call_name=Format a function call for display., format_file_size=Format file size in human-readable format., get_file_info=Get basic information about a file., group_functions_by_purpose=Group functions into logical modules for refactoring suggestions., is_local_module=Check if a module is local to the project., safe_filename=Create a safe filename by removing or replacing invalid characters.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
@@ -86,7 +86,7 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   CodeUtils (line 18):
+#   CodeUtils (line 20):
 #     - CodeUtils.is_local_module()
 #     - CodeUtils.call_to_name()
 #     - CodeUtils.format_call_name()
@@ -198,6 +198,8 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

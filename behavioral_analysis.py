@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: behavioral_analysis.py
-# SYNOPSIS_HASH: a9e3bb36855a58fd3c9dc854217fd645b1afd0216e93fa96839cbff79d2511bd
-# Generated: 2025-10-25 11:18:38
+# SYNOPSIS_HASH: f849ba567d49aed5275026f78e8ca718a3127d19e752adbca125f5e2da99bd39
+# Generated: 2025-10-25 13:00:58
 # INTENT: Renders, Analyzes functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 239
+#   Total Lines: 241
 #   Functions: 11
 #   Classes: 1
 #   Global Variables: 0
@@ -22,7 +22,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-25 11:18:38
+# LAST_ANALYZED: 2025-10-25 13:00:58
 # FILE: behavioral_analysis.py
 # IMPORTS_EXTERNAL: ast, collections, datetime, typing
 # IMPORTS_LOCAL: 
@@ -42,7 +42,7 @@
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
 # INTENT: Renders, Analyzes functionality for this module.
-# FUNCTION_INTENTS: __init__=Handles the target entities., analyze_function_dependencies=Examines and summarizes function dependencies., analyze_high_priority_functions=Examines and summarizes high priority functions., build_machine_block=Constructs or generates machine block., categorize_shared_state=Handles shared state., dfs=Handles the target entities., generate_behavioral_summary=Handles behavioral summary., group_modules_generic=Organizes modules generic., render_call_hierarchy=Produces or displays call hierarchy., render_state_machines=Produces or displays state machines., render_ui_after_usage=Produces or displays ui after usage.
+# FUNCTION_INTENTS: __init__=Initialize with reference to main analyzer and optional shared state., analyze_function_dependencies=Analyze functions with high fan-out (calling many other functions)., analyze_high_priority_functions=Identify functions that modify multiple globals or are thread targets., build_machine_block=Build the machine-readable data block., categorize_shared_state=Categorize global variables by their likely purpose., dfs=Iterates and processes items., generate_behavioral_summary=Generate a comprehensive behavioral analysis summary., group_modules_generic=Group functions into logical modules for refactoring suggestions., render_call_hierarchy=Render a depth-limited call hierarchy., render_state_machines=Render detected state machines with enhanced detection., render_ui_after_usage=Render UI threading dependencies.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
@@ -83,7 +83,7 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   BehavioralAnalyzer (line 19):
+#   BehavioralAnalyzer (line 21):
 #     - BehavioralAnalyzer.__init__()
 #     - BehavioralAnalyzer.render_call_hierarchy()
 #     - BehavioralAnalyzer.render_state_machines()
@@ -179,6 +179,8 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

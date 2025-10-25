@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: synopsis_renderer.py
-# SYNOPSIS_HASH: 9618a353e947946c303a50b8014af2efe542779243436110b0a6c1f359eab927
-# Generated: 2025-10-25 11:18:38
+# SYNOPSIS_HASH: 5afc522d183d8b414bfd2da08180c1e5e2731c52b3f8dbf302186b607de18572
+# Generated: 2025-10-25 13:00:59
 # INTENT: Generates functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 455
+#   Total Lines: 457
 #   Functions: 18
 #   Classes: 1
 #   Global Variables: 0
@@ -20,7 +20,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-25 11:18:38
+# LAST_ANALYZED: 2025-10-25 13:00:59
 # FILE: synopsis_renderer.py
 # IMPORTS_EXTERNAL: datetime, typing
 # IMPORTS_LOCAL: 
@@ -40,7 +40,7 @@
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
 # INTENT: Generates functionality for this module.
-# FUNCTION_INTENTS: __init__=Handles the target entities., _render_classes=Produces or displays classes., _render_critical_globals=Produces or displays critical globals., _render_data_flow_summary=Produces or displays data flow summary., _render_function_behavioral_summaries=Produces or displays function behavioral summaries., _render_function_dependencies=Produces or displays function dependencies., _render_function_signatures=Produces or displays function signatures., _render_high_priority_functions=Produces or displays high priority functions., _render_hotkeys=Produces or displays hotkeys., _render_integration_intent=Produces or displays integration intent., _render_io_summary=Produces or displays io summary., _render_modularization_recommendations=Produces or displays modularization recommendations., _render_patch_additions=Produces or displays patch additions., _render_shared_state=Produces or displays shared state., _render_state_machine_diagrams=Produces or displays state machine diagrams., _render_thread_interactions=Produces or displays thread interactions., _render_threading_analysis=Produces or displays threading analysis., generate_synopsis_header=Handles synopsis header.
+# FUNCTION_INTENTS: __init__=Initialize with references to analyzers and optional shared state., _render_classes=Render classes section., _render_critical_globals=Render critical global variables section., _render_data_flow_summary=Render semantic data flow summary., _render_function_behavioral_summaries=Render function behavioral summaries section., _render_function_dependencies=Render function dependencies section., _render_function_signatures=Render function signatures with type hints and docstrings., _render_high_priority_functions=Render high priority functions section., _render_hotkeys=Render hotkey bindings section., _render_integration_intent=Render integration intent and AI instructions., _render_io_summary=Render external I/O summary., _render_modularization_recommendations=Render modularization recommendations., _render_patch_additions=Render patch additions for refined behavioral analysis., _render_shared_state=Render shared state categories., _render_state_machine_diagrams=Render Mermaid state machine diagrams if available., _render_thread_interactions=Render thread interaction map., _render_threading_analysis=Render threading analysis section., generate_synopsis_header=Generate the complete synopsis header.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
@@ -105,7 +105,7 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   SynopsisRenderer (line 16):
+#   SynopsisRenderer (line 18):
 #     - SynopsisRenderer.__init__()
 #     - SynopsisRenderer.generate_synopsis_header()
 #     - SynopsisRenderer._render_state_machine_diagrams()
@@ -232,6 +232,8 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: state_machine_detector.py
-# SYNOPSIS_HASH: 82b6b6c9bd28f74628f0185443e21574f06535f781cdbfa22da0a7dcb3f5b19d
-# Generated: 2025-10-25 11:18:38
+# SYNOPSIS_HASH: 7d9bc9441f74e2eae9e52d33cfbd11d16df3d45f3682dfa1704e1b2a599c11e0
+# Generated: 2025-10-25 13:00:59
 # INTENT: Generates, Renders functionality for this module.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 557
+#   Total Lines: 559
 #   Functions: 18
 #   Classes: 4
 #   Global Variables: 20
@@ -23,7 +23,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-25 11:18:38
+# LAST_ANALYZED: 2025-10-25 13:00:59
 # FILE: state_machine_detector.py
 # IMPORTS_EXTERNAL: ast, collections, dataclasses, re, typing
 # IMPORTS_LOCAL: 
@@ -43,7 +43,7 @@
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: 
 # INTENT: Generates, Renders functionality for this module.
-# FUNCTION_INTENTS: __init__=Handles the target entities., _analyze_transitions=Examines and summarizes transitions., _build_function_map=Constructs or generates function map., _classify_state_variable=Handles state variable., _detect_guards=Identifies guards., _detect_state_variables=Identifies state variables., _extract_name=Retrieves name., _extract_value=Retrieves value., _get_enclosing_function=Handles enclosing function., _group_into_state_machines=Organizes into state machines., _infer_source_states=Handles source states., _matches_variable=Handles variable., detect=Identifies the target entities., detect_state_machines=Identifies state machines., generate_mermaid_diagram=Handles mermaid diagram., generate_state_machine_diagram=Handles state machine diagram., render_state_machine_summary=Produces or displays state machine summary., render_summary=Produces or displays summary.
+# FUNCTION_INTENTS: __init__=Updates internal state., _analyze_transitions=Analyze state transitions (assignments to state variables)., _build_function_map=Build a map of function names to their AST nodes., _classify_state_variable=Classify if a variable name represents state., _detect_guards=Detect guard conditions (if statements checking state)., _detect_state_variables=Detect variables that represent state., _extract_name=Extract a variable name from an AST node., _extract_value=Extract a constant value from an AST node., _get_enclosing_function=Find the name of the function enclosing this node., _group_into_state_machines=Group related state variables into state machines., _infer_source_states=Infer possible source states by looking at preceding if conditions., _matches_variable=Check if a state value relates to a variable., detect=Run full state machine detection pipeline., detect_state_machines=Detect state machines in the given analyzer's code., generate_mermaid_diagram=Generate a Mermaid state diagram for detected state machines., generate_state_machine_diagram=Generate a Mermaid state diagram for detected state machines., render_state_machine_summary=Render a text summary of detected state machines for synopsis header., render_summary=Render a text summary of detected state machines.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
@@ -108,10 +108,10 @@
 #
 # 🧱 CLASSES FOUND:
 #
-#   StateVariable (line 62):
-#   StateTransition (line 73):
-#   StateMachine (line 83):
-#   StateMachineDetector (line 91):
+#   StateVariable (line 64):
+#   StateTransition (line 75):
+#   StateMachine (line 85):
+#   StateMachineDetector (line 93):
 #     - StateMachineDetector.__init__()
 #     - StateMachineDetector.detect()
 #     - StateMachineDetector._build_function_map()
@@ -135,15 +135,15 @@
 #   Modified by: detect_state_machines, generate_state_machine_diagram, render_state_machine_summary
 #   Read by: detect_state_machines, generate_state_machine_diagram, render_state_machine_summary
 #
+# from_state:
+#   Modified by: _analyze_transitions, generate_mermaid_diagram
+#   Read by: _analyze_transitions, generate_mermaid_diagram
+#
 # var_type:
 #   Modified by: _detect_state_variables, _classify_state_variable
 #   Read by: _detect_state_variables, _classify_state_variable
 #
 # to_state:
-#   Modified by: _analyze_transitions, generate_mermaid_diagram
-#   Read by: _analyze_transitions, generate_mermaid_diagram
-#
-# from_state:
 #   Modified by: _analyze_transitions, generate_mermaid_diagram
 #   Read by: _analyze_transitions, generate_mermaid_diagram
 #
@@ -297,6 +297,8 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===

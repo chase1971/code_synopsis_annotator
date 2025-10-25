@@ -1,12 +1,12 @@
 #===============================================================================
 # CODE SYNOPSIS: main.py
-# SYNOPSIS_HASH: fb53a8fba2e4b017d2adec5d658297f3eff7e704e8c6cbb40cd08471c508d2cd
-# Generated: 2025-10-25 11:18:38
+# SYNOPSIS_HASH: e1f6e49f780351bb4d34db40e83ed5c421933adc3cab9e600aa516bb8680b2bf
+# Generated: 2025-10-25 13:00:59
 # INTENT: Main application entry point and orchestration.
 #===============================================================================
 #
 # OVERVIEW:
-#   Total Lines: 124
+#   Total Lines: 126
 #   Functions: 3
 #   Classes: 0
 #   Global Variables: 0
@@ -27,7 +27,7 @@
 # BEGIN MACHINE-READABLE DATA (for automated processing)
 # ════════════════════
 # SYNOPSIS_ANNOTATED: YES
-# LAST_ANALYZED: 2025-10-25 11:18:38
+# LAST_ANALYZED: 2025-10-25 13:00:59
 # FILE: main.py
 # IMPORTS_EXTERNAL: code_synopsis_annotator.behavioral_analysis, code_synopsis_annotator.core_analyzer, code_synopsis_annotator.file_io, code_synopsis_annotator.synopsis_renderer, os, sys, typing
 # IMPORTS_LOCAL: analyzer_state
@@ -47,7 +47,7 @@
 # STATE_TRANSITIONS_COUNT: 0
 # INIT_SEQUENCE: sys.path.insert
 # INTENT: Main application entry point and orchestration.
-# FUNCTION_INTENTS: analyze_file=Examines and summarizes file., batch_analyze=Examines and summarizes the target entities., main=Handles the target entities.
+# FUNCTION_INTENTS: analyze_file=Analyze a single file and return results., batch_analyze=Analyze multiple files in batch., main=Main entry point for the code synopsis annotator.
 # END MACHINE-READABLE DATA
 # ════════════════════
 #===============================================================================
@@ -136,6 +136,8 @@
 #   5. Keep UI-threaded calls (e.g., tk.after) on main thread or marshal via queue
 #   6. Ensure hotkeys and binds still invoke the same callbacks
 #===============================================================================
+# === END SYNOPSIS HEADER ===
+# === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
 # === END SYNOPSIS HEADER ===
